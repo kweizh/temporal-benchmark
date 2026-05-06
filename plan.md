@@ -1,72 +1,107 @@
-### 1. Library Overview
-*   **Description**: Temporal is an open-source durable execution platform that enables developers to build "invincible" applications. It abstracts away the complexity of distributed systems (retries, state management, timeouts, and coordination) by providing a programming model where code is automatically fault-tolerant and stateful.
-*   **Ecosystem Role**: It acts as a workflow orchestration engine. It sits between your application services, managing long-running processes that can last from seconds to years. It is frequently used for payment processing, SaaS provisioning, background jobs, and increasingly for "agentic" AI workflows where multi-step LLM operations must be reliable.
+# Evaluation Dataset Research: Temporal.io
+## 1. Library Overview
+*   **Description**: Temporal.io is a durable execution platform that enables developers to build scalable, reliable applications by orchestrating complex workflows. It ensures that code is executed reliably even in the face of network failures, server crashes, or long-running processes (months or years).
+*   **Ecosystem Role**: Temporal acts as a "durable state machine" in the backend. It sits between your services, managing retries, state persistence, and execution flow, replacing ad-hoc cron jobs, message queues, and manual state management.
 *   **Project Setup**:
-    1.  **Install Temporal CLI**: `curl -sSf https://temporal.download/cli.sh | sh` (or `brew install temporal`).
-    2.  **Start Local Server**: `temporal server start-dev` (runs the server and Web UI at `http://localhost:8233`).
-    3.  **SDK Installation**:
-        *   **Python**: `pip install temporalio`
-        *   **TypeScript**: `npm install @temporalio/workflow @temporalio/activity @temporalio/client @temporalio/worker`
-    4.  **Boilerplate**: Typically involves defining an `Activity`, a `Workflow` that calls that activity, and a `Worker` to host them.
-### 2. Core Primitives & APIs
-*   **Workflows**: Orchestration logic. **Must be deterministic.**
-    *   *Python*: `@workflow.defn`, `@workflow.run`.
-    *   *TypeScript*: Exported functions in a dedicated workflow file.
-*   **Activities**: Side effects (API calls, DB ops). Can be non-deterministic and have retries.
-    *   *Python*: `@activity.defn`.
-    *   *TypeScript*: Exported functions.
-*   **Workers**: Processes that listen to a "Task Queue" and execute the code.
-*   **Signals & Queries**:
-    *   **Signal**: Asynchronous "write" to a running workflow (e.g., `workflow.signal`).
-    *   **Query**: Synchronous "read" of workflow state (e.g., `workflow.query`).
-*   **Updates**: Synchronous "write-then-read" (Wait for a result from a signal-like call).
-#### Code Snippet (Python)
-```python
-from temporalio import workflow, activity
-from datetime import timedelta
-@activity.defn
-async def send_email(email: str) -> str:
-    # Side effects go here
-    return f"Email sent to {email}"
-@workflow.defn
-class GreetingWorkflow:
-    @workflow.run
-    async def run(self, name: str) -> str:
-        # Orchestration logic (Deterministic!)        result = await workflow.execute_activity(
-            send_email, 
-            f"{name}@example.com", 
-            start_to_close_timeout=timedelta(seconds=5)
-        )
-        return result
+    *   **TypeScript**:
+        ```bash
+        npm install @temporalio/client @temporalio/worker @temporalio/workflow @temporalio/activity
+        # For environment config support
+        npm install @temporalio/envconfig
+        ```
+    *   **Python**:
+        ```bash
+        pip install temporalio
+        ```
+    *   **Temporal Cloud Configuration**:
+        To connect to Temporal Cloud, set the following environment variables:
+        ```bash
+        export TEMPORAL_API_KEY="your_api_key"
+        export TEMPORAL_ADDRESS="your-namespace.account-id.tmprl.cloud:7233"
+        export TEMPORAL_NAMESPACE="your-namespace.account-id"
+        ```
+## 2. Core Primitives & APIs
+*   **Workflow**: A durable function that orchestrates activities. Must be deterministic.
+    *   [Documentation](https://docs.temporal.io/develop/typescript/workflows/basics)
+*   **Activity**: A function for non-deterministic operations (API calls, DB access).
+    *   [Documentation](https://docs.temporal.io/develop/typescript/activities)
+*   **Worker**: The process that hosts and executes Workflow and Activity code.
+    *   [Documentation](https://docs.temporal.io/develop/typescript/workers)
+*   **Client**: Used to start, signal, query, and describe Workflows.
+    *   [Documentation](https://docs.temporal.io/develop/typescript/client/temporal-client)
+### Code Snippet: TypeScript Cloud Connection
+```typescript
+import { Connection, Client } from '@temporalio/client';
+import { loadClientConnectConfig } from '@temporalio/envconfig';
+async function run() {
+  // Automatically loads TEMPORAL_API_KEY, TEMPORAL_ADDRESS, etc.
+  const config = loadClientConnectConfig();
+
+  const connection = await Connection.connect(config.connectionOptions);
+  const client = new Client({
+    connection,
+    namespace: config.namespace
+  });
+  const handle = await client.workflow.start('MyWorkflow', {
+    taskQueue: 'my-task-queue',
+    workflowId: 'wf-id-123',
+    args: [{ data: 'hello' }]
+  });
+
+  console.log(`Started workflow ${handle.workflowId}`);
+}
 ```
-#### Documentation Links
-*   [Workflows Concepts](https://docs.temporal.io/workflows)
-*   [Activities Concepts](https://docs.temporal.io/activities)
-*   [Python SDK Guide](https://docs.temporal.io/develop/python)
-*   [TypeScript SDK Guide](https://docs.temporal.io/develop/typescript)
-### 3. Real-World Use Cases & Templates
-*   **Durable AI Agents**: Orchestrating multi-step LLM chains where each step (Activity) is retried on failure, and the state (Workflow) is preserved.
-*   **Subscription Billing**: Managing monthly billing cycles with Timers and `ContinueAsNew` for infinite loops.
-*   **Money Transfer**: Ensuring atomicity across distributed services (e.g., withdraw from A, deposit to B).
-*   **Templates**:
-    *   [Temporal Samples (GitHub)](https://github.com/temporalio/samples-python) - Official repository of patterns.
-    *   [Subscription Pattern](https://github.com/temporalio/samples-typescript/tree/main/subscription) - Common SaaS billing example.
-### 4. Developer Friction Points
-*   **Determinism Violations**: Using `time.now()`, `random.uuid()`, or global variables inside a Workflow. This causes `NondeterminismError` during replay. [Issue Example](https://github.com/temporalio/sdk-go/issues/818).
-*   **Versioning/Patching**: Modifying a Workflow's logic (e.g., adding a new activity) while instances are still running. If not handled with the `Patching API` or `GetVersion`, the replay will fail because the history doesn't match the new code.
-*   **Activity Timeout Confusion**: Misunderstanding `StartToClose` (worker execution time) vs `ScheduleToClose` (total time including queue wait). Setting these too low causes unnecessary retries.
-### 5. Evaluation Ideas
-*   **Basic**: Implement a "Hello World" workflow and activity that returns a formatted string.
-*   **Reliability**: Create a workflow that retries an activity 3 times with exponential backoff before failing.
-*   **State Management**: Use a Signal to update a "User Profile" workflow's state while it is running.
-*   **Determinism Fix**: Refactor a provided "broken" workflow that uses `datetime.now()` to use `workflow.now()`.
-*   **Long-running**: Implement a "Subscription" workflow that sleeps for 30 days and uses `ContinueAsNew` to prevent history bloat.
-*   **Versioning**: Safely add a second activity to an existing workflow using the SDK's versioning/patching API.
-*   **Complex Coordination**: Implement a "Saga Pattern" where if a second activity fails, a compensation activity is triggered to roll back the first one.
-### 6. Sources
-1.  [Temporal Documentation (llms.txt)](https://docs.temporal.io/llms.txt) - Full platform documentation overview.
-2.  [Temporal Python SDK README](https://github.com/temporalio/sdk-python) - Installation and basic usage for Python.
-3.  [Temporal TypeScript SDK Guide](https://docs.temporal.io/develop/typescript) - Core concepts and setup for TypeScript.
-4.  [Temporal Anti-Patterns Blog](https://temporal.io/blog/spooky-stories-chilling-temporal-anti-patterns-part-1) - Detailed discussion of common developer mistakes.
-5.  [AI Agent Architecture with Temporal](https://www.waylandz.com/ai-agent-book-en/chapter-21-temporal-workflows/) - Modern use cases for LLM orchestration.
-6.  [Determinism in Temporal](https://docs.temporal.io/workflows#determinism) - Official explanation of the determinism requirement.
+### Code Snippet: Python Cloud Connection
+```python
+import os
+import asyncio
+from temporalio.client import Client
+async def main():
+    # Manual connection using environment variables
+    client = await Client.connect(
+        os.getenv("TEMPORAL_ADDRESS"),
+        namespace=os.getenv("TEMPORAL_NAMESPACE"),
+        api_key=os.getenv("TEMPORAL_API_KEY")
+    )
+
+    result = await client.execute_workflow(
+        "MyWorkflow",
+        "arg1",
+        id="wf-id-123",
+        task_queue="my-task-queue"
+    )
+    print(f"Result: {result}")
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+## 3. Real-World Use Cases & Templates
+*   **Subscription Management**: Handling recurring billing, trial periods, and cancellation logic over months.
+    *   [TS Template](https://github.com/temporalio/subscription-workflow-project-template-typescript)
+*   **Saga Pattern (E-commerce)**: Coordinating multi-step transactions (Reserve stock -> Charge card -> Ship) with "compensation" steps if one fails.
+    *   [Saga Example](https://github.com/temporalio/samples-typescript/tree/main/saga)
+*   **Infrastructure Provisioning**: Orchestrating cloud resource creation (VPC -> Subnet -> EC2) with long waits and retries.
+*   **Integration Patterns**: Using Activities to wrap flaky 3rd-party APIs (Stripe, Twilio) with exponential backoff.
+## 4. Developer Friction Points
+*   **Non-Determinism**: Using `Date.now()`, `Math.random()`, or making network calls directly inside a Workflow function. This causes "Non-deterministic error" during replay.
+    *   *Task*: Fix a workflow that uses `new Date()` to determine a discount.
+*   **Task Queue Mismatch**: The Client starts a workflow on `queue-A`, but the Worker is polling `queue-B`. The workflow stays in "Running" state forever with no progress.
+    *   *Task*: Debug why a started workflow isn't executing.
+*   **Large History / Continue-As-New**: Workflows that run forever (e.g., a "User Wallet" workflow) accumulate too many events. Developers must use `continueAsNew` to reset history.
+    *   *Task*: Refactor a long-running loop to use `continueAsNew` after 100 iterations.
+*   **mTLS vs API Key**: Misconfiguring TLS when connecting to Cloud. Using the wrong endpoint format (mTLS vs API Key endpoints differ slightly).
+## 5. Evaluation Ideas
+*   **Simple**: Connect to Temporal Cloud using `TEMPORAL_API_KEY` and trigger a "Hello World" workflow.
+*   **Simple**: Implement a basic Activity that performs a GET request to a mock API and returns the result.
+*   **Intermediate**: Create a "Reminder" workflow that sleeps for a user-provided duration and then calls a "Notify" activity.
+*   **Intermediate**: Implement a Workflow that retries a failing Activity exactly 5 times with a 2-second fixed delay.
+*   **Complex**: Build a "Money Transfer" Saga that withdraws from Account A and deposits to Account B, with a compensation step to refund Account A if Deposit B fails.
+*   **Complex**: Implement a "Subscription" workflow that handles a 30-day billing cycle and uses `Signals` to allow users to "Upgrade" or "Cancel" mid-cycle.
+*   **Edge Case**: Debug and fix a "Non-deterministic" error in a provided workflow that uses global variables or system time for logic.
+*   **Edge Case**: Migrate a long-running workflow's state to a new version using the `patch` (TS) or `patched` (Python) versioning API.
+## 6. Sources
+1.  [Temporal Cloud API Keys](https://docs.temporal.io/cloud/api-keys) - Official guide on creating and using API keys.
+2.  [Temporal Client Environment Configuration](https://docs.temporal.io/develop/environment-configuration) - Details on `TEMPORAL_API_KEY` and TOML profiles.
+3.  [TypeScript SDK Client Docs](https://docs.temporal.io/develop/typescript/client/temporal-client) - Connection and workflow execution patterns for TS.
+4.  [Python SDK Client Docs](https://docs.temporal.io/develop/python/client/temporal-client) - Connection and workflow execution patterns for Python.
+5.  [Workflow Determinism Constraints](https://docs.temporal.io/develop/typescript/workflows/basics#deterministic-constraints) - Explanation of what code is allowed inside workflows.
+6.  [Temporal Samples (GitHub)](https://github.com/temporalio/samples-typescript) - Collection of real-world implementation patterns.
