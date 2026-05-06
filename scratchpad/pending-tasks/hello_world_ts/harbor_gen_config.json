@@ -1,0 +1,7 @@
+{
+  "library_name": "Temporal.io",
+  "complexity_level": "simple single terminal command",
+  "deep_research_path": "plan.md",
+  "task_name": "hello_world_ts",
+  "output_dir": "scratchpad/pending-tasks"
+}

@@ -1,0 +1,7 @@
+{
+  "library_name": "temporalio",
+  "complexity_level": "Intermediate",
+  "deep_research_path": "../../../plan.md",
+  "task_name": "reminder_workflow_py",
+  "output_dir": "scratchpad/pending-tasks/"
+}

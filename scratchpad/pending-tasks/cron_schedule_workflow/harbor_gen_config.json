@@ -1,7 +1,0 @@
-{
-  "library_name": "Temporal",
-  "complexity_level": "simple set of 2-5 commands",
-  "deep_research_path": "../../../plan.md",
-  "task_name": "cron_schedule_workflow",
-  "output_dir": "./"
-}

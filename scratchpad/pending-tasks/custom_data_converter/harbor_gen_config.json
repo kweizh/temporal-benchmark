@@ -1,7 +1,0 @@
-{
-  "library_name": "Temporal",
-  "complexity_level": "much more complicated task which not easy to be fixed by llm agents and only provide a simple instruction.md",
-  "deep_research_path": "../../../plan.md",
-  "task_name": "custom_data_converter",
-  "output_dir": "./"
-}

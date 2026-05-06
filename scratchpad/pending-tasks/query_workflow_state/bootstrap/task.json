@@ -1,5 +1,0 @@
-{
-  "task_name": "query_workflow_state",
-  "task_description": "# Query Temporal Workflow State\n\n## Background\nTemporal allows you to synchronously read the state of a running workflow using Queries. You have a Python Temporal project that manages a user profile workflow.\n\n## Requirements\n- The workflow `UserProfileWorkflow` in `workflow.py` currently has a signal `update_email` that updates the user's email.\n- You need to add a query method named `get_email` to this workflow that returns the current email address.\n\n## Implementation Guide\n1. Open `/home/user/project/workflow.py`.\n2. Add a method decorated with `@workflow.query` named `get_email` that returns `self._email`.\n3. Run the provided test to verify your implementation: `pytest test_workflow.py`\n\n## Constraints\n- Project path: `/home/user/project`\n- Do not modify `test_workflow.py`.",
-  "truth": "# Verification Plan\n\n## Setup\n1. `cd /home/user/project`\n\n## Verification Steps\n1. Run `pytest test_workflow.py` and verify it passes.\n\n## Expected Results\n- The pytest command should succeed with exit code 0, indicating the query method is correctly implemented."
-}
