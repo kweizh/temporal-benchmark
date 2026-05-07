@@ -1,0 +1,1373 @@
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Command outputs captured
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Command outputs captured
+Running command: echo mtls_connection_ts__wudvnsL > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Running command: echo hello_world_ts__3maMadR > /logs/artifacts/trial_id
+Running command: echo retry_activity_py__CgQJWV6 > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Configure Temporal Client with mTLS in TypeScript
+
+## Background
+You are setting up a Temporal application in TypeScript and need to connect to Temporal Cloud using mTLS authentication. Instead of hardcoding credentials, you will use a TOML configuration file and the `@temporalio/envconfig` package to load the connection options.
+
+## Requirements
+1. Initialize a Node.js project in `/home/user/temporal-app`.
+2. Install `@temporalio/client` and `@temporalio/envconfig`.
+3. Create a `config.toml` file in the project root with a `prod` profile.
+4. Configure the `prod` profile to connect to `my-namespace.a1b2c.tmprl.cloud:7233` for the `my-namespace` namespace.
+5. Configure the `tls` settings in the `prod` profile to use the certificate at `/home/user/temporal-app/certs/client.pem` and the private key at `/home/user/temporal-app/certs/client.key`.
+6. Write a TypeScript script `connect.ts` that loads the `prod` profile from `config.toml` using `loadClientConnectConfig`, attempts to connect to the Temporal Service, and catches any errors (printing "Connection failed as expected" to the console if an error occurs).
+
+## Implementation Guide
+1. Create the `/home/user/temporal-app` directory and run `npm init -y`.
+2. Run `npm install @temporalio/client @temporalio/envconfig`. Also install TypeScript execution tools: `npm install -D tsx typescript`.
+3. Generate dummy certificates in `/home/user/temporal-app/certs/`:
+   ```bash
+   mkdir -p certs
+   echo "dummy-cert" > certs/client.pem
+   echo "dummy-key" > certs/client.key
+   ```
+4. Create `config.toml` with the `[profile.prod]` and `[profile.prod.tls]` sections.
+5. Create `connect.ts` using `loadClientConnectConfig({ profile: 'prod', configSource: { path: './config.toml' } })`.
+6. Use `Connection.connect(config.connectionOptions)` inside a try-catch block.
+
+## Constraints
+- Project path: `/home/user/temporal-app`
+- Do not use environment variables for the TLS configuration; use `config.toml`.
+- You must use `@temporalio/envconfig` to load the profile.
+EOF
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Running command: echo continue_as_new_py__NNG4pRs > /logs/artifacts/trial_id
+Command outputs captured
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Cloud Hello World in TypeScript
+
+## Background
+Temporal.io is a durable execution platform. In this task, you will connect to Temporal Cloud and execute a simple "Hello World" workflow using TypeScript.
+
+## Requirements
+- Initialize a Node.js project in `/home/user/temporal-hello` with TypeScript support.
+- Install the required Temporal SDK packages: `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`, and `@temporalio/envconfig`.
+- Implement a Workflow named `helloWorld` that takes a `name` string and returns `"Hello, " + name + "!"`.
+- Implement a Worker that connects to Temporal Cloud and polls a task queue named `hello-world-queue`.
+- Implement a Client script that connects to Temporal Cloud, starts the `helloWorld` workflow with the argument `"Temporal"`, waits for the result, and writes the result to `/home/user/temporal-hello/output.log`.
+- The connection to Temporal Cloud must be established using the environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`.
+
+## Implementation Guide
+1. Run `npm init -y` and configure TypeScript in `/home/user/temporal-hello`.
+2. Create `src/workflows.ts` with the `helloWorld` workflow.
+3. Create `src/worker.ts` that loads cloud config using `loadClientConnectConfig()` from `@temporalio/envconfig`, connects to Temporal Cloud, and runs a Worker on `hello-world-queue`.
+4. Create `src/client.ts` that loads cloud config, connects to Temporal Cloud, executes the workflow, and writes the output to `output.log`.
+
+## Constraints
+- Project path: /home/user/temporal-hello
+- Log file: /home/user/temporal-hello/output.log
+- The worker must be able to run and process the workflow.
+
+## Integrations
+- Temporal Cloud
+EOF
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Python Retry Activity
+
+## Background
+Temporal provides robust capabilities for handling transient failures. In this task, you will implement a Python workflow that executes a failing activity with a specific retry policy.
+
+## Requirements
+- Create a Temporal Activity named `failing_activity` that always raises a `ValueError("failing")`.
+- Create a Temporal Workflow named `RetryWorkflow` that calls `failing_activity`.
+- The Workflow must configure the Activity call with a retry policy that:
+  - Retries exactly 5 times (i.e., `maximum_attempts=5`).
+  - Has a fixed delay of 2 seconds between retries (i.e., `initial_interval=timedelta(seconds=2)` and `backoff_coefficient=1.0`).
+- Provide a script `run_worker.py` that starts a Temporal Worker listening on task queue `retry-task-queue`.
+- Provide a script `start_workflow.py` that connects to the Temporal cluster, starts `RetryWorkflow` on `retry-task-queue`, and waits for its execution to complete.
+- Let the workflow catch the `ActivityError` resulting from the activity failing after all retries, and return the string `"Failed as expected"`.
+
+## Implementation Guide
+1. Initialize a Python project in `/home/user/retry_project`.
+2. Create `workflow.py` containing the Activity and Workflow definitions.
+3. Create `run_worker.py` that connects to Temporal (using environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY` if present, else default local) and runs the worker.
+4. Create `start_workflow.py` that connects to Temporal (using the same environment variables), starts the workflow, and prints the result.
+
+## Constraints
+- Project path: `/home/user/retry_project`
+- Task queue: `retry-task-queue`
+- The worker and starter scripts must use environment variables for connection if they are set (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`).
+EOF
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Refactor Long-Running Loop with continue_as_new
+
+## Background
+In Temporal, workflows that run for a long time and process many events can exceed the event history limit. To prevent this, developers should use `continue_as_new` to reset the workflow execution history while continuing the execution.
+
+## Requirements
+You have a Temporal project at `/home/user/project`. It contains a workflow in `workflow.py` that processes items in a loop. The loop currently runs indefinitely, which will eventually cause an event history limit error.
+
+Your task is to refactor the `ProcessItemsWorkflow` in `workflow.py` to use `workflow.continue_as_new` after every 100 iterations.
+
+The workflow takes two arguments: `start_index` (int) and `total_items` (int). It should process items one by one. If it has processed 100 items and there are still more items to process, it should call `workflow.continue_as_new` with the updated `start_index` (which should be the current index + 1) and the same `total_items`.
+
+## Implementation Guide
+1. Open `/home/user/project/workflow.py`.
+2. Locate the `ProcessItemsWorkflow` class and its `run` method.
+3. Modify the loop to keep track of the number of processed items in the current run.
+4. When 100 items have been processed, and `start_index + 100 < total_items`, use `workflow.continue_as_new(start_index + 100, total_items)` to continue the workflow.
+5. Ensure the workflow returns `True` when all items are processed.
+
+## Constraints
+- Project path: `/home/user/project`
+- The workflow must use `temporalio.workflow.continue_as_new`.
+- The workflow name is `ProcessItemsWorkflow`.
+EOF
+Running command: echo money_transfer_saga_ts__ENbds7M > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Money Transfer Saga
+
+## Background
+You need to implement a "Money Transfer" Saga pattern using Temporal.io in TypeScript. The saga must withdraw funds from Account A and deposit them into Account B. If the deposit fails, a compensation step must refund Account A.
+
+## Requirements
+- Create a Temporal Workflow named `moneyTransferSaga` that takes `fromAccountId` (string), `toAccountId` (string), and `amount` (number).
+- Create three Activities: `withdraw(accountId: string, amount: number)`, `deposit(accountId: string, amount: number)`, and `refund(accountId: string, amount: number)`.
+- The workflow should first call `withdraw` on `fromAccountId`.
+- Then it should call `deposit` on `toAccountId`.
+- If `deposit` fails (throws an error), the workflow must catch the error and execute `refund` on `fromAccountId` before failing or completing.
+- The `deposit` activity MUST throw an error if `accountId === 'fail'`.
+- Use Temporal Cloud for execution.
+
+## Implementation Guide
+1. Initialize a Node.js project in `/home/user/money-transfer`.
+2. Install `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`, and `@temporalio/envconfig`.
+3. Implement the `moneyTransferSaga` workflow in `src/workflows.ts`.
+4. Implement the activities in `src/activities.ts`.
+5. Create a `src/worker.ts` that connects to Temporal Cloud using environment variables (`TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`) and registers the workflow and activities on the `money-transfer-queue` task queue. The worker should be able to be started via `npm run worker`.
+6. Create a `tsconfig.json` to compile the TypeScript code if needed, or use `ts-node`.
+
+## Constraints
+- Project path: `/home/user/money-transfer`
+- Task queue: `money-transfer-queue`
+- Start command for worker: `npm run worker`
+- Do not use mock or fake Temporal servers; use the provided Temporal Cloud credentials.
+
+## Integrations
+- Temporal Cloud
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo hello_world_py__WRLrQXo > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Hello World in Python
+
+## Background
+You need to connect to Temporal Cloud and execute a simple "Hello World" workflow using the Python SDK.
+
+## Requirements
+- Create a Python script `/home/user/temporal-hello/main.py`.
+- The script must connect to Temporal Cloud using the `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY` environment variables.
+- Define a Temporal workflow named `HelloWorldWorkflow` that takes a `name` (string) as input and returns `"Hello, " + name + "!"`.
+- The script should concurrently run a Temporal Worker on the task queue `hello-world-tasks` and a Client that executes `HelloWorldWorkflow` with the argument `"World"` and workflow ID `"hello-world-wf"`.
+- The script should print the workflow result to standard output and then exit cleanly.
+
+## Implementation Guide
+1. Use `temporalio.client.Client.connect` to connect to Temporal Cloud.
+2. Define the workflow using `@workflow.defn` and `@workflow.run`.
+3. Create a `Worker` and use `asyncio.gather` or similar to run the worker and execute the workflow.
+4. Ensure the worker shuts down after the workflow execution completes.
+
+## Constraints
+- Project path: `/home/user/temporal-hello`
+- Log file: `/home/user/temporal-hello/output.log`
+- The script must be executable via `python3 main.py` and output `Hello, World!`.
+
+## Integrations
+- Temporal Cloud
+EOF
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo money_transfer_saga_py__Gu4kkdX > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Money Transfer Saga in Python
+
+## Background
+You need to implement a Money Transfer Saga using Temporal.io in Python. The Saga pattern is used to coordinate multi-step transactions with compensation steps if one fails.
+
+## Requirements
+Implement a Temporal application with the following components:
+
+1. **Activities** (`activities.py`):
+   - `withdraw(account_id: str, amount: int)`: Appends `WITHDRAW {account_id} {amount}` to `/home/user/app/transactions.log`.
+   - `deposit(account_id: str, amount: int)`: If `account_id` is `'B_FAIL'`, it raises a `ValueError("Deposit failed")`. Otherwise, it appends `DEPOSIT {account_id} {amount}` to `/home/user/app/transactions.log`.
+   - `refund(account_id: str, amount: int)`: Appends `REFUND {account_id} {amount}` to `/home/user/app/transactions.log`.
+
+2. **Workflow** (`workflow.py`):
+   - `MoneyTransferSaga`: A workflow that takes `source_account: str`, `target_account: str`, and `amount: int`.
+   - It should execute `withdraw` from `source_account`.
+   - Then it should execute `deposit` to `target_account`.
+   - If `deposit` fails, it must catch the exception and execute the `refund` activity to `source_account` as a compensation step, then re-raise the exception or fail the workflow gracefully.
+
+3. **Worker** (`run_worker.py`):
+   - Connects to Temporal Cloud using environment variables: `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`.
+   - Hosts the activities and workflow on the task queue `money-transfer-queue`.
+
+4. **Starter** (`run_workflow.py`):
+   - Takes three command line arguments: `<source_account> <target_account> <amount>`.
+   - Connects to Temporal Cloud using the same environment variables.
+   - Starts the `MoneyTransferSaga` workflow on `money-transfer-queue` and waits for its result.
+
+## Constraints
+- **Project path**: `/home/user/app`
+- The application must use the `temporalio` Python SDK.
+- Do not use fake Temporal environments. Use the real Temporal Cloud credentials provided in the environment variables.
+
+## Integrations
+- Temporal Cloud
+EOF
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo debug_task_queue_mismatch_ts__URQnVBW > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Debug Temporal Task Queue Mismatch
+
+## Background
+You have a Temporal TypeScript project at `/home/user/project`. There is a workflow `MyWorkflow` that is being started by a client script, and a worker that is supposed to execute it. However, when you run the client, the workflow stays in the 'Running' state forever and makes no progress.
+
+## Requirements
+- Identify why the workflow is not executing.
+- Fix the issue in the code so that the worker successfully picks up and completes the workflow.
+- The workflow should return 'Hello, Temporal!' upon successful execution.
+
+## Implementation Guide
+1. Inspect `src/client.ts` and `src/worker.ts` in `/home/user/project`.
+2. Notice the mismatch in the task queue names between the client and the worker.
+3. Update `src/worker.ts` (or `src/client.ts`) so that both use the exact same task queue name: `my-task-queue`.
+4. Run the worker and the client to verify it works.
+
+## Constraints
+- Project path: `/home/user/project`
+- The Temporal server is running locally on `127.0.0.1:7233` (already started in the environment).
+- Do not change the workflow logic in `src/workflows.ts`, only fix the configuration mismatch.
+
+## Integrations
+- None
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo subscription_signals_py__5CEL4Zu > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Subscription Workflow with Signals in Python
+
+## Background
+You are building a subscription management system using Temporal in Python. The workflow needs to handle a billing cycle (e.g., 30 days) and allow users to modify their subscription mid-cycle using Temporal Signals.
+
+## Requirements
+- Implement a Temporal Workflow named `SubscriptionWorkflow`.
+- The workflow should run a loop for a 30-day billing cycle (you can simulate 30 days by sleeping for a shorter duration or using Temporal's time-skipping/sleep primitives, but for this task, the workflow should await a signal or sleep for a short duration like 30 seconds to represent the cycle).
+- Implement a Signal handler to allow upgrading the subscription tier (e.g., from 'basic' to 'premium').
+- Implement a Signal handler to allow canceling the subscription mid-cycle.
+- If canceled, the workflow should terminate gracefully.
+- Implement a worker in `worker.py` that connects to Temporal Cloud using environment variables (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`) and hosts the workflow on task queue `subscription-task-queue`.
+- Implement a client script `starter.py` that starts the workflow, sends an 'upgrade' signal, sends a 'cancel' signal, and waits for the workflow to complete.
+
+## Implementation Guide
+1. Initialize a Python project in `/home/user/subscription_app`.
+2. Write `workflow.py` defining the `SubscriptionWorkflow` with `@workflow.defn`, and signal methods with `@workflow.signal`.
+3. Write `worker.py` to connect to Temporal and run the worker.
+4. Write `starter.py` to connect to Temporal, execute the workflow, send signals, and print the final result.
+5. Run the worker in the background and execute the starter script.
+
+## Constraints
+- Project path: `/home/user/subscription_app`
+- Log file: `/home/user/subscription_app/output.log`
+- Use `temporalio` Python SDK.
+- Connect to Temporal Cloud using `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY` environment variables.
+
+## Integrations
+- Temporal Cloud
+EOF
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo subscription_signals_ts__DhXSqYc > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Subscription Workflow with Signals
+
+## Background
+Temporal.io orchestrates complex, long-running workflows. In this task, you will implement a "Subscription" workflow in TypeScript that handles a billing cycle and uses Temporal Signals to allow users to "Upgrade" or "Cancel" their subscription mid-cycle.
+
+## Requirements
+- Initialize a Node.js TypeScript project in `/home/user/project`.
+- Install `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`, and `@temporalio/envconfig`.
+- Implement a workflow `subscriptionWorkflow` in `src/workflows.ts`.
+  - It takes an argument object: `{ initialTier: string, billingPeriodMs: number }`.
+  - It loops continuously. In each iteration, it waits for `billingPeriodMs`.
+  - After waiting, it executes an activity `chargeUser(tier)`.
+  - It must handle a signal named `updateTierSignal` that updates the current tier.
+  - It must handle a signal named `cancelSubscriptionSignal` that breaks the loop, causing the workflow to complete and return `"Canceled"`.
+- Implement the activity `chargeUser(tier: string)` in `src/activities.ts` which just returns `"Charged for ${tier}"`.
+- Create a worker script `src/worker.ts` that connects using `loadClientConnectConfig()` (which automatically uses `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`), registers the workflow and activity, and polls the task queue `subscription-queue`.
+- Create a client script `src/client.ts` that connects using `loadClientConnectConfig()`, starts the workflow (with a short billing period like 2000ms), waits 1 second, sends an `updateTierSignal` with a new tier, waits another 3 seconds, sends a `cancelSubscriptionSignal`, and prints the final workflow result to a log file `/home/user/project/output.log`.
+
+## Implementation Guide
+1. `cd /home/user/project` and `npm init -y`.
+2. Install dependencies: `npm install @temporalio/client @temporalio/worker @temporalio/workflow @temporalio/activity @temporalio/envconfig typescript ts-node`.
+3. Create `tsconfig.json` for TypeScript.
+4. Write `src/workflows.ts`, `src/activities.ts`, `src/worker.ts`, and `src/client.ts`.
+5. Ensure your worker and client use `loadClientConnectConfig()` from `@temporalio/envconfig` to connect to Temporal Cloud using environment variables.
+
+## Constraints
+- Project path: `/home/user/project`
+- Log file: `/home/user/project/output.log`
+- Task Queue: `subscription-queue`
+- The workflow must use `temporalio/workflow`'s `condition` or `sleep` combined with signal handlers to manage the waiting and interruption.
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo versioning_patch_py__NF8yz79 > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Migrate a Workflow with Patched Versioning in Python
+
+## Background
+You have a Temporal Python project at `/home/user/temporal_project`. It contains a workflow `MyWorkflow` in `workflow.py` that executes an activity `old_activity`. We need to migrate this workflow to use a new activity `new_activity` instead. 
+
+However, there are already running workflows that were started with the old code. We must ensure that these old workflows don't fail with a `NonDeterministicWorkflowError` during replay. To achieve this, you must use Temporal's versioning API (`workflow.patched`).
+
+## Requirements
+- Update `workflow.py` to use `workflow.patched("use_new_activity")`.
+- If the patch returns `True`, execute `new_activity`.
+- If the patch returns `False`, execute `old_activity`.
+- The workflow should return the result of whichever activity it runs.
+
+## Implementation Guide
+1. Modify `workflow.py` to import `patched` from `temporalio.workflow`.
+2. In the `run` method of `MyWorkflow`, use `workflow.patched("use_new_activity")` to branch the logic.
+
+## Constraints
+- Project path: `/home/user/temporal_project`
+- Do not remove `old_activity` from the worker or file.
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo versioning_patch_ts__e9JTySp > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Workflow Versioning
+
+## Background
+You have a Temporal TypeScript project at `/home/user/project`.
+The workflow `processOrder` currently sleeps for 100 milliseconds, then calls `chargeCustomer(orderId)`.
+We need to update this workflow to use `chargeCustomerV2(orderId)` instead of `chargeCustomer(orderId)`.
+However, because there are existing executions in production, you must use the `patched` API from `@temporalio/workflow` with the patch ID `'use-v2-charge'` to migrate safely.
+
+## Requirements
+- Update `src/workflows.ts` to use `chargeCustomerV2(orderId)` instead of `chargeCustomer(orderId)`.
+- Use `patched('use-v2-charge')` to ensure existing running workflows don't break. If the patch is applied, call `chargeCustomerV2`. Otherwise, call `chargeCustomer`.
+- Both activities are already defined in `src/activities.ts` and exported.
+- Do not change the sleep duration or other logic.
+
+## Constraints
+- Project path: /home/user/project
+EOF
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo activity_get_request_ts__4KijACJ > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal TypeScript Activity GET Request
+
+## Background
+Temporal Activities are the right place to perform non-deterministic operations like network requests. In this task, you will implement a basic Activity that performs a GET request to a mock API and returns the result in TypeScript.
+
+## Requirements
+- Implement an Activity named `fetchData` in `src/activities.ts` that makes an HTTP GET request to `https://jsonplaceholder.typicode.com/todos/1` and returns the JSON response.
+- Implement a Workflow named `exampleWorkflow` in `src/workflows.ts` that executes the `fetchData` activity and returns its result.
+- Implement a Worker in `src/worker.ts` that registers the workflow and activity. It must connect to Temporal Cloud using the standard environment variables (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`).
+- Implement a Client in `src/client.ts` that connects to Temporal Cloud using the same environment variables, starts `exampleWorkflow` on task queue `tutorial`, waits for the result, and prints it to the console.
+
+## Implementation Guide
+1. A Node.js project is already initialized in `/home/user/temporal-app` with the necessary Temporal SDK dependencies and TypeScript configured.
+2. Write the Activity in `src/activities.ts`.
+3. Write the Workflow in `src/workflows.ts`.
+4. Write the Worker in `src/worker.ts` using `@temporalio/envconfig` to load client configuration.
+5. Write the Client in `src/client.ts` to execute the workflow and print the result.
+
+## Constraints
+- Project path: `/home/user/temporal-app`
+- Task queue: `tutorial`
+- The project uses TypeScript. You can run files using `npx ts-node <file>`.
+
+## Integrations
+- Temporal Cloud
+EOF
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo reminder_workflow_ts__ffBUzaa > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Reminder Workflow
+
+## Background
+Temporal is a durable execution platform. You need to create a simple "Reminder" workflow in TypeScript that takes a sleep duration and a message, sleeps for the specified duration, and then calls a `notify` activity with the message.
+
+## Requirements
+- Create a Temporal project in `/home/user/reminder_project`.
+- Implement a workflow named `reminderWorkflow` that takes two arguments: `durationMs` (number) and `message` (string).
+- The workflow must use Temporal's `sleep` function to wait for `durationMs` milliseconds.
+- After sleeping, the workflow must call a `notify` activity, passing the `message` to it.
+- The `notify` activity should simply return the string `"Notified: " + message`.
+- Create a worker script `worker.ts` that registers the workflow and activity and connects to Temporal Cloud using environment variables: `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`.
+- Create a client script `client.ts` that connects to Temporal Cloud using the same environment variables, starts the workflow with `durationMs=1000` and `message="Hello Temporal"`, waits for the result, and prints it to stdout.
+
+## Implementation Guide
+1. Initialize a Node.js project in `/home/user/reminder_project`.
+2. Install `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`, and `@temporalio/envconfig`.
+3. Also install `typescript`, `ts-node`, and `@tsconfig/node18` as dev dependencies, and initialize `tsconfig.json`.
+4. Create `src/activities.ts` containing the `notify` activity.
+5. Create `src/workflows.ts` containing the `reminderWorkflow`.
+6. Create `src/worker.ts` that uses `loadClientConnectConfig()` from `@temporalio/envconfig` to connect to Temporal Cloud and run the worker on task queue `reminder-queue`.
+7. Create `src/client.ts` that uses `loadClientConnectConfig()` to connect to Temporal Cloud, executes the workflow on `reminder-queue`, and logs the result.
+
+## Constraints
+- Project path: /home/user/reminder_project
+- The task queue must be named `reminder-queue`.
+EOF
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo reminder_workflow_py__X33eFJM > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Reminder Workflow in Python
+
+## Background
+Temporal.io is a durable execution platform. You need to create a "Reminder" workflow in Python that sleeps for a user-provided duration and then calls a "Notify" activity.
+
+## Requirements
+- Create a Python project in `/home/user/project`.
+- Define an Activity `notify(message: str) -> str` that returns the string `"Notified: " + message`.
+- Define a Workflow `ReminderWorkflow` that takes two arguments: `duration: int` (seconds) and `message: str`.
+- The workflow must sleep for `duration` seconds (using Temporal's durable sleep) and then execute the `notify` activity, returning its result.
+- Create a `worker.py` script that connects to Temporal Cloud, registers the activity and workflow, and starts a worker listening on the `reminder-task-queue`.
+- Create a `start.py` script that connects to Temporal Cloud, executes `ReminderWorkflow` with `duration=2` and `message="Time is up!"` on the `reminder-task-queue`, and prints the result exactly as `RESULT: <result>`.
+- Both scripts must connect to Temporal Cloud using the environment variables: `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`. Be sure to configure TLS (`tls=True`) when connecting to Temporal Cloud with an API key.
+
+## Constraints
+- Project path: `/home/user/project`
+- Use the `temporalio` Python SDK.
+
+## Integrations
+- Temporal Cloud
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Trial money_transfer_saga_ts__ENbds7M failed: Verifier execution timed out after 600.0 seconds
+Exception VerifierTimeoutError is in exclude_exceptions, not retrying
+Not retrying trial because the exception is not in include_exceptions or the maximum number of retries has been reached

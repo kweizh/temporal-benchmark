@@ -1,0 +1,75 @@
+downloading uv 0.9.7 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Downloading pygments (1.2MiB)
+ Downloading pygments
+Installed 7 packages in 64ms
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: json-ctrf-0.3.5
+collected 2 items
+
+tests/test_final_state.py FF                                             [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_client_script_success __________________________
+
+run_workflow = CompletedProcess(args=['npx', 'ts-node', 'src/client.ts'], returncode=1, stdout='', stderr="/home/user/project/node_mo.../loader:1335:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\n  diagnosticCodes: [ 2559 ]\n}\n")
+
+    def test_client_script_success(run_workflow):
+        """Priority 3: Verify the client script executes without error."""
+        client_result = run_workflow
+>       assert client_result.returncode == 0, \
+            f"Client script failed to execute: {client_result.stderr}\nStdout: {client_result.stdout}"
+E       AssertionError: Client script failed to execute: /home/user/project/node_modules/ts-node/src/index.ts:859
+E             return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+E                    ^
+E         TSError: ⨯ Unable to compile TypeScript:
+E         src/client.ts(9,47): error TS2559: Type 'ClientConnectConfig' has no properties in common with type 'ConnectionOptions'.
+E         
+E             at createTSError (/home/user/project/node_modules/ts-node/src/index.ts:859:12)
+E             at reportTSError (/home/user/project/node_modules/ts-node/src/index.ts:863:19)
+E             at getOutput (/home/user/project/node_modules/ts-node/src/index.ts:1077:36)
+E             at Object.compile (/home/user/project/node_modules/ts-node/src/index.ts:1433:41)
+E             at Module.m._compile (/home/user/project/node_modules/ts-node/src/index.ts:1617:30)
+E             at node:internal/modules/cjs/loader:1943:10
+E             at Object.require.extensions.<computed> [as .ts] (/home/user/project/node_modules/ts-node/src/index.ts:1621:12)
+E             at Module.load (node:internal/modules/cjs/loader:1533:32)
+E             at Module._load (node:internal/modules/cjs/loader:1335:12)
+E             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+E           diagnosticCodes: [ 2559 ]
+E         }
+E         
+E         Stdout: 
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npx', 'ts-node', 'src/client.ts'], returncode=1, stdout='', stderr="/home/user/project/node_mo.../loader:1335:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\n  diagnosticCodes: [ 2559 ]\n}\n").returncode
+
+tests/test_final_state.py:45: AssertionError
+______________________ test_output_log_contains_canceled _______________________
+
+run_workflow = CompletedProcess(args=['npx', 'ts-node', 'src/client.ts'], returncode=1, stdout='', stderr="/home/user/project/node_mo.../loader:1335:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\n  diagnosticCodes: [ 2559 ]\n}\n")
+
+    def test_output_log_contains_canceled(run_workflow):
+        """Priority 3: Verify the workflow returns 'Canceled' and logs it."""
+>       assert os.path.isfile(LOG_FILE), \
+            f"Log file {LOG_FILE} was not created by the client script."
+E       AssertionError: Log file /home/user/project/output.log was not created by the client script.
+E       assert False
+E        +  where False = <function isfile at 0x719a88180220>('/home/user/project/output.log')
+E        +    where <function isfile at 0x719a88180220> = <module 'posixpath' (frozen)>.isfile
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+tests/test_final_state.py:50: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_client_script_success - AssertionError...
+FAILED tests/test_final_state.py::test_output_log_contains_canceled - Asserti...
+============================== 2 failed in 9.18s ===============================

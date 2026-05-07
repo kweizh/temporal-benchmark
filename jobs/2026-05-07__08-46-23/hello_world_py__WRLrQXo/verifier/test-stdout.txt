@@ -1,0 +1,65 @@
+downloading uv 0.9.7 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Downloading pygments (1.2MiB)
+ Downloading pygments
+Installed 7 packages in 17ms
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: json-ctrf-0.3.5
+collected 3 items
+
+tests/test_final_state.py .FF                                            [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_main_script_execution __________________________
+
+    def test_main_script_execution():
+        # Run the script and write output to output.log
+        with open(LOG_FILE, "w") as f:
+            result = subprocess.run(
+                ["python3", "main.py"],
+                cwd=PROJECT_DIR,
+                stdout=f,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+    
+>       assert result.returncode == 0, f"Script execution failed with error:\n{result.stderr}"
+E       AssertionError: Script execution failed with error:
+E         Traceback (most recent call last):
+E           File "/home/user/temporal-hello/main.py", line 3, in <module>
+E             from temporalio import workflow
+E         ModuleNotFoundError: No module named 'temporalio'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python3', 'main.py'], returncode=1, stderr='Traceback (most recent call last):\n  File "/home/....py", line 3, in <module>\n    from temporalio import workflow\nModuleNotFoundError: No module named \'temporalio\'\n').returncode
+
+tests/test_final_state.py:23: AssertionError
+_____________________ test_output_log_contains_hello_world _____________________
+
+    def test_output_log_contains_hello_world():
+        assert os.path.isfile(LOG_FILE), f"Log file {LOG_FILE} was not created."
+        with open(LOG_FILE, "r") as f:
+            content = f.read()
+>       assert "Hello, World!" in content, f"Expected 'Hello, World!' in output.log, got:\n{content}"
+E       AssertionError: Expected 'Hello, World!' in output.log, got:
+E         
+E       assert 'Hello, World!' in ''
+
+tests/test_final_state.py:29: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_main_file_exists
+FAILED tests/test_final_state.py::test_main_script_execution - AssertionError...
+FAILED tests/test_final_state.py::test_output_log_contains_hello_world - Asse...
+========================= 2 failed, 1 passed in 0.09s ==========================

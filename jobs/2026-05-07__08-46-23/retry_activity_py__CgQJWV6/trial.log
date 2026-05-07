@@ -1,0 +1,89 @@
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash  && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo retry_activity_py__CgQJWV6 > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" -e "s/ANTHROPIC_API_KEY/${ANTHROPIC_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "anthropic": {
+      "kind": "openai",
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-opus-4-6": {
+          "name": "claude-opus-4-6"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: mkdir -p /logs/artifacts
+Command outputs captured
+Running command: export PATH="$HOME/.pochi/bin:$PATH"; pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Preserving your work
+
+Save a copy of files you create during this task to `/logs/artifacts/`. This directory is preserved after the run so outputs can be inspected. Organize with subdirectories if helpful (e.g., `/logs/artifacts/code/`, `/logs/artifacts/reports/`). The directory already exists and is writable.
+
+---
+
+# Temporal Python Retry Activity
+
+## Background
+Temporal provides robust capabilities for handling transient failures. In this task, you will implement a Python workflow that executes a failing activity with a specific retry policy.
+
+## Requirements
+- Create a Temporal Activity named `failing_activity` that always raises a `ValueError("failing")`.
+- Create a Temporal Workflow named `RetryWorkflow` that calls `failing_activity`.
+- The Workflow must configure the Activity call with a retry policy that:
+  - Retries exactly 5 times (i.e., `maximum_attempts=5`).
+  - Has a fixed delay of 2 seconds between retries (i.e., `initial_interval=timedelta(seconds=2)` and `backoff_coefficient=1.0`).
+- Provide a script `run_worker.py` that starts a Temporal Worker listening on task queue `retry-task-queue`.
+- Provide a script `start_workflow.py` that connects to the Temporal cluster, starts `RetryWorkflow` on `retry-task-queue`, and waits for its execution to complete.
+- Let the workflow catch the `ActivityError` resulting from the activity failing after all retries, and return the string `"Failed as expected"`.
+
+## Implementation Guide
+1. Initialize a Python project in `/home/user/retry_project`.
+2. Create `workflow.py` containing the Activity and Workflow definitions.
+3. Create `run_worker.py` that connects to Temporal (using environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY` if present, else default local) and runs the worker.
+4. Create `start_workflow.py` that connects to Temporal (using the same environment variables), starts the workflow, and prints the result.
+
+## Constraints
+- Project path: `/home/user/retry_project`
+- Task queue: `retry-task-queue`
+- The worker and starter scripts must use environment variables for connection if they are set (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`).
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured

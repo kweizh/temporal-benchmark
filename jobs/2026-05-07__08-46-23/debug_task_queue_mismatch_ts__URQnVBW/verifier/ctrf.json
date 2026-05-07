@@ -1,0 +1,32 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 1,
+            "passed": 0,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778115271.2075295,
+            "stop": 1778115288.7089365
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_workflow_execution",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 17.463352352147922,
+                "start": 1778115271.2167919,
+                "stop": 1778115288.7086253,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_workflow_execution():\n        # Build the project\n        build_result = subprocess.run([\"npx\", \"tsc\"], cwd=PROJECT_DIR, capture_output=True, text=True)\n        assert build_result.returncode == 0, f\"TypeScript build failed: {build_result.stderr}\"\n    \n        # Start the worker in the background\n        worker_process = subprocess.Popen(\n            [\"node\", \"lib/worker.js\"],\n            cwd=PROJECT_DIR,\n            stdout=subprocess.PIPE,\n            stderr=subprocess.PIPE,\n            preexec_fn=os.setsid\n        )\n    \n        # Give the worker a few seconds to connect to the Temporal server\n        time.sleep(5)\n    \n        try:\n            # Run the client\n            client_result = subprocess.run(\n                [\"node\", \"lib/client.js\"],\n                cwd=PROJECT_DIR,\n                capture_output=True,\n                text=True,\n                timeout=15\n            )\n    \n>           assert client_result.returncode == 0, f\"Client script failed: {client_result.stderr}\"\nE           AssertionError: Client script failed: Error: Failed to connect before the deadline\nE                 at checkState (/home/user/project/node_modules/@grpc/grpc-js/build/src/client.js:78:26)\nE                 at Timeout._onTimeout (/home/user/project/node_modules/@grpc/grpc-js/build/src/internal-channel.js:570:17)\nE                 at listOnTimeout (node:internal/timers:581:17)\nE                 at process.processTimers (node:internal/timers:519:7)\nE             \nE           assert 1 == 0\nE            +  where 1 = CompletedProcess(args=['node', 'lib/client.js'], returncode=1, stdout='', stderr='Error: Failed to connect before the ...:17)\\n    at listOnTimeout (node:internal/timers:581:17)\\n    at process.processTimers (node:internal/timers:519:7)\\n').returncode\n\ntests/test_final_state.py:36: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

@@ -1,0 +1,78 @@
+downloading uv 0.9.7 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Downloading pygments (1.2MiB)
+ Downloading pygments
+Installed 7 packages in 45ms
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: json-ctrf-0.3.5
+collected 1 item
+
+tests/test_final_state.py F                                              [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_workflow_execution ____________________________
+
+    def test_workflow_execution():
+        """Priority 1: Run the client script and verify the workflow executes correctly."""
+    
+        # Start the worker in the background
+        worker_process = subprocess.Popen(
+            ["npx", "ts-node", "src/worker.ts"],
+            cwd=PROJECT_DIR,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            preexec_fn=os.setsid
+        )
+    
+        # Give the worker a few seconds to connect to Temporal Cloud and start polling
+        time.sleep(5)
+    
+        try:
+            # Run the client script
+            result = subprocess.run(
+                ["npx", "ts-node", "src/client.ts"],
+                cwd=PROJECT_DIR,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+    
+>           assert result.returncode == 0, f"Client script failed: {result.stderr}"
+E           AssertionError: Client script failed: /home/user/reminder_project/node_modules/ts-node/src/index.ts:859
+E                 return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+E                        ^
+E             TSError: ⨯ Unable to compile TypeScript:
+E             src/client.ts(10,21): error TS2339: Property 'address' does not exist on type 'ClientConnectConfig'.
+E             src/client.ts(11,17): error TS2339: Property 'tls' does not exist on type 'ClientConnectConfig'.
+E             
+E                 at createTSError (/home/user/reminder_project/node_modules/ts-node/src/index.ts:859:12)
+E                 at reportTSError (/home/user/reminder_project/node_modules/ts-node/src/index.ts:863:19)
+E                 at getOutput (/home/user/reminder_project/node_modules/ts-node/src/index.ts:1077:36)
+E                 at Object.compile (/home/user/reminder_project/node_modules/ts-node/src/index.ts:1433:41)
+E                 at Module.m._compile (/home/user/reminder_project/node_modules/ts-node/src/index.ts:1617:30)
+E                 at node:internal/modules/cjs/loader:1943:10
+E                 at Object.require.extensions.<computed> [as .ts] (/home/user/reminder_project/node_modules/ts-node/src/index.ts:1621:12)
+E                 at Module.load (node:internal/modules/cjs/loader:1533:32)
+E                 at Module._load (node:internal/modules/cjs/loader:1335:12)
+E                 at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+E               diagnosticCodes: [ 2339, 2339 ]
+E             }
+E             
+E           assert 1 == 0
+E            +  where 1 = CompletedProcess(args=['npx', 'ts-node', 'src/client.ts'], returncode=1, stdout='', stderr="/home/user/reminder_projec...r:1335:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\n  diagnosticCodes: [ 2339, 2339 ]\n}\n").returncode
+
+tests/test_final_state.py:33: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_workflow_execution - AssertionError: C...
+============================== 1 failed in 7.87s ===============================

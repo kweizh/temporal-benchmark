@@ -1,0 +1,48 @@
+{
+    "id": "f0971132-d6ae-44ae-9acc-2f090336298f",
+    "started_at": "2026-05-07T08:46:29.197201",
+    "finished_at": "2026-05-07T09:10:43.328159",
+    "n_total_trials": 15,
+    "stats": {
+        "n_trials": 15,
+        "n_errors": 1,
+        "evals": {
+            "pochi__gemini-3-flash__tasks": {
+                "n_trials": 14,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.2
+                    }
+                ],
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "continue_as_new_py__NNG4pRs",
+                            "retry_activity_py__CgQJWV6",
+                            "mtls_connection_ts__wudvnsL",
+                            "hello_world_py__WRLrQXo",
+                            "money_transfer_saga_py__Gu4kkdX",
+                            "debug_task_queue_mismatch_ts__URQnVBW",
+                            "subscription_signals_py__5CEL4Zu",
+                            "subscription_signals_ts__DhXSqYc",
+                            "versioning_patch_py__NF8yz79",
+                            "reminder_workflow_ts__ffBUzaa",
+                            "reminder_workflow_py__X33eFJM"
+                        ],
+                        "1.0": [
+                            "hello_world_ts__3maMadR",
+                            "versioning_patch_ts__e9JTySp",
+                            "activity_get_request_ts__4KijACJ"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "VerifierTimeoutError": [
+                        "money_transfer_saga_ts__ENbds7M"
+                    ]
+                }
+            }
+        }
+    }
+}

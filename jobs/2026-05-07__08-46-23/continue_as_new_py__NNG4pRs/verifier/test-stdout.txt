@@ -1,0 +1,73 @@
+downloading uv 0.9.7 x86_64-unknown-linux-gnu
+no checksums to verify
+installing to /root/.local/bin
+  uv
+  uvx
+everything's installed!
+
+To add $HOME/.local/bin to your PATH, either restart your shell or run:
+
+    source $HOME/.local/bin/env (sh, bash, zsh)
+    source $HOME/.local/bin/env.fish (fish)
+Downloading pygments (1.2MiB)
+ Downloading pygments
+Installed 7 packages in 36ms
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+rootdir: /tests
+plugins: json-ctrf-0.3.5
+collected 1 item
+
+tests/test_final_state.py F                                              [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_workflow_execution ____________________________
+
+temporal_env = None
+
+    def test_workflow_execution(temporal_env):
+        # Write test_workflow.py
+        test_script = os.path.join(PROJECT_DIR, "test_workflow.py")
+        with open(test_script, "w") as f:
+            f.write('''import asyncio
+    import sys
+    from temporalio.client import Client
+    
+    async def main():
+        client = await Client.connect("localhost:7233")
+        result = await client.execute_workflow(
+            "ProcessItemsWorkflow",
+            0, 250,
+            id="test-workflow-1",
+            task_queue="my-task-queue"
+        )
+        if result is True:
+            print("SUCCESS")
+        else:
+            print("FAILED")
+            sys.exit(1)
+    
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ''')
+    
+        # Run the workflow
+        result = subprocess.run(
+            ["python3", "test_workflow.py"],
+            cwd=PROJECT_DIR,
+            capture_output=True,
+            text=True
+        )
+>       assert result.returncode == 0, f"Workflow execution failed: {result.stderr}"
+E       AssertionError: Workflow execution failed: Traceback (most recent call last):
+E           File "/home/user/project/test_workflow.py", line 3, in <module>
+E             from temporalio.client import Client
+E         ModuleNotFoundError: No module named 'temporalio'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python3', 'test_workflow.py'], returncode=1, stdout='', stderr='Traceback (most recent call la... line 3, in <module>\n    from temporalio.client import Client\nModuleNotFoundError: No module named \'temporalio\'\n').returncode
+
+tests/test_final_state.py:109: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_workflow_execution - AssertionError: W...
+============================== 1 failed in 7.12s ===============================

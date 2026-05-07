@@ -1,0 +1,7 @@
+INFO:root:Connected to Temporal Cloud at REDACTED
+INFO:root:Worker started on task queue 'subscription-task-queue'
+INFO:root:Starting workflow with ID: subscription-workflow-e751fc05-9799-4958-91d8-ea8abca4f068
+INFO:root:Sending upgrade signal: premium
+INFO:root:Sending cancel signal
+INFO:root:Workflow result: Subscription canceled. Final tier: premium
+FINAL_RESULT: Subscription canceled. Final tier: premium

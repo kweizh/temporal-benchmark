@@ -1,0 +1,53 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 1,
+            "failed": 2,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778115069.0166593,
+            "stop": 1778115069.1099427
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_main_file_exists",
+                "status": "passed",
+                "duration": 0.0004708890337496996,
+                "start": 1778115069.025036,
+                "stop": 1778115069.0257025,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_main_script_execution",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.06574323424138129,
+                "start": 1778115069.0258904,
+                "stop": 1778115069.1069212,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_main_script_execution():\n        # Run the script and write output to output.log\n        with open(LOG_FILE, \"w\") as f:\n            result = subprocess.run(\n                [\"python3\", \"main.py\"],\n                cwd=PROJECT_DIR,\n                stdout=f,\n                stderr=subprocess.PIPE,\n                text=True\n            )\n    \n>       assert result.returncode == 0, f\"Script execution failed with error:\\n{result.stderr}\"\nE       AssertionError: Script execution failed with error:\nE         Traceback (most recent call last):\nE           File \"/home/user/temporal-hello/main.py\", line 3, in <module>\nE             from temporalio import workflow\nE         ModuleNotFoundError: No module named 'temporalio'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['python3', 'main.py'], returncode=1, stderr='Traceback (most recent call last):\\n  File \"/home/....py\", line 3, in <module>\\n    from temporalio import workflow\\nModuleNotFoundError: No module named \\'temporalio\\'\\n').returncode\n\ntests/test_final_state.py:23: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_output_log_contains_hello_world",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.0007143949624150991,
+                "start": 1778115069.1071377,
+                "stop": 1778115069.109763,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_output_log_contains_hello_world():\n        assert os.path.isfile(LOG_FILE), f\"Log file {LOG_FILE} was not created.\"\n        with open(LOG_FILE, \"r\") as f:\n            content = f.read()\n>       assert \"Hello, World!\" in content, f\"Expected 'Hello, World!' in output.log, got:\\n{content}\"\nE       AssertionError: Expected 'Hello, World!' in output.log, got:\nE         \nE       assert 'Hello, World!' in ''\n\ntests/test_final_state.py:29: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

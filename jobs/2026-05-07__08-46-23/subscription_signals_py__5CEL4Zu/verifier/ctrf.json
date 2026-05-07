@@ -1,0 +1,32 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 1,
+            "passed": 0,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778115330.36361,
+            "stop": 1778115335.4796438
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_workflow_execution",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 5.087781677255407,
+                "start": 1778115330.3729165,
+                "stop": 1778115335.4793344,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "run_worker = <Popen: returncode: None args: ['python3', 'worker.py']>\n\n    def test_workflow_execution(run_worker):\n        starter_script = os.path.join(PROJECT_DIR, \"starter.py\")\n        assert os.path.isfile(starter_script), f\"starter.py not found at {starter_script}\"\n    \n        result = subprocess.run(\n            [\"python3\", \"starter.py\"],\n            cwd=PROJECT_DIR,\n            capture_output=True,\n            text=True\n        )\n    \n        with open(os.path.join(PROJECT_DIR, \"output.log\"), \"w\") as f:\n            f.write(result.stdout)\n            if result.stderr:\n                f.write(\"\\n\" + result.stderr)\n    \n>       assert result.returncode == 0, f\"starter.py failed with exit code {result.returncode}. Stderr: {result.stderr}\"\nE       AssertionError: starter.py failed with exit code 1. Stderr: Traceback (most recent call last):\nE           File \"/home/user/subscription_app/starter.py\", line 5, in <module>\nE             from temporalio.client import Client\nE         ModuleNotFoundError: No module named 'temporalio'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['python3', 'starter.py'], returncode=1, stdout='', stderr='Traceback (most recent call last):\\n... line 5, in <module>\\n    from temporalio.client import Client\\nModuleNotFoundError: No module named \\'temporalio\\'\\n').returncode\n\ntests/test_final_state.py:44: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

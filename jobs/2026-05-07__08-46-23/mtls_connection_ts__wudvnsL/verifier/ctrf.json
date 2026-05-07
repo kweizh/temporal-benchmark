@@ -1,0 +1,62 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 4,
+            "passed": 2,
+            "failed": 2,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778114972.5842636,
+            "stop": 1778114983.9256108
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_config_file_exists",
+                "status": "passed",
+                "duration": 0.0005239623133093119,
+                "start": 1778114972.5962212,
+                "stop": 1778114972.596967,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_cli_reads_cert_path",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.04153742198832333,
+                "start": 1778114972.5971916,
+                "stop": 1778114972.654398,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_cli_reads_cert_path():\n        \"\"\"Priority 1: Use Temporal CLI to verify the TLS client_cert_path in the config.\"\"\"\n        env = os.environ.copy()\n        env[\"TEMPORAL_CONFIG_FILE\"] = CONFIG_FILE\n    \n        result = subprocess.run(\n            [\"temporal\", \"--profile\", \"prod\", \"config\", \"get\", \"tls.client_cert_path\"],\n            capture_output=True, text=True, cwd=PROJECT_DIR, env=env\n        )\n>       assert result.returncode == 0, f\"'temporal config get tls.client_cert_path' failed: {result.stderr}\"\nE       AssertionError: 'temporal config get tls.client_cert_path' failed: Error: unknown command \"tls.client_cert_path\" for \"temporal config get\"\nE         Error: unknown command \"tls.client_cert_path\" for \"temporal config get\"\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['temporal', '--profile', 'prod', 'config', 'get', 'tls.client_cert_path'], returncode=1, stdout...lient_cert_path\" for \"temporal config get\"\\nError: unknown command \"tls.client_cert_path\" for \"temporal config get\"\\n').returncode\n\ntests/test_final_state.py:22: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_cli_reads_key_path",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.039089211728423834,
+                "start": 1778114972.654642,
+                "stop": 1778114972.696762,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_cli_reads_key_path():\n        \"\"\"Priority 1: Use Temporal CLI to verify the TLS client_key_path in the config.\"\"\"\n        env = os.environ.copy()\n        env[\"TEMPORAL_CONFIG_FILE\"] = CONFIG_FILE\n    \n        result = subprocess.run(\n            [\"temporal\", \"--profile\", \"prod\", \"config\", \"get\", \"tls.client_key_path\"],\n            capture_output=True, text=True, cwd=PROJECT_DIR, env=env\n        )\n>       assert result.returncode == 0, f\"'temporal config get tls.client_key_path' failed: {result.stderr}\"\nE       AssertionError: 'temporal config get tls.client_key_path' failed: Error: unknown command \"tls.client_key_path\" for \"temporal config get\"\nE         Error: unknown command \"tls.client_key_path\" for \"temporal config get\"\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['temporal', '--profile', 'prod', 'config', 'get', 'tls.client_key_path'], returncode=1, stdout=....client_key_path\" for \"temporal config get\"\\nError: unknown command \"tls.client_key_path\" for \"temporal config get\"\\n').returncode\n\ntests/test_final_state.py:37: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_connect_script_executes_and_handles_error",
+                "status": "passed",
+                "duration": 11.228177019162104,
+                "start": 1778114972.6969805,
+                "stop": 1778114983.925397,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

@@ -1,0 +1,44 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 2,
+            "passed": 0,
+            "failed": 2,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778115296.5641036,
+            "stop": 1778115305.7436724
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_client_script_success",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 9.146755008026958,
+                "start": 1778115296.5750756,
+                "stop": 1778115305.739262,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "run_workflow = CompletedProcess(args=['npx', 'ts-node', 'src/client.ts'], returncode=1, stdout='', stderr=\"/home/user/project/node_mo.../loader:1335:12)\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\\n  diagnosticCodes: [ 2559 ]\\n}\\n\")\n\n    def test_client_script_success(run_workflow):\n        \"\"\"Priority 3: Verify the client script executes without error.\"\"\"\n        client_result = run_workflow\n>       assert client_result.returncode == 0, \\\n            f\"Client script failed to execute: {client_result.stderr}\\nStdout: {client_result.stdout}\"\nE       AssertionError: Client script failed to execute: /home/user/project/node_modules/ts-node/src/index.ts:859\nE             return new TSError(diagnosticText, diagnosticCodes, diagnostics);\nE                    ^\nE         TSError: \u2a2f Unable to compile TypeScript:\nE         src/client.ts(9,47): error TS2559: Type 'ClientConnectConfig' has no properties in common with type 'ConnectionOptions'.\nE         \nE             at createTSError (/home/user/project/node_modules/ts-node/src/index.ts:859:12)\nE             at reportTSError (/home/user/project/node_modules/ts-node/src/index.ts:863:19)\nE             at getOutput (/home/user/project/node_modules/ts-node/src/index.ts:1077:36)\nE             at Object.compile (/home/user/project/node_modules/ts-node/src/index.ts:1433:41)\nE             at Module.m._compile (/home/user/project/node_modules/ts-node/src/index.ts:1617:30)\nE             at node:internal/modules/cjs/loader:1943:10\nE             at Object.require.extensions.<computed> [as .ts] (/home/user/project/node_modules/ts-node/src/index.ts:1621:12)\nE             at Module.load (node:internal/modules/cjs/loader:1533:32)\nE             at Module._load (node:internal/modules/cjs/loader:1335:12)\nE             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\nE           diagnosticCodes: [ 2559 ]\nE         }\nE         \nE         Stdout: \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['npx', 'ts-node', 'src/client.ts'], returncode=1, stdout='', stderr=\"/home/user/project/node_mo.../loader:1335:12)\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\\n  diagnosticCodes: [ 2559 ]\\n}\\n\").returncode\n\ntests/test_final_state.py:45: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_output_log_contains_canceled",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 0.0008191049564629793,
+                "start": 1778115305.7396576,
+                "stop": 1778115305.7433672,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "run_workflow = CompletedProcess(args=['npx', 'ts-node', 'src/client.ts'], returncode=1, stdout='', stderr=\"/home/user/project/node_mo.../loader:1335:12)\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\\n  diagnosticCodes: [ 2559 ]\\n}\\n\")\n\n    def test_output_log_contains_canceled(run_workflow):\n        \"\"\"Priority 3: Verify the workflow returns 'Canceled' and logs it.\"\"\"\n>       assert os.path.isfile(LOG_FILE), \\\n            f\"Log file {LOG_FILE} was not created by the client script.\"\nE       AssertionError: Log file /home/user/project/output.log was not created by the client script.\nE       assert False\nE        +  where False = <function isfile at 0x719a88180220>('/home/user/project/output.log')\nE        +    where <function isfile at 0x719a88180220> = <module 'posixpath' (frozen)>.isfile\nE        +      where <module 'posixpath' (frozen)> = os.path\n\ntests/test_final_state.py:50: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

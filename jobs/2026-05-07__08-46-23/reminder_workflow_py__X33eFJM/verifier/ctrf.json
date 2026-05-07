@@ -1,0 +1,30 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 1,
+            "passed": 0,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778115517.0440369,
+            "stop": 1778115522.078238
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_workflow_execution",
+                "status": "failed",
+                "duration": 5.004590442636982,
+                "start": 1778115517.053812,
+                "stop": 1778115522.0778167,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "@pytest.fixture(scope=\"module\")\n    def start_worker():\n        # Start the worker process\n        worker_process = subprocess.Popen(\n            [\"python3\", \"worker.py\"],\n            cwd=PROJECT_DIR,\n            stdout=subprocess.PIPE,\n            stderr=subprocess.PIPE,\n            preexec_fn=os.setsid\n        )\n    \n        # Wait for the worker to connect and start listening\n        time.sleep(5)\n    \n        # Check if worker crashed immediately\n        if worker_process.poll() is not None:\n            stdout, stderr = worker_process.communicate()\n>           pytest.fail(f\"Worker process exited prematurely with code {worker_process.returncode}.\\nStdout: {stdout.decode()}\\nStderr: {stderr.decode()}\")\nE           Failed: Worker process exited prematurely with code 1.\nE           Stdout: \nE           Stderr: Traceback (most recent call last):\nE             File \"/home/user/project/worker.py\", line 3, in <module>\nE               from temporalio.client import Client\nE           ModuleNotFoundError: No module named 'temporalio'\n\ntests/test_final_state.py:26: Failed"
+            }
+        ]
+    }
+}

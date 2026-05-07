@@ -1,0 +1,38 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 2,
+            "passed": 2,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778115412.741719,
+            "stop": 1778115426.859402
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_workflow_uses_patch",
+                "status": "passed",
+                "duration": 14.102645029081032,
+                "start": 1778115412.7535996,
+                "stop": 1778115426.8579125,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_code_contains_patched",
+                "status": "passed",
+                "duration": 0.0006351710762828588,
+                "start": 1778115426.8583722,
+                "stop": 1778115426.8591552,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

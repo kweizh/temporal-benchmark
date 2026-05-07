@@ -1,0 +1,32 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "8.4.1"
+        },
+        "summary": {
+            "tests": 1,
+            "passed": 0,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1778114914.8272743,
+            "stop": 1778114921.9449406
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_workflow_execution",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 7.087607619585469,
+                "start": 1778114914.8385603,
+                "stop": 1778114921.9446034,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "temporal_env = None\n\n    def test_workflow_execution(temporal_env):\n        # Write test_workflow.py\n        test_script = os.path.join(PROJECT_DIR, \"test_workflow.py\")\n        with open(test_script, \"w\") as f:\n            f.write('''import asyncio\n    import sys\n    from temporalio.client import Client\n    \n    async def main():\n        client = await Client.connect(\"localhost:7233\")\n        result = await client.execute_workflow(\n            \"ProcessItemsWorkflow\",\n            0, 250,\n            id=\"test-workflow-1\",\n            task_queue=\"my-task-queue\"\n        )\n        if result is True:\n            print(\"SUCCESS\")\n        else:\n            print(\"FAILED\")\n            sys.exit(1)\n    \n    if __name__ == \"__main__\":\n        asyncio.run(main())\n    ''')\n    \n        # Run the workflow\n        result = subprocess.run(\n            [\"python3\", \"test_workflow.py\"],\n            cwd=PROJECT_DIR,\n            capture_output=True,\n            text=True\n        )\n>       assert result.returncode == 0, f\"Workflow execution failed: {result.stderr}\"\nE       AssertionError: Workflow execution failed: Traceback (most recent call last):\nE           File \"/home/user/project/test_workflow.py\", line 3, in <module>\nE             from temporalio.client import Client\nE         ModuleNotFoundError: No module named 'temporalio'\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['python3', 'test_workflow.py'], returncode=1, stdout='', stderr='Traceback (most recent call la... line 3, in <module>\\n    from temporalio.client import Client\\nModuleNotFoundError: No module named \\'temporalio\\'\\n').returncode\n\ntests/test_final_state.py:109: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}
