@@ -1,0 +1,37 @@
+# Temporal Activity that Performs a GitHub GET Request (Python)
+
+## Background
+You are building a Temporal application with the Temporal.io Python SDK (`temporalio`). The goal is to demonstrate the canonical pattern for wrapping an external HTTP call inside a Temporal **Activity** so it can be retried and recorded durably. The Activity will perform a simple `GET https://api.github.com/repos/{owner}/{repo}` request against the public GitHub REST API and return the `full_name` field from the JSON response. A **Workflow** then calls the Activity from a **Worker** that connects to **Temporal Cloud**.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. The unique run identifier is provided as `ZEALT_RUN_ID`.
+
+## Requirements
+- Implement a Python Temporal project under `/home/user/myproject` that contains:
+  - An **Activity** named `fetch_repo_full_name` that accepts two string arguments `owner` and `repo`, uses `httpx.AsyncClient` to issue `GET https://api.github.com/repos/{owner}/{repo}`, parses the JSON response, and returns the value of the `full_name` field as a string.
+  - A **Workflow** named `FetchRepoWorkflow` that accepts the same two string arguments `owner` and `repo`, calls the `fetch_repo_full_name` activity with a `start_to_close_timeout` of 30 seconds, and returns the string returned by the activity.
+  - A **Worker** that connects to Temporal Cloud using the API key, registers `FetchRepoWorkflow` and `fetch_repo_full_name`, and polls the task queue `repo-fetch-py`.
+  - A **Client** entrypoint that connects to Temporal Cloud, executes `FetchRepoWorkflow` with the arguments `owner="temporalio"` and `repo="temporal"`, waits for completion, and prints the returned string to stdout.
+- The Worker and Client must use the task queue `repo-fetch-py`.
+- The Workflow ID must be exactly `repo-fetch-py-${ZEALT_RUN_ID}` where `${ZEALT_RUN_ID}` is read from the `ZEALT_RUN_ID` environment variable so concurrent runs do not collide.
+- Provide a runnable entrypoint that starts the Worker and the Client together against Temporal Cloud (for example, a single `python main.py` command, or any `python -m` style entrypoint that does the same). After the workflow completes, the printed result must equal the GitHub repository full name.
+
+## Implementation Hints
+- Install the official Temporal Python SDK with `pip install temporalio` and the HTTP client with `pip install httpx`.
+- For Temporal Cloud, connect with `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)`.
+- Define the activity using `@activity.defn` from `temporalio` and the workflow using `@workflow.defn` plus `@workflow.run` on the async run method.
+- Inside the workflow, use `workflow.execute_activity(...)` and pass `start_to_close_timeout=timedelta(seconds=30)` to satisfy the 30-second timeout requirement.
+- Use `temporalio.worker.Worker` to register the workflow and activity on the `repo-fetch-py` task queue, and `Client.execute_workflow` to start `FetchRepoWorkflow` with the required arguments.
+- The activity must use `httpx.AsyncClient` (or `httpx.AsyncClient` via `async with`) to perform the GET request; do not call `requests` or any synchronous HTTP client inside an async activity.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
+- You may run the worker and the client in the same `asyncio` event loop (for example by starting the worker as a background task, executing the workflow, then cancelling the worker) — just make sure the workflow completes against Temporal Cloud and the result is printed before the process exits.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `python main.py` (executed from `/home/user/myproject`)
+- Task queue: `repo-fetch-py`
+- Workflow type name: `FetchRepoWorkflow`
+- Activity type name: `fetch_repo_full_name`
+- Workflow ID: must be exactly `repo-fetch-py-${ZEALT_RUN_ID}` using the value of the `ZEALT_RUN_ID` environment variable
+- When `python main.py` is executed, the workflow `FetchRepoWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the string returned from the activity must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the GitHub repository full name for `owner="temporalio"`, `repo="temporal"`.
+

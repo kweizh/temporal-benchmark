@@ -1,0 +1,44 @@
+# Reminder Workflow with Durable Timer (Python)
+
+## Background
+You are building a durable Reminder service using the Temporal.io **Python SDK**. The workflow should accept a message and a delay (in seconds), wait for that duration using a Temporal durable timer, and then invoke an Activity that delivers the notification by writing it to a log file.
+
+This demonstrates Temporal's durable timer primitive: even if the worker is restarted while the workflow is sleeping, the timer survives and the activity will still fire when the duration elapses.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment.
+
+## Requirements
+- Implement a Python Temporal project under `/home/user/myproject` that contains:
+  - An **Activity** named `notify` that takes a `str` argument `message` and:
+    - Appends a single line `Notified: <message>` (followed by a newline) to `/workspace/reminder.log`.
+    - Returns the string `Notified: <message>`.
+  - A **Workflow** named `ReminderWorkflow` whose `run` method accepts two positional arguments — `message: str` and `delay_seconds: int` — and:
+    - Sleeps inside the workflow for `delay_seconds` seconds using Temporal's durable timer API (i.e., `await asyncio.sleep(delay_seconds)` inside the workflow body).
+    - After the timer elapses, calls the `notify` Activity with `message` and returns the activity's return value.
+  - A **Worker** that connects to Temporal Cloud (API key + TLS) and polls the task queue `reminder-py`, registering both the workflow and the activity.
+  - A **Client** entrypoint that connects to Temporal Cloud, starts (or executes) `ReminderWorkflow` with `message="wake up"` and `delay_seconds=3`, waits for completion, and prints the returned string to stdout.
+- The Workflow ID must be exactly `reminder-py-${ZEALT_RUN_ID}`, where `${ZEALT_RUN_ID}` is read from the `ZEALT_RUN_ID` environment variable.
+- The Worker and Client must both use the task queue `reminder-py`.
+- Ensure `/workspace` exists and is writable before the activity runs.
+- Provide a startup mechanism so a single shell command can spin up the worker, run the client, wait for the workflow's result, print it, and exit cleanly with code 0.
+
+## Implementation Hints
+- Install the official Python SDK: `pip install temporalio`.
+- Use `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)` for the client.
+- Use `temporalio.worker.Worker(client, task_queue=..., workflows=[...], activities=[...])` for the worker.
+- Inside the workflow, use `await asyncio.sleep(delay_seconds)` for the durable timer — Temporal automatically converts this into a durable Temporal timer that survives worker restarts.
+- Use `workflow.execute_activity(notify, message, start_to_close_timeout=timedelta(seconds=...))` to invoke the activity from the workflow.
+- You can launch the worker as a background task in the same process (e.g., `asyncio.create_task(worker.run())`) and shut it down after the client finishes, or run it as a separate process — either approach is acceptable as long as the entrypoint exits cleanly with the printed result.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `bash run.sh` (executed from `/home/user/myproject`)
+- Task queue: `reminder-py`
+- Workflow type name: `ReminderWorkflow`
+- Activity type name: `notify`
+- Workflow ID: must equal `reminder-py-${ZEALT_RUN_ID}` (read `ZEALT_RUN_ID` from the environment).
+- Log file: `/workspace/reminder.log` must exist after the run and must contain a line equal to `Notified: wake up`.
+- When `bash run.sh` is executed, the workflow `ReminderWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting string returned from the activity must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the string `Notified: wake up`.
+

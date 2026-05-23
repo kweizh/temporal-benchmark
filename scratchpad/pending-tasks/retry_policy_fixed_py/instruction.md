@@ -1,0 +1,34 @@
+# Temporal Python: Workflow with Fixed-Delay Retry Policy
+
+## Background
+Temporal automatically retries failing Activities according to a configurable `RetryPolicy`. In this task you will build a small Temporal Python application that exercises a *fixed-delay* retry policy: every retry waits the same amount of time (no exponential backoff) and the Activity is retried a bounded number of times before the failure is surfaced to the Workflow code.
+
+The Worker and Client must connect to **real Temporal Cloud** using the standard environment variables (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Do **not** mock Temporal.
+
+## Requirements
+- Implement an Activity named `flaky_task` that:
+  - Appends a single line to `/workspace/attempts.log` every time it runs. The line must be unique per attempt (for example, it can include the current Activity attempt number or a timestamp).
+  - Always raises `temporalio.exceptions.ApplicationError("boom")` after writing the log line.
+- Implement a Workflow named `FlakyWorkflow` that:
+  - Invokes `flaky_task` using a `RetryPolicy` with `maximum_attempts=5`, `initial_interval=timedelta(seconds=2)` and `backoff_coefficient=1.0` (so every retry waits exactly 2 seconds).
+  - Catches the resulting `ActivityError` after retries are exhausted and returns the string `"failed after 5 attempts"` from `@workflow.run`.
+- Provide a Worker entrypoint that registers `FlakyWorkflow` and `flaky_task` and polls the task queue `retry-py`.
+- Provide a Client entrypoint that starts the Workflow on task queue `retry-py` with Workflow ID `retry-py-${ZEALT_RUN_ID}` (read `ZEALT_RUN_ID` from the environment), waits for completion, and writes the Workflow result to `/workspace/result.log` in the format `Workflow result: <result>`.
+
+## Implementation Hints
+- Use the `temporalio` Python SDK (`temporalio.client.Client`, `temporalio.worker.Worker`, `temporalio.workflow`, `temporalio.activity`, `temporalio.common.RetryPolicy`, `temporalio.exceptions.ApplicationError`, `temporalio.exceptions.ActivityError`).
+- Connect to Temporal Cloud with `Client.connect(os.environ["TEMPORAL_ADDRESS"], namespace=os.environ["TEMPORAL_NAMESPACE"], api_key=os.environ["TEMPORAL_API_KEY"], tls=True)`.
+- Set a sensible `start_to_close_timeout` on `execute_activity` (a few seconds is enough; the Activity fails immediately).
+- Make sure the Worker is running before (or concurrently with) the Client that starts the Workflow. A common pattern is to launch the Worker in the background and then run the Client.
+- The Activity must produce *exactly* one log line per attempt; do not also append on retries inside the same attempt.
+
+## Acceptance Criteria
+- Project path: `/home/user/myproject`
+- Log files (must be created by your code, not by the verifier):
+  - `/workspace/attempts.log` — one line appended per Activity attempt.
+  - `/workspace/result.log` — must contain a line in the format `Workflow result: failed after 5 attempts`.
+- Task queue: `retry-py`
+- Workflow ID: `retry-py-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Retry behavior: `maximum_attempts=5`, fixed `2s` delay between attempts (`initial_interval=2s`, `backoff_coefficient=1.0`).
+- After running your solution, `/workspace/attempts.log` must contain exactly 5 non-empty lines and the Workflow returns `"failed after 5 attempts"`.
+

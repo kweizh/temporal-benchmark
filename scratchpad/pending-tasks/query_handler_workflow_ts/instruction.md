@@ -1,0 +1,41 @@
+# Temporal Query Handler Workflow (TypeScript)
+
+## Background
+Temporal.io supports synchronous read-only **Query** handlers that let a client peek at a running Workflow's internal state without affecting its execution. In this task, you implement a `ProgressWorkflow` that iterates through a number of steps, calling an Activity for each step, and exposes its progress via a Query handler. A client script then mid-run queries the workflow to observe progress before awaiting the final result.
+
+You must connect to **Temporal Cloud** using the API key configured via environment variables.
+
+## Requirements
+- Implement a TypeScript Temporal application with three parts: workflow definition, activity, and a client script.
+- Define an Activity `doStep(i: number)` that appends a line `step <i>` (no quotes; `<i>` is the numeric step value passed in) to `/workspace/progress.log` and returns `void`.
+- Define a Workflow `ProgressWorkflow(totalSteps: number)` that:
+  - Maintains internal mutable state: `progress` (number, 0..1) and `currentStep` (number).
+  - Iterates from step 1 to `totalSteps`, calling `doStep(i)` for each.
+  - After each step, updates `currentStep = i` and `progress = i / totalSteps`.
+  - Uses `workflow.sleep('1s')` between steps so that mid-run queries can observe partial progress.
+  - Exposes a Query named `getProgress` that returns `{ progress: number, currentStep: number, total: number }`.
+- Run a Temporal Worker that hosts both the workflow and activity on task queue `progress-ts`.
+- Implement a client script that:
+  - Reads the run id from `ZEALT_RUN_ID` and uses workflow id `progress-${ZEALT_RUN_ID}`.
+  - Starts `ProgressWorkflow` with `totalSteps = 5` on task queue `progress-ts`.
+  - Waits approximately 2.5 seconds after starting.
+  - Sends a `getProgress` Query and writes the returned JSON object to `/workspace/progress.json`.
+  - Awaits the final workflow result (expected `{ progress: 1, currentStep: 5, total: 5 }`).
+
+## Implementation Hints
+- Use `@temporalio/workflow`'s `defineQuery` and `setHandler` to register the Query handler.
+- A Query handler must be synchronous (non-async) and must not mutate workflow state.
+- Use `workflow.proxyActivities` to invoke the activity from the workflow with a reasonable `startToCloseTimeout` (e.g., 30 seconds).
+- Use `workflow.sleep('1s')` between steps to keep the workflow alive long enough for the client query to land mid-execution.
+- On the client side, use `client.workflow.start(...)` to obtain a `WorkflowHandle`, then call `handle.query(...)` for the Query and `handle.result()` for the final result.
+- Connect to Temporal Cloud using `Connection.connect({ address: TEMPORAL_ADDRESS, tls: true, apiKey: TEMPORAL_API_KEY })` and pass `metadata: { 'temporal-namespace': TEMPORAL_NAMESPACE }` for API-key auth.
+- Start the Worker in the background (or in a separate process) before the client runs.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Log file (workflow side effect): /workspace/progress.log — must contain exactly 5 lines, the i-th line being `step <i>` (1-indexed) after the workflow completes.
+- Query output file: /workspace/progress.json — must be written by the client during the mid-run query and must be a JSON object with numeric field `progress` strictly between 0 and 1 (exclusive), demonstrating that the Query observed a partial in-flight state.
+- The Temporal Cloud workflow execution with id `progress-${ZEALT_RUN_ID}` must reach `COMPLETED` status with final result whose `progress` equals 1.0 and `currentStep` equals 5 and `total` equals 5.
+- The workflow must be registered on task queue `progress-ts`.
+- Read the value of `run-id` from the `ZEALT_RUN_ID` environment variable; the workflow id must be `progress-${ZEALT_RUN_ID}`.
+

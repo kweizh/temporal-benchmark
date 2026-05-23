@@ -1,0 +1,7 @@
+{
+  "library_name": "Temporal.io",
+  "task_name": "parallel_activities_workflow_py",
+  "complexity_level": "multi-step parallel command set",
+  "research_plan_path": "/Users/kw/code/zealt/temporal-benchmark/plan.md",
+  "output_dir": "/Users/kw/code/zealt/temporal-benchmark/scratchpad/pending-tasks"
+}
