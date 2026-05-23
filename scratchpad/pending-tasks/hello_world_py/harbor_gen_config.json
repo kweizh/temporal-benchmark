@@ -1,7 +1,0 @@
-{
-  "library_name": "temporalio",
-  "complexity_level": "simple single terminal command",
-  "deep_research_path": "/Users/kw/code/zealt/temporal-benchmark/plan.md",
-  "task_name": "hello_world_py",
-  "output_dir": "scratchpad/pending-tasks"
-}

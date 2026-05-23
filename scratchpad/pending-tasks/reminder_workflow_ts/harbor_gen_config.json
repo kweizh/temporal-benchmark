@@ -1,7 +1,0 @@
-{
-  "library_name": "Temporal.io",
-  "complexity_level": "Intermediate",
-  "deep_research_path": "/Users/kw/code/zealt/temporal-benchmark/plan.md",
-  "task_name": "reminder_workflow_ts",
-  "output_dir": "scratchpad/pending-tasks/"
-}

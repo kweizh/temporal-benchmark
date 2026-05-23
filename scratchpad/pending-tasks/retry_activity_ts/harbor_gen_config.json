@@ -1,7 +1,0 @@
-{
-  "library_name": "temporal",
-  "complexity_level": "Intermediate",
-  "deep_research_path": "plan.md",
-  "task_name": "retry_activity_ts",
-  "output_dir": "scratchpad/pending-tasks"
-}

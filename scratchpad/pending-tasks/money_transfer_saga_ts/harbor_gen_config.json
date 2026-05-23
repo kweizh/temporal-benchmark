@@ -1,7 +1,0 @@
-{
-  "library_name": "Temporal.io",
-  "complexity_level": "Complex",
-  "deep_research_path": "plan.md",
-  "task_name": "money_transfer_saga_ts",
-  "output_dir": "scratchpad/pending-tasks"
-}

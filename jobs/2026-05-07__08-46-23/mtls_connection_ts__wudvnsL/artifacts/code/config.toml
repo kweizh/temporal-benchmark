@@ -1,7 +1,0 @@
-[profile.prod]
-address = "my-namespace.a1b2c.tmprl.cloud:7233"
-namespace = "my-namespace"
-
-[profile.prod.tls]
-clientCertPath = "/home/user/temporal-app/certs/client.pem"
-clientPrivateKeyPath = "/home/user/temporal-app/certs/client.key"

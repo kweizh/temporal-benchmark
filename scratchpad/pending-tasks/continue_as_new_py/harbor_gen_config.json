@@ -1,7 +1,0 @@
-{
-  "library_name": "Temporal.io",
-  "complexity_level": "much more complicated task which not easy to be fixed by llm agents",
-  "deep_research_path": "plan.md",
-  "task_name": "continue_as_new_py",
-  "output_dir": "scratchpad/pending-tasks/continue_as_new_py"
-}

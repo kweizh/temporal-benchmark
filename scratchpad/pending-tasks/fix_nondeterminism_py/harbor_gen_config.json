@@ -1,7 +1,0 @@
-{
-  "library_name": "Temporal.io",
-  "complexity_level": "Edge Case",
-  "deep_research_path": "/Users/kw/code/zealt/temporal-benchmark/plan.md",
-  "task_name": "fix_nondeterminism_py",
-  "output_dir": "scratchpad/pending-tasks"
-}
