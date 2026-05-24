@@ -1,0 +1,73 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 4,
+            "passed": 0,
+            "failed": 4,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779521675857,
+            "stop": 1779521677456
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_npm_start_succeeds",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 1082,
+                "start": 1779521676160,
+                "stop": 1779521677242,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n', ...\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n\")\n\n    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"`npm start` did not exit successfully. \"\n            f\"stdout=\\n{npm_start_output.stdout}\\nstderr=\\n{npm_start_output.stderr}\"\n        )\nE       AssertionError: `npm start` did not exit successfully. stdout=\nE         \nE         > myproject@1.0.0 start\nE         > ts-node src/start.ts\nE         \nE         \nE         stderr=\nE         /home/user/myproject/node_modules/ts-node/src/index.ts:859\nE             return new TSError(diagnosticText, diagnosticCodes, diagnostics);\nE                    ^\nE         TSError: \u2a2f Unable to compile TypeScript:\nE         src/start.ts(1,23): error TS2591: Cannot find name 'child_process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(2,23): error TS2591: Cannot find name 'path'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(6,53): error TS2304: Cannot find name '__dirname'.\nE         src/start.ts(8,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(15,53): error TS2304: Cannot find name '__dirname'.\nE         src/start.ts(17,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(20,23): error TS7006: Parameter 'code' implicitly has an 'any' type.\nE         src/start.ts(23,5): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(26,23): error TS7006: Parameter 'err' implicitly has an 'any' type.\nE         src/start.ts(29,5): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(35,3): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         \nE             at createTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:859:12)\nE             at reportTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:863:19)\nE             at getOutput (/home/user/myproject/node_modules/ts-node/src/index.ts:1077:36)\nE             at Object.compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1433:41)\nE             at Module.m._compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1617:30)\nE             at node:internal/modules/cjs/loader:1961:10\nE             at Object.require.extensions.<computed> [as .ts] (/home/user/myproject/node_modules/ts-node/src/index.ts:1621:12)\nE             at Module.load (node:internal/modules/cjs/loader:1553:32)\nE             at Module._load (node:internal/modules/cjs/loader:1355:12)\nE             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\nE           diagnosticCodes: [\nE             2591, 2591, 2304,\nE             2591, 2304, 2591,\nE             7006, 2591, 7006,\nE             2591, 2591\nE           ]\nE         }\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n', ...\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n\").returncode\n\ntests/test_final_state.py:44: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_npm_start_prints_reminder",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 189,
+                "start": 1779521677243,
+                "stop": 1779521677432,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n', ...\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n\")\n\n    def test_npm_start_prints_reminder(npm_start_output: subprocess.CompletedProcess):\n        combined = (npm_start_output.stdout or \"\") + (npm_start_output.stderr or \"\")\n>       assert EXPECTED_REMINDER in combined, (\n            f\"Expected combined output of `npm start` to contain '{EXPECTED_REMINDER}', \"\n            f\"got stdout=\\n{npm_start_output.stdout}\\nstderr=\\n{npm_start_output.stderr}\"\n        )\nE       AssertionError: Expected combined output of `npm start` to contain 'Notified: wake up', got stdout=\nE         \nE         > myproject@1.0.0 start\nE         > ts-node src/start.ts\nE         \nE         \nE         stderr=\nE         /home/user/myproject/node_modules/ts-node/src/index.ts:859\nE             return new TSError(diagnosticText, diagnosticCodes, diagnostics);\nE                    ^\nE         TSError: \u2a2f Unable to compile TypeScript:\nE         src/start.ts(1,23): error TS2591: Cannot find name 'child_process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(2,23): error TS2591: Cannot find name 'path'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(6,53): error TS2304: Cannot find name '__dirname'.\nE         src/start.ts(8,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(15,53): error TS2304: Cannot find name '__dirname'.\nE         src/start.ts(17,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(20,23): error TS7006: Parameter 'code' implicitly has an 'any' type.\nE         src/start.ts(23,5): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(26,23): error TS7006: Parameter 'err' implicitly has an 'any' type.\nE         src/start.ts(29,5): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         src/start.ts(35,3): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.\nE         \nE             at createTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:859:12)\nE             at reportTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:863:19)\nE             at getOutput (/home/user/myproject/node_modules/ts-node/src/index.ts:1077:36)\nE             at Object.compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1433:41)\nE             at Module.m._compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1617:30)\nE             at node:internal/modules/cjs/loader:1961:10\nE             at Object.require.extensions.<computed> [as .ts] (/home/user/myproject/node_modules/ts-node/src/index.ts:1621:12)\nE             at Module.load (node:internal/modules/cjs/loader:1553:32)\nE             at Module._load (node:internal/modules/cjs/loader:1355:12)\nE             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {\nE           diagnosticCodes: [\nE             2591, 2591, 2304,\nE             2591, 2304, 2591,\nE             7006, 2591, 7006,\nE             2591, 2591\nE           ]\nE         }\nE         \nE       assert 'Notified: wake up' in '\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n/home/user/myproject/node_modules/ts-node/src/index.ts:859\\n    ...{\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n'\n\ntests/test_final_state.py:52: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_reminder_log_written_by_activity",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 12,
+                "start": 1779521677433,
+                "stop": 1779521677445,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n', ...\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n\")\n\n    def test_reminder_log_written_by_activity(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"Skipping log-file check because `npm start` did not exit cleanly.\"\n        )\nE       AssertionError: Skipping log-file check because `npm start` did not exit cleanly.\nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n', ...\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n\").returncode\n\ntests/test_final_state.py:59: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 9,
+                "start": 1779521677446,
+                "stop": 1779521677455,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n', ...\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n\")\n\n    def test_workflow_completed_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"Skipping cloud verification because `npm start` did not exit cleanly.\"\n        )\nE       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.\nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n', ...\\n  diagnosticCodes: [\\n    2591, 2591, 2304,\\n    2591, 2304, 2591,\\n    7006, 2591, 7006,\\n    2591, 2591\\n  ]\\n}\\n\").returncode\n\ntests/test_final_state.py:103: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

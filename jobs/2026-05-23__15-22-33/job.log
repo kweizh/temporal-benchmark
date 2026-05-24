@@ -1,0 +1,1641 @@
+Skipping image OS validation for hb__query_handler_workflow_ts: docker inspect returned 1
+Skipping image OS validation for hb__continue_as_new_loop_py: docker inspect returned 1
+Skipping image OS validation for hb__continue_as_new_loop_ts: docker inspect returned 1
+Skipping image OS validation for hb__parallel_activities_workflow_py: docker inspect returned 1
+Skipping image OS validation for hb__hello_workflow_ts: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Running command: echo zr-hvjlrhz > /logs/artifacts/run-id && echo parallel_activities_workflow_py__HVJLrhZ > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Temporal Workflow with Parallel Activities via `asyncio.gather` (Python)
+
+## Background
+You are building a Temporal application with the Temporal.io Python SDK (`temporalio`). The goal is to demonstrate the canonical pattern for fan-out parallelism inside a Temporal **Workflow**: invoking many **Activities** concurrently with `asyncio.gather` and aggregating their results. Each Activity issues a single `GET` request to a URL and returns its HTTP status code; the Workflow then returns a mapping of URL to status code.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. The unique run identifier is provided as `ZEALT_RUN_ID`.
+
+## Requirements
+- Implement a Python Temporal project under `/home/user/myproject` that contains:
+  - An **Activity** named `fetch_url` that accepts a single string argument `url`, uses `httpx.AsyncClient` to issue `GET <url>`, and returns the HTTP status code as a Python `int`.
+  - A **Workflow** named `ParallelFetchWorkflow` that accepts a single argument `urls` (a list of strings), schedules one `fetch_url` activity per URL **concurrently** using `asyncio.gather`, and returns a `dict[str, int]` mapping each input URL to its HTTP status code.
+  - A **Worker** that connects to Temporal Cloud using the API key, registers `ParallelFetchWorkflow` and `fetch_url`, and polls the task queue `parallel-py`.
+  - A **Client** entrypoint that connects to Temporal Cloud, executes `ParallelFetchWorkflow` with the URL list `["https://www.example.com", "https://api.github.com", "https://httpbin.org/status/200"]`, waits for completion, and prints the resulting dictionary to stdout.
+- The Worker and Client must use the task queue `parallel-py`.
+- The Workflow ID must be exactly `parallel-${ZEALT_RUN_ID}` where `${ZEALT_RUN_ID}` is read from the `ZEALT_RUN_ID` environment variable so concurrent runs do not collide.
+- Provide a runnable entrypoint that starts the Worker and the Client together against Temporal Cloud (for example, a single `python main.py` command, or any `python -m` style entrypoint that does the same). After the workflow completes, the printed dictionary must contain each of the three input URLs as a key, each mapping to integer `200`.
+
+## Implementation Hints
+- Install the official Temporal Python SDK with `pip install temporalio` and the HTTP client with `pip install httpx`.
+- For Temporal Cloud, connect with `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)`.
+- Define the activity using `@activity.defn` from `temporalio` and the workflow using `@workflow.defn` plus `@workflow.run` on the async `run` method.
+- Inside the workflow, build a list of awaitables by calling `workflow.execute_activity(fetch_url, url, start_to_close_timeout=timedelta(seconds=30))` for each URL **without** awaiting individually, then await them all together with `asyncio.gather(*tasks)` so the activities are scheduled in parallel.
+- After `asyncio.gather` returns, zip the input URL list with the result list into a `dict[str, int]` and return it.
+- The activity must use `httpx.AsyncClient` to perform the GET request and return `response.status_code` as `int`; do not call `requests` or any synchronous HTTP client inside an async activity.
+- Use `temporalio.worker.Worker` to register the workflow and activity on the `parallel-py` task queue, and `Client.execute_workflow` to start `ParallelFetchWorkflow` with the required arguments.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
+- You may run the worker and the client in the same `asyncio` event loop (for example by starting the worker as a background task, executing the workflow, then cancelling the worker) — just make sure the workflow completes against Temporal Cloud and the result is printed before the process exits.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `python main.py` (executed from `/home/user/myproject`)
+- Task queue: `parallel-py`
+- Workflow type name: `ParallelFetchWorkflow`
+- Activity type name: `fetch_url`
+- Workflow ID: must be exactly `parallel-${ZEALT_RUN_ID}` using the value of the `ZEALT_RUN_ID` environment variable
+- When `python main.py` is executed, the workflow `ParallelFetchWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting dictionary must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must be a JSON object containing each of the three input URLs (`https://www.example.com`, `https://api.github.com`, `https://httpbin.org/status/200`) as a key, each mapping to the integer `200`.
+- The activities must be scheduled in parallel, not sequentially: all three `fetch_url` activity-task-scheduled events must appear in the workflow history within a small time window of each other (a few seconds).
+
+
+EOF
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-hdyesme > /logs/artifacts/run-id && echo hello_workflow_ts__HDYEsmE > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Running command: echo zr-hq9pajy > /logs/artifacts/run-id && echo query_handler_workflow_ts__Hq9Pajy > /logs/artifacts/trial_id
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Hello World Temporal Workflow (TypeScript)
+
+## Background
+You are building your first Temporal application using the Temporal.io TypeScript SDK. The goal is to connect to **Temporal Cloud** using an API key, run a Worker that hosts a simple Workflow and Activity, and use a Client to start the Workflow and print its result.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment.
+
+## Requirements
+- Implement a TypeScript Temporal project that contains:
+  - An **Activity** named `greet` that takes a string `name` and returns `Hello, <name>!`.
+  - A **Workflow** named `HelloWorkflow` that accepts a string `name`, calls the `greet` activity, and returns its result.
+  - A **Worker** that connects to Temporal Cloud (via API key + TLS) and polls the task queue `hello-world-ts`.
+  - A **Client** entrypoint that connects to Temporal Cloud, starts (or executes) `HelloWorkflow` with the input `"Temporal"`, waits for completion, and prints the returned greeting to stdout.
+- The Workflow ID must use the prefix `hello-wf-` and include the current `run-id` so concurrent runs do not collide (e.g. `hello-wf-${ZEALT_RUN_ID}`).
+- The Worker and Client must use the task queue `hello-world-ts`.
+- Provide an `npm start` script that runs the Worker in the background, runs the Client, waits for the workflow result, prints it, and then exits cleanly (the Worker may be terminated after the Client finishes).
+
+## Implementation Hints
+- Install the official TypeScript SDK packages: `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`.
+- For the Client, use `Connection.connect` from `@temporalio/client` with `address`, `tls: true`, and `apiKey` options. For the Worker, use `NativeConnection.connect` from `@temporalio/worker` with the same connection options.
+- Pass `namespace` to both the `Client` constructor and `Worker.create`.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `process.env`.
+- Use `proxyActivities` from `@temporalio/workflow` to invoke the activity from the workflow with a reasonable `startToCloseTimeout`.
+- You can run the worker in the background of the same `npm start` script (for example with `concurrently`, a shell `&`, or by spawning it from the client script) — just make sure the workflow completes and its result is printed before the script exits.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `npm start` (executed from `/home/user/myproject`)
+- Task queue: `hello-world-ts`
+- Workflow type name: `HelloWorkflow`
+- Activity type name: `greet`
+- Workflow ID: must start with `hello-wf-` and include the value of the `ZEALT_RUN_ID` environment variable
+- When `npm start` is executed, the workflow `HelloWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting greeting string returned from the activity must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the greeting produced by the `greet` activity for the input `"Temporal"`.
+
+
+EOF
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Temporal Query Handler Workflow (TypeScript)
+
+## Background
+Temporal.io supports synchronous read-only **Query** handlers that let a client peek at a running Workflow's internal state without affecting its execution. In this task, you implement a `ProgressWorkflow` that iterates through a number of steps, calling an Activity for each step, and exposes its progress via a Query handler. A client script then mid-run queries the workflow to observe progress before awaiting the final result.
+
+You must connect to **Temporal Cloud** using the API key configured via environment variables.
+
+## Requirements
+- Implement a TypeScript Temporal application with three parts: workflow definition, activity, and a client script.
+- Define an Activity `doStep(i: number)` that appends a line `step <i>` (no quotes; `<i>` is the numeric step value passed in) to `/workspace/progress.log` and returns `void`.
+- Define a Workflow `ProgressWorkflow(totalSteps: number)` that:
+  - Maintains internal mutable state: `progress` (number, 0..1) and `currentStep` (number).
+  - Iterates from step 1 to `totalSteps`, calling `doStep(i)` for each.
+  - After each step, updates `currentStep = i` and `progress = i / totalSteps`.
+  - Uses `workflow.sleep('1s')` between steps so that mid-run queries can observe partial progress.
+  - Exposes a Query named `getProgress` that returns `{ progress: number, currentStep: number, total: number }`.
+- Run a Temporal Worker that hosts both the workflow and activity on task queue `progress-ts`.
+- Implement a client script that:
+  - Reads the run id from `ZEALT_RUN_ID` and uses workflow id `progress-${ZEALT_RUN_ID}`.
+  - Starts `ProgressWorkflow` with `totalSteps = 5` on task queue `progress-ts`.
+  - Waits approximately 2.5 seconds after starting.
+  - Sends a `getProgress` Query and writes the returned JSON object to `/workspace/progress.json`.
+  - Awaits the final workflow result (expected `{ progress: 1, currentStep: 5, total: 5 }`).
+
+## Implementation Hints
+- Use `@temporalio/workflow`'s `defineQuery` and `setHandler` to register the Query handler.
+- A Query handler must be synchronous (non-async) and must not mutate workflow state.
+- Use `workflow.proxyActivities` to invoke the activity from the workflow with a reasonable `startToCloseTimeout` (e.g., 30 seconds).
+- Use `workflow.sleep('1s')` between steps to keep the workflow alive long enough for the client query to land mid-execution.
+- On the client side, use `client.workflow.start(...)` to obtain a `WorkflowHandle`, then call `handle.query(...)` for the Query and `handle.result()` for the final result.
+- Connect to Temporal Cloud using `Connection.connect({ address: TEMPORAL_ADDRESS, tls: true, apiKey: TEMPORAL_API_KEY })` and pass `metadata: { 'temporal-namespace': TEMPORAL_NAMESPACE }` for API-key auth.
+- Start the Worker in the background (or in a separate process) before the client runs.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Log file (workflow side effect): /workspace/progress.log — must contain exactly 5 lines, the i-th line being `step <i>` (1-indexed) after the workflow completes.
+- Query output file: /workspace/progress.json — must be written by the client during the mid-run query and must be a JSON object with numeric field `progress` strictly between 0 and 1 (exclusive), demonstrating that the Query observed a partial in-flight state.
+- The Temporal Cloud workflow execution with id `progress-${ZEALT_RUN_ID}` must reach `COMPLETED` status with final result whose `progress` equals 1.0 and `currentStep` equals 5 and `total` equals 5.
+- The workflow must be registered on task queue `progress-ts`.
+- Read the value of `run-id` from the `ZEALT_RUN_ID` environment variable; the workflow id must be `progress-${ZEALT_RUN_ID}`.
+
+
+EOF
+Running command: echo zr-hkkqnml > /logs/artifacts/run-id && echo continue_as_new_loop_py__hKkQnML > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-g6fhadd > /logs/artifacts/run-id && echo continue_as_new_loop_ts__g6fHADd > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Continue-As-New Loop Workflow (TypeScript)
+
+## Background
+You are building a long-running counter on top of Temporal Cloud using the Temporal.io TypeScript SDK. A naive workflow that loops thousands of times in one Run Id will eventually accumulate a huge event history and approach Temporal's event history limits. To stay healthy, long loops should periodically call `continueAsNew` so the workflow closes its current Run Id and starts a fresh one with the same Workflow Id, carrying its current state forward.
+
+In this task you are given a starter TypeScript Temporal project. The workflow file (`src/workflows.ts`) ships with a **broken** `LongLoopWorkflow` implementation that loops from `start` up to `target` calling the `incrementCounter` activity for each iteration, all in a single Run Id. You must refactor it so that the workflow calls `continueAsNew` every 10 iterations, passing the current counter value forward as the new `start` argument. The workflow should still ultimately complete and return the final counter value (which must equal `target`).
+
+Temporal Cloud credentials are already provided to the environment as `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. The current run id is provided as `ZEALT_RUN_ID`; use it to scope the workflow id.
+
+## Requirements
+Implement a TypeScript Temporal project with the following pieces (extending the starter project under `/home/user/myproject`):
+
+- A **Workflow** named `LongLoopWorkflow` with the signature `LongLoopWorkflow(start: number, target: number): Promise<number>` that:
+  - Treats `start` as the **current** counter value, and `target` as the value the chain should eventually reach.
+  - On each iteration, invokes the activity `incrementCounter(currentValue)` and updates its local counter to the returned value.
+  - Calls `continueAsNew` every **10** iterations (i.e., after the 10th, 20th, 30th, ... increment within a single Run Id), passing the latest counter value forward as the new `start` and forwarding `target` unchanged. After calling `continueAsNew`, the current Run Id must close successfully and a new Run Id with the same Workflow Id must take over.
+  - Returns the final counter value when the counter reaches `target`. The final returned value must equal `target`.
+
+- An **Activity** named `incrementCounter(currentValue: number): Promise<number>` that:
+  - Returns `currentValue + 1`.
+  - Appends a single line containing exactly the new value followed by a newline (`<newValue>\n`) to the file `/workspace/loop.log`. The activity must ensure `/workspace` exists before writing.
+
+- A **Worker** that connects to Temporal Cloud (API key + TLS) and polls the task queue `loop-ts`.
+
+- A **Client** entrypoint that, against the same Temporal Cloud namespace, starts `LongLoopWorkflow` with arguments `start = 0`, `target = 25`, task queue `loop-ts`, and workflow id `loop-${ZEALT_RUN_ID}`, then awaits the final result (following the continue-as-new chain) and prints it to stdout as `Final result: <number>`.
+
+The project must expose an `npm start` script that starts the Worker, runs the Client, awaits the workflow result, prints the final result, and exits cleanly with exit code `0`.
+
+## Implementation Hints
+- Read the official `continueAsNew` guidance for the TypeScript SDK at https://docs.temporal.io/develop/typescript/continue-as-new .
+- Import `continueAsNew` (and `proxyActivities`) from `@temporalio/workflow`. The typed form `continueAsNew<typeof LongLoopWorkflow>(start, target)` ensures the arguments line up with the workflow signature.
+- Calling `continueAsNew` ends the current Run Id; control will not return to the caller in the same run. You do **not** need to `return` after it.
+- Activities must perform the file I/O (workflows are sandboxed). In `incrementCounter`, ensure `/workspace` exists and append `"<newValue>\n"` to `/workspace/loop.log`.
+- The client must `await handle.result()` so it follows the continue-as-new chain to the **final** Run Id and reads its result (the SDK does this automatically when you call `result()` on a handle returned by `client.workflow.start`).
+- Use `Connection.connect` from `@temporalio/client` and `NativeConnection.connect` from `@temporalio/worker` with `address`, `tls: true`, and `apiKey`. Pass `namespace` to both the `Client` constructor and `Worker.create`.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `process.env`.
+- You may run the worker in the background of the same `npm start` script. Make sure both the client and the worker use the **same** task queue and namespace.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `npm start` (executed from `/home/user/myproject`)
+- Task queue: `loop-ts`
+- Workflow type name: `LongLoopWorkflow`
+- Activity type name: `incrementCounter`
+- Workflow ID: must equal `loop-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Log file: `/workspace/loop.log` — each line contains exactly the integer counter value produced by one successful `incrementCounter` invocation.
+- The workflow source file at `/home/user/myproject/src/workflows.ts` must call `continueAsNew` (i.e., contain a literal `continueAsNew(` invocation).
+- When `npm start` is run with `start = 0` and `target = 25`, the script must start the workflow, await its final result, print `Final result: 25` to stdout, and exit with code `0`.
+- After the run, the workflow chain `loop-${ZEALT_RUN_ID}` in Temporal Cloud must exist, its terminal Run Id must have status `COMPLETED`, and the chain must span multiple Run Ids (the original run plus at least 2 continued runs, reflecting the continue-as-new boundaries crossed at counter values 10 and 20).
+
+
+EOF
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Long-Running Workflow with Continue-As-New (Python SDK)
+
+## Background
+Long-running Temporal Workflows can accumulate large Event Histories. To keep history bounded, the Temporal Python SDK exposes `workflow.continue_as_new(...)`, which atomically completes the current Workflow run and starts a fresh run (with a new Run ID but the same Workflow ID), forwarding any state needed to resume work. In this task, you will use the Temporal **Python SDK** with **Temporal Cloud** to build a workflow that performs a long incrementing loop, checkpointing itself by calling `continue_as_new` every 10 iterations until it reaches a target.
+
+## Requirements
+- Implement an Activity `increment_counter` in Python that:
+  - Accepts a single `int` argument (the next value to record).
+  - Appends a single line `<value>\n` (decimal representation followed by a newline) to the file `/workspace/loop.log`.
+  - Returns the value it just recorded.
+- Implement a Temporal Workflow named `LongLoopWorkflow` in Python that:
+  - Takes two `int` arguments: `start` and `target`.
+  - Executes the `increment_counter` Activity in a loop, beginning with `start + 1` and increasing by `1` each iteration, until the recorded value equals `target`.
+  - Performs at most **10 activity invocations per Workflow run**. As soon as 10 activities have completed in the current run, the Workflow must call `workflow.continue_as_new(...)` to start a new run with `start` updated to the last recorded value and `target` unchanged.
+  - Returns `target` (an `int`) from the final run, once the recorded value reaches `target`.
+- Implement a Worker that polls the task queue `loop-py` and hosts both `LongLoopWorkflow` and `increment_counter`.
+- Implement a Client script that:
+  1. Connects to Temporal Cloud.
+  2. Starts (or executes) the `LongLoopWorkflow` with arguments `start=0`, `target=25`, using workflow id `loop-py-${ZEALT_RUN_ID}` and task queue `loop-py`.
+  3. Awaits the final result and writes the line `result=<n>` (e.g. `result=25`) to `/workspace/loop.out`.
+- Connect to **Temporal Cloud** using the environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`. Do **not** mock Temporal.
+
+## Implementation Hints
+- Install the `temporalio` Python SDK.
+- Use `temporalio.client.Client.connect(...)` with `tls=True` and the API key, address, and namespace from environment variables.
+- Decorate the activity with `@activity.defn` and the workflow with `@workflow.defn` / `@workflow.run`.
+- Inside the workflow, call `workflow.continue_as_new(new_start, target)` once the batch limit is reached. After calling it, the workflow run ends immediately.
+- Use `workflow.execute_activity(...)` (with an appropriate `start_to_close_timeout`) to invoke the activity; do not block the workflow on raw I/O.
+- Open `/workspace/loop.log` in append mode (`"a"`) inside the activity so that multiple workflow runs continue to extend the same file.
+- Read the `ZEALT_RUN_ID` environment variable to scope the workflow id (`loop-py-${ZEALT_RUN_ID}`) so concurrent runs do not collide.
+- The Worker must be running while the client triggers the workflow. Run the worker as a separate process or background task on the task queue `loop-py`.
+
+## Acceptance Criteria
+- Project path: `/home/user/loop-py`
+- Task queue: `loop-py`
+- Workflow id: `loop-py-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Workflow type name: `LongLoopWorkflow`
+- The workflow source code must use the Temporal `continue_as_new` API (the literal substring `continue_as_new` must appear in the workflow source file).
+- Log file: `/workspace/loop.log` — must contain exactly the 25 lines `1`, `2`, ..., `25`, each followed by `\n`, after the client completes.
+- Output file: `/workspace/loop.out` — must contain a line `result=25` after the client completes.
+- The final workflow run for workflow id `loop-py-${ZEALT_RUN_ID}` must reach status `COMPLETED` on Temporal Cloud with an integer result of `25`.
+- There must be at least 2 prior runs in the same Workflow Execution chain that ended with status `CONTINUED_AS_NEW` (i.e., the workflow continued-as-new at least twice before finishing).
+- The client must use the real Temporal Cloud connection (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Mocking the Temporal client or server is not allowed.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Skipping image OS validation for hb__patch_versioning_ts: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-88vynba > /logs/artifacts/run-id && echo patch_versioning_ts__88VynbA > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Safely Add a New Activity to a Running Workflow Using Patching
+
+## Background
+A TypeScript Temporal worker is already deployed for an order-processing service. The existing `OrderWorkflow(orderId)` runs `chargeCard` followed by `shipOrder`. The team wants to insert a new step `notifyCustomer` between the existing two steps, but workflow executions for the previous version may still be in flight and replaying. A naive code change would cause non-determinism errors. You must use Temporal's versioning-with-patching mechanism so that both old and new executions remain correct.
+
+The project at `/home/user/myproject` is preconfigured to connect to a real Temporal Cloud namespace using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` (already set as environment variables).
+
+## Requirements
+- Modify `src/workflows.ts` so that the new `notifyCustomer` activity is invoked between `chargeCard` and `shipOrder`, guarded by Temporal's patching API so that already-running executions of the previous version do not break on replay.
+- The patch identifier must be exactly `add-notify-customer`.
+- Register the new `notifyCustomer` activity (already implemented in `src/activities.ts`) with the worker if it is not already registered.
+- Running `npm start` from `/home/user/myproject` must start the worker, which should poll the `order-ts` task queue and process both pre-existing and new workflow executions to completion.
+
+## Implementation Hints
+- Read https://docs.temporal.io/develop/typescript/versioning for the patching API.
+- Use the `patched()` function from `@temporalio/workflow` to introduce the new branch.
+- Do NOT rename `OrderWorkflow` or change its argument shape; existing executions reference it by name.
+- The new branch should invoke `notifyCustomer(orderId)` after `chargeCard(orderId)` and before `shipOrder(orderId)`.
+- The old (pre-patch) branch must keep the original two-activity sequence so in-flight workflows continue to replay deterministically.
+- The verifier will inspect `src/workflows.ts` to confirm the patch identifier is present.
+- Read `run-id` from the `ZEALT_RUN_ID` environment variable; it is used only by the verifier to derive workflow IDs and is not needed by your worker code.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: npm start
+- Task queue: order-ts
+- The file `/home/user/myproject/src/workflows.ts` MUST contain a call to `patched('add-notify-customer')`.
+- The worker registered by `npm start` MUST:
+  - Replay and complete the pre-existing workflow execution started by the verifier before the worker came up (workflow ID `order-old-${ZEALT_RUN_ID}`).
+  - Execute to completion a new workflow execution `order-new-${ZEALT_RUN_ID}` started by the verifier against the running worker.
+- The new branch MUST cause the `notifyCustomer` activity to append a line containing `notified:order-new-${ZEALT_RUN_ID}` to `/workspace/notify.log`.
+- The original branch MUST NOT produce a `notified:` line for `order-old-${ZEALT_RUN_ID}` (the old execution predates the patch).
+
+
+EOF
+Skipping image OS validation for hb__fix_nondeterministic_workflow_ts: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-rdtrclf > /logs/artifacts/run-id && echo fix_nondeterministic_workflow_ts__RdTRcLF > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Fix a Non-Deterministic Temporal Workflow (TypeScript)
+
+## Background
+A teammate wrote a Temporal Workflow in TypeScript that picks a percentage discount for a user. The Workflow currently performs random number generation and reads wall-clock time directly inside the Workflow body, which violates Temporal's [deterministic execution constraints](https://docs.temporal.io/develop/typescript/workflows/basics#workflow-logic-requirements). Even when the TypeScript SDK provides deterministic replacements for some APIs, the team's coding standard forbids the bare use of `Math.random` and `new Date(` inside Workflow code so that the codebase remains explicit about side effects and replay-safety.
+
+Your job is to refactor the broken Workflow so that:
+- Time is obtained through Temporal's Workflow API (e.g. `workflow.now()`).
+- Random selection of the discount happens inside an Activity called `pickDiscount` and is awaited from the Workflow.
+
+The project is already wired to connect to Temporal Cloud using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` environment variables. A Worker and Client driver are already provided.
+
+## Requirements
+- Refactor `src/workflows.ts` so that the `DiscountWorkflow(userId: string)` Workflow no longer contains the strings `Math.random` or `new Date(`.
+- Add an Activity `pickDiscount()` (in `src/activities.ts`) that returns one of the integer percentages `[0, 5, 10, 15, 20]` chosen at random.
+- The Workflow must invoke `pickDiscount` through `proxyActivities` (do not call it inline) and must record the decision time using `workflow.now()` (or another Workflow-safe time API).
+- The Workflow must return an object of shape `{ userId: string, discount: number, decidedAt: number }` where `decidedAt` is a Unix epoch millisecond timestamp obtained from the Workflow time API.
+- Start the Worker (`npm run worker`) and then run the client (`npm run client`) which starts the Workflow with id `discount-${ZEALT_RUN_ID}` on Task Queue `discount-ts` and waits for completion.
+- The client must append the resulting discount to the log file `/home/user/myproject/output.log` in the format `Discount: <number>` after the Workflow completes successfully.
+
+## Implementation Hints
+- Read the existing `src/workflows.ts`, `src/activities.ts`, `src/worker.ts`, and `src/client.ts` to understand the layout before changing anything.
+- The Temporal TypeScript SDK exposes `now()` from `@temporalio/workflow` which returns the deterministic Workflow time.
+- Activities can use `Math.random` freely; only Workflow code is restricted.
+- Read the `ZEALT_RUN_ID` environment variable in the client and use it to derive the Workflow id `discount-${ZEALT_RUN_ID}`.
+- Verify your fix by running the Worker in one process and the client in another; the Workflow must reach the `COMPLETED` state in Temporal Cloud.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Log file: /home/user/myproject/output.log
+- The Workflow with id `discount-${ZEALT_RUN_ID}` on Task Queue `discount-ts` must reach the `COMPLETED` state in Temporal Cloud (no `NonDeterministicError`).
+- The Workflow execution history must include at least one `ActivityTaskScheduled` event whose Activity Type is `pickDiscount`.
+- The file `src/workflows.ts` must NOT contain the strings `Math.random` or `new Date(` (regex check on raw file contents).
+- The Workflow result's `discount` field must be one of `0`, `5`, `10`, `15`, or `20`.
+- The log file must contain a line in the format: `Discount: <number>` where `<number>` is the discount returned by the Workflow.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Skipping image OS validation for hb__hello_workflow_py: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-urqs4ml > /logs/artifacts/run-id && echo hello_workflow_py__UrqS4ML > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Hello World Temporal Workflow (Python)
+
+## Background
+You are building your first Temporal application using the Temporal.io Python SDK (`temporalio`). The goal is to connect to **Temporal Cloud** using an API key, run a Worker that hosts a simple Workflow and Activity, and use a Client to start the Workflow and print its result.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment.
+
+## Requirements
+- Implement a Python Temporal project that contains:
+  - An **Activity** named `greet` that takes a string `name` and returns `Hello, <name>!`.
+  - A **Workflow** named `HelloWorkflow` that accepts a string `name`, calls the `greet` activity, and returns its result.
+  - A **Worker** that connects to Temporal Cloud (via API key + TLS) and polls the task queue `hello-world-py`.
+  - A **Client** entrypoint that connects to Temporal Cloud, executes `HelloWorkflow` with the input `"Temporal"`, waits for completion, and prints the returned greeting to stdout.
+- The Workflow ID must use the prefix `hello-py-` and include the current `run-id` so concurrent runs do not collide (e.g. `hello-py-${ZEALT_RUN_ID}`).
+- The Worker and Client must use the task queue `hello-world-py`.
+- Provide a `run.sh` start script that starts the Worker in the background, runs the Client, waits for the workflow result, prints it, and then exits cleanly (the Worker may be terminated after the Client finishes).
+
+## Implementation Hints
+- Install the official Python SDK package: `temporalio`.
+- Use `temporalio.client.Client.connect(target, namespace=..., api_key=..., tls=True)` to connect to Temporal Cloud from both the Worker and Client.
+- Define the Activity with the `@activity.defn` decorator and the Workflow with the `@workflow.defn` decorator (use `workflow.execute_activity` from inside the workflow with a reasonable `start_to_close_timeout`).
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
+- The Worker should be started with `temporalio.worker.Worker(client, task_queue=..., workflows=[...], activities=[...])` and call `await worker.run()`.
+- Use `client.execute_workflow(HelloWorkflow.run, "Temporal", id=..., task_queue="hello-world-py")` from the Client to start the workflow and await its result.
+- You can run the worker in the background of the same `run.sh` script (for example with a shell `&` and `kill` after the client finishes) - just make sure the workflow completes and its result is printed before the script exits.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `bash run.sh` (executed from `/home/user/myproject`)
+- Task queue: `hello-world-py`
+- Workflow type name: `HelloWorkflow`
+- Activity type name: `greet`
+- Workflow ID: must start with `hello-py-` and include the value of the `ZEALT_RUN_ID` environment variable
+- When `bash run.sh` is executed, the workflow `HelloWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting greeting string returned from the activity must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the greeting produced by the `greet` activity for the input `"Temporal"`.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Skipping image OS validation for hb__reminder_sleep_workflow_py: docker inspect returned 1
+Skipping image OS validation for hb__fix_nondeterministic_workflow_py: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-xvuoeb4 > /logs/artifacts/run-id && echo reminder_sleep_workflow_py__XvuoeB4 > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Running command: echo zr-lzemrup > /logs/artifacts/run-id && echo fix_nondeterministic_workflow_py__LZEMrup > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Reminder Workflow with Durable Timer (Python)
+
+## Background
+You are building a durable Reminder service using the Temporal.io **Python SDK**. The workflow should accept a message and a delay (in seconds), wait for that duration using a Temporal durable timer, and then invoke an Activity that delivers the notification by writing it to a log file.
+
+This demonstrates Temporal's durable timer primitive: even if the worker is restarted while the workflow is sleeping, the timer survives and the activity will still fire when the duration elapses.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment.
+
+## Requirements
+- Implement a Python Temporal project under `/home/user/myproject` that contains:
+  - An **Activity** named `notify` that takes a `str` argument `message` and:
+    - Appends a single line `Notified: <message>` (followed by a newline) to `/workspace/reminder.log`.
+    - Returns the string `Notified: <message>`.
+  - A **Workflow** named `ReminderWorkflow` whose `run` method accepts two positional arguments — `message: str` and `delay_seconds: int` — and:
+    - Sleeps inside the workflow for `delay_seconds` seconds using Temporal's durable timer API (i.e., `await asyncio.sleep(delay_seconds)` inside the workflow body).
+    - After the timer elapses, calls the `notify` Activity with `message` and returns the activity's return value.
+  - A **Worker** that connects to Temporal Cloud (API key + TLS) and polls the task queue `reminder-py`, registering both the workflow and the activity.
+  - A **Client** entrypoint that connects to Temporal Cloud, starts (or executes) `ReminderWorkflow` with `message="wake up"` and `delay_seconds=3`, waits for completion, and prints the returned string to stdout.
+- The Workflow ID must be exactly `reminder-py-${ZEALT_RUN_ID}`, where `${ZEALT_RUN_ID}` is read from the `ZEALT_RUN_ID` environment variable.
+- The Worker and Client must both use the task queue `reminder-py`.
+- Ensure `/workspace` exists and is writable before the activity runs.
+- Provide a startup mechanism so a single shell command can spin up the worker, run the client, wait for the workflow's result, print it, and exit cleanly with code 0.
+
+## Implementation Hints
+- Install the official Python SDK: `pip install temporalio`.
+- Use `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)` for the client.
+- Use `temporalio.worker.Worker(client, task_queue=..., workflows=[...], activities=[...])` for the worker.
+- Inside the workflow, use `await asyncio.sleep(delay_seconds)` for the durable timer — Temporal automatically converts this into a durable Temporal timer that survives worker restarts.
+- Use `workflow.execute_activity(notify, message, start_to_close_timeout=timedelta(seconds=...))` to invoke the activity from the workflow.
+- You can launch the worker as a background task in the same process (e.g., `asyncio.create_task(worker.run())`) and shut it down after the client finishes, or run it as a separate process — either approach is acceptable as long as the entrypoint exits cleanly with the printed result.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `bash run.sh` (executed from `/home/user/myproject`)
+- Task queue: `reminder-py`
+- Workflow type name: `ReminderWorkflow`
+- Activity type name: `notify`
+- Workflow ID: must equal `reminder-py-${ZEALT_RUN_ID}` (read `ZEALT_RUN_ID` from the environment).
+- Log file: `/workspace/reminder.log` must exist after the run and must contain a line equal to `Notified: wake up`.
+- When `bash run.sh` is executed, the workflow `ReminderWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting string returned from the activity must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the string `Notified: wake up`.
+
+
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Fix a Non-Deterministic Temporal Workflow (Python SDK)
+
+## Background
+Temporal Workflows must be **deterministic** because the Temporal Server can replay them at any time to reconstruct state. Using `datetime.datetime.now()`, `random.choice(...)`, network I/O, or other non-deterministic constructs directly inside the Workflow function will produce a Non-Deterministic Error during replay and may cause the Workflow to fail in production.
+
+A project under `/home/user/discount-py` has been shipped with a broken Workflow that violates these rules. The current `workflows.py` reads the current wall-clock time and picks a random discount **inside** the Workflow body. You must refactor it to be deterministic, run it against **real Temporal Cloud**, and confirm it completes successfully.
+
+A Python virtual environment is preinstalled at `/home/user/discount-py/.venv` with the `temporalio` SDK. Use `/home/user/discount-py/.venv/bin/python` to run scripts.
+
+## Requirements
+- Refactor `/home/user/discount-py/workflows.py` so the `@workflow.defn` class no longer calls `datetime.datetime.now()`, `datetime.now()`, `random.choice(...)`, or any other non-deterministic construct directly.
+- The Workflow MUST obtain the current time using Temporal's deterministic time API.
+- Randomness MUST be moved into a Temporal **Activity** named `pick_discount` that returns one of the allowed discounts. The Workflow MUST call this Activity via `workflow.execute_activity`.
+- The Workflow MUST return a JSON-serializable dict of the form:
+  ```json
+  {
+    "user_id": "<the user_id passed in>",
+    "discount": <int in [0, 5, 10, 15, 20]>,
+    "decided_at": "<ISO-8601 timestamp string>"
+  }
+  ```
+- Register `pick_discount` as an Activity on the Worker and execute it against the task queue `discount-py`.
+- The Workflow must be started against **real Temporal Cloud** using the credentials in the environment.
+- The Workflow ID MUST be `discount-py-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- The task queue MUST be exactly `discount-py`.
+- Write the final Workflow result to `/home/user/discount-py/output.log` in the format `Workflow result: <json>` after the Workflow completes.
+
+## Implementation Hints
+- Inspect the existing files in `/home/user/discount-py/` (`workflows.py`, `activities.py`, `worker.py`, `starter.py`) to understand the project layout.
+- Review the Temporal Python documentation on **Workflow determinism** and **deterministic alternatives** for time and randomness.
+- The Worker must register both the Workflow class and the new Activity on the `discount-py` task queue.
+- The connection to Temporal Cloud uses the environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`. TLS is required for Cloud connections.
+- You can run the Worker in the background and then run the starter script to execute the Workflow synchronously.
+- The Workflow `id` and `task_queue` values are critical — they are what the verifier inspects.
+
+## Acceptance Criteria
+- Project path: /home/user/discount-py
+- Log file: /home/user/discount-py/output.log
+- `workflows.py` MUST NOT contain any of the following substrings (checked via regex): `datetime.now`, `datetime.datetime.now`, `random.choice`.
+- An Activity named `pick_discount` MUST exist in the project and be invoked from the Workflow.
+- The Workflow MUST be executed on Temporal Cloud with:
+  - Task queue: `discount-py`
+  - Workflow ID: `discount-py-${ZEALT_RUN_ID}` (where `ZEALT_RUN_ID` is read from the environment)
+- The Workflow MUST reach the `COMPLETED` status in Temporal Cloud.
+- The Workflow history MUST contain an `ActivityTaskScheduled` event for the `pick_discount` Activity.
+- The Workflow result `discount` field MUST be an integer in `[0, 5, 10, 15, 20]`.
+- The log file MUST contain a line in the format: `Workflow result: <json_dict>` where the dict has the required `user_id`, `discount`, and `decided_at` fields.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Skipping image OS validation for hb__retry_policy_fixed_py: docker inspect returned 1
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-h7a8yfi > /logs/artifacts/run-id && echo retry_policy_fixed_py__h7A8YFi > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Temporal Python: Workflow with Fixed-Delay Retry Policy
+
+## Background
+Temporal automatically retries failing Activities according to a configurable `RetryPolicy`. In this task you will build a small Temporal Python application that exercises a *fixed-delay* retry policy: every retry waits the same amount of time (no exponential backoff) and the Activity is retried a bounded number of times before the failure is surfaced to the Workflow code.
+
+The Worker and Client must connect to **real Temporal Cloud** using the standard environment variables (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Do **not** mock Temporal.
+
+## Requirements
+- Implement an Activity named `flaky_task` that:
+  - Appends a single line to `/workspace/attempts.log` every time it runs. The line must be unique per attempt (for example, it can include the current Activity attempt number or a timestamp).
+  - Always raises `temporalio.exceptions.ApplicationError("boom")` after writing the log line.
+- Implement a Workflow named `FlakyWorkflow` that:
+  - Invokes `flaky_task` using a `RetryPolicy` with `maximum_attempts=5`, `initial_interval=timedelta(seconds=2)` and `backoff_coefficient=1.0` (so every retry waits exactly 2 seconds).
+  - Catches the resulting `ActivityError` after retries are exhausted and returns the string `"failed after 5 attempts"` from `@workflow.run`.
+- Provide a Worker entrypoint that registers `FlakyWorkflow` and `flaky_task` and polls the task queue `retry-py`.
+- Provide a Client entrypoint that starts the Workflow on task queue `retry-py` with Workflow ID `retry-py-${ZEALT_RUN_ID}` (read `ZEALT_RUN_ID` from the environment), waits for completion, and writes the Workflow result to `/workspace/result.log` in the format `Workflow result: <result>`.
+
+## Implementation Hints
+- Use the `temporalio` Python SDK (`temporalio.client.Client`, `temporalio.worker.Worker`, `temporalio.workflow`, `temporalio.activity`, `temporalio.common.RetryPolicy`, `temporalio.exceptions.ApplicationError`, `temporalio.exceptions.ActivityError`).
+- Connect to Temporal Cloud with `Client.connect(os.environ["TEMPORAL_ADDRESS"], namespace=os.environ["TEMPORAL_NAMESPACE"], api_key=os.environ["TEMPORAL_API_KEY"], tls=True)`.
+- Set a sensible `start_to_close_timeout` on `execute_activity` (a few seconds is enough; the Activity fails immediately).
+- Make sure the Worker is running before (or concurrently with) the Client that starts the Workflow. A common pattern is to launch the Worker in the background and then run the Client.
+- The Activity must produce *exactly* one log line per attempt; do not also append on retries inside the same attempt.
+
+## Acceptance Criteria
+- Project path: `/home/user/myproject`
+- Log files (must be created by your code, not by the verifier):
+  - `/workspace/attempts.log` — one line appended per Activity attempt.
+  - `/workspace/result.log` — must contain a line in the format `Workflow result: failed after 5 attempts`.
+- Task queue: `retry-py`
+- Workflow ID: `retry-py-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Retry behavior: `maximum_attempts=5`, fixed `2s` delay between attempts (`initial_interval=2s`, `backoff_coefficient=1.0`).
+- After running your solution, `/workspace/attempts.log` must contain exactly 5 non-empty lines and the Workflow returns `"failed after 5 attempts"`.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Skipping image OS validation for hb__reminder_sleep_workflow_ts: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Skipping image OS validation for hb__workflow_cancellation_cleanup_py: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-6rwajh3 > /logs/artifacts/run-id && echo reminder_sleep_workflow_ts__6RWajH3 > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Reminder Workflow with `workflow.sleep` (TypeScript)
+
+## Background
+You are building a durable **Reminder** application on top of Temporal Cloud using the Temporal.io TypeScript SDK. The workflow receives a message and a delay (in seconds), uses the deterministic `sleep` primitive inside the workflow to wait, and then invokes a `Notify` activity that records the reminder to a local log file and returns the reminder string.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment.
+
+## Requirements
+- Implement a TypeScript Temporal project that contains:
+  - A **Workflow** named `ReminderWorkflow` that:
+    - Accepts a single object input with shape `{ message: string, delaySeconds: number }`.
+    - Sleeps for `delaySeconds * 1000` milliseconds using the workflow `sleep` API from `@temporalio/workflow` (i.e. `workflow.sleep(delaySeconds * 1000)`).
+    - After sleeping, calls the `Notify` activity with the same `message` and returns the activity's return value.
+  - An **Activity** named `Notify` that takes a `message: string`, appends a line `Notified: <message>` to the file `/workspace/reminder.log`, and returns the exact same string `Notified: <message>`.
+  - A **Worker** that connects to Temporal Cloud (via API key + TLS) and polls the task queue `reminder-ts`.
+  - A **Client** entrypoint that connects to Temporal Cloud, executes `ReminderWorkflow` with the input `{ message: "wake up", delaySeconds: 3 }`, waits for completion, and prints the returned string to stdout.
+- The Workflow ID must be `reminder-${ZEALT_RUN_ID}` (read `ZEALT_RUN_ID` from the environment).
+- The Worker and Client must use the task queue `reminder-ts`.
+- Provide an `npm start` script that starts the Worker, runs the Client against the same Temporal Cloud namespace, waits for the workflow result, prints it to stdout, and then exits cleanly (the Worker may be terminated after the Client finishes).
+
+## Implementation Hints
+- Install the official TypeScript SDK packages: `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`.
+- Inside the workflow, import `sleep` (or use `workflow.sleep`) from `@temporalio/workflow`. Do **NOT** use `setTimeout` or `Date`-based timing.
+- Use `proxyActivities` from `@temporalio/workflow` to invoke `Notify` with a reasonable `startToCloseTimeout`.
+- The activity should perform the file I/O (Workflows are sandboxed and cannot do file I/O). Use `fs.appendFileSync` (or equivalent) and ensure the parent directory `/workspace` exists before writing.
+- For the Client, use `Connection.connect` from `@temporalio/client` with `address`, `tls: true`, and `apiKey` options. For the Worker, use `NativeConnection.connect` from `@temporalio/worker` with the same connection options.
+- Pass `namespace` to both the `Client` constructor and `Worker.create`.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `process.env`.
+- You can run the worker in the background of the same `npm start` script (for example with `concurrently`, a shell `&`, or by spawning it from the client script) — just make sure the workflow completes and its result is printed before the script exits.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `npm start` (executed from `/home/user/myproject`)
+- Task queue: `reminder-ts`
+- Workflow type name: `ReminderWorkflow`
+- Activity type name: `Notify`
+- Workflow ID: must equal `reminder-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Log file: `/workspace/reminder.log` — after `npm start` completes, the file must contain at least one line equal to `Notified: <message>` for the executed reminder.
+- When `npm start` is executed, the workflow `ReminderWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and its return value (the same `Notified: <message>` string produced by the `Notify` activity) must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the string returned by the `Notify` activity for the configured input.
+
+
+EOF
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-behjtrz > /logs/artifacts/run-id && echo workflow_cancellation_cleanup_py__beHJtRz > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Graceful Workflow Cancellation with Shielded Cleanup (Temporal Python SDK)
+
+## Background
+Temporal Workflows can be canceled by clients. In Python, a cancellation is delivered to the workflow as an `asyncio.CancelledError` raised at the next `await` point. A well-written workflow can catch this exception, run any required cleanup (release locks, free resources, write audit logs), and then re-raise the error so the workflow is recorded as `CANCELED` on the server. Because cleanup work also runs inside the cancelled task, it must be **shielded** (e.g. with `asyncio.shield`) so the cancellation does not abort the cleanup itself. In this task you will implement this pattern end-to-end against **Temporal Cloud** using the **Python SDK**.
+
+## Requirements
+- Implement a Temporal Activity `release_resources(job_id: str)` in Python that appends a single line `released:<job_id>` to the file `/workspace/cleanup.log` (creating the file if necessary).
+- Implement a Temporal Workflow `LongJobWorkflow` in Python that:
+  - Takes a single argument `job_id: str` in its `@workflow.run` method.
+  - Calls `await workflow.sleep(timedelta(minutes=10))` as its main work.
+  - When cancellation is requested, catches `asyncio.CancelledError`, executes the `release_resources` activity for the given `job_id` in a way that survives cancellation (i.e. shields the activity invocation so it completes even though the workflow task itself has been cancelled), and then re-raises `asyncio.CancelledError` so the workflow ends in the `CANCELED` state.
+- Implement a Worker that polls the task queue `cancel-py` and hosts both `LongJobWorkflow` and `release_resources`.
+- Implement a Client script that:
+  1. Connects to Temporal Cloud using `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`.
+  2. Starts `LongJobWorkflow` with workflow id `job-${ZEALT_RUN_ID}`, task queue `cancel-py`, and the argument `job_id="alpha"`.
+  3. Waits roughly 3 seconds, then calls `handle.cancel()` on the workflow handle.
+  4. Awaits the workflow result and expects a cancellation (i.e. the awaited result raises a cancellation-related error). The client must not treat this as task failure: it should exit with status code `0` once the workflow has been confirmed as cancelled.
+- Connect to **Temporal Cloud** using the environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`. Do **not** mock Temporal.
+- Read `ZEALT_RUN_ID` from the environment and use it as the workflow id suffix so concurrent runs do not collide.
+
+## Implementation Hints
+- Install the `temporalio` Python SDK.
+- Use `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)` for Temporal Cloud connections (API keys require TLS).
+- Decorate the workflow with `@workflow.defn` and the activity with `@activity.defn`.
+- Inside the workflow, wrap the long sleep in `try/except asyncio.CancelledError`. To make the cleanup activity invocation survive cancellation, schedule it with `workflow.execute_activity(...)` and wrap that coroutine in `asyncio.shield(...)` before awaiting. Re-raise the `CancelledError` from the `except` block once cleanup has completed.
+- Give the cleanup activity a reasonable `start_to_close_timeout` (e.g. 30 seconds).
+- The worker process must be running while the client cancels and awaits the workflow; run it as a separate process or as an `asyncio` background task on task queue `cancel-py`.
+- When awaiting `handle.result()` after a cancel, the SDK raises a `WorkflowFailureError` whose cause is a `CancelledError`. Catch that case in the client and exit cleanly.
+
+## Acceptance Criteria
+- Project path: `/home/user/cancel-py`
+- Task queue: `cancel-py`
+- Workflow id: `job-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Workflow type name: `LongJobWorkflow`
+- Activity type name: `release_resources`
+- Output file: `/workspace/cleanup.log` — must contain a line `released:alpha` after the client completes.
+- The workflow execution must reach status `CANCELED` on Temporal Cloud.
+- The workflow event history must include at least one `ActivityTaskScheduled` event for the activity type `release_resources`.
+- The client must use the real Temporal Cloud connection (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Mocking the Temporal client or server is not allowed.
+
+
+EOF
+Skipping image OS validation for hb__task_queue_debug_ts: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-cyajeez > /logs/artifacts/run-id && echo task_queue_debug_ts__cyaJeEZ > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Debug a Stuck Temporal Workflow (Task Queue Mismatch)
+
+## Background
+You are on call for a TypeScript Temporal project that connects to Temporal Cloud. A teammate left for the day and complained that a workflow they kick off with `npm run client` "just hangs forever". Running `npm run worker` and then `npm run client` produces a `Started workflow ...` line, but the workflow never completes — its server-side status stays in `Running` (with the workflow task scheduled but not started) indefinitely. Your job is to find the root cause, fix it with a minimal change, and prove that the workflow now runs to completion against the real Temporal Cloud namespace.
+
+The project under `/home/user/myproject` already contains a working `PingWorkflow(name: string): Promise<string>` that returns `pong-<name>` and a `src/worker.ts` / `src/client.ts` pair that both connect to Temporal Cloud using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. The connection code works — the bug is somewhere else.
+
+## Requirements
+- Investigate the project under `/home/user/myproject` and explain to yourself why the workflow never makes progress even though both the worker and client appear to start without error.
+- Apply a minimal fix so that the Worker actually picks up and executes the workflow started by the Client. The Worker and the Client must agree on which Task Queue the workflow runs on.
+- Do NOT change the workflow code, the workflow ID format, the workflow argument, or the connection logic. The only intended change is to make the task queue used by the Worker and the Client consistent.
+- Running `npm run worker` (in the background) followed by `npm run client` must result in a Workflow Execution that completes successfully on Temporal Cloud.
+
+## Implementation Hints
+- A Temporal Worker only executes Workflow Tasks from the Task Queue it is registered for. If a Client starts a workflow on a different Task Queue, no Worker will ever pick it up and the workflow will sit in the `Running` state with a scheduled-but-not-started Workflow Task.
+- Read both `src/worker.ts` and `src/client.ts` carefully and compare the Task Queue strings they use. They should match exactly.
+- You can fix the mismatch by editing either file — pick whichever change is smaller. The verifier does not care which task queue name you settle on, only that the Worker and Client agree.
+- You can use the Temporal Cloud UI or `temporal` CLI (optional) to confirm the workflow is stuck in `Running` with no events beyond `WorkflowExecutionStarted` and `WorkflowTaskScheduled`.
+- The Worker must be left running while the Client executes the workflow.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Log file: /home/user/myproject/output.log
+- Read `run-id` from the `ZEALT_RUN_ID` environment variable.
+- After your fix, `src/worker.ts` and `src/client.ts` must use the **same** Task Queue name. The exact string is up to you.
+- A Workflow Execution must be created on Temporal Cloud (namespace `$TEMPORAL_NAMESPACE`) with:
+  - Workflow Type: `PingWorkflow`
+  - Workflow ID: `ping-${ZEALT_RUN_ID}`
+  - A single string argument with value `temporal`
+- The Workflow Execution must complete successfully with the string result `pong-temporal`.
+- After running `npm run client`, the log file `/home/user/myproject/output.log` must contain a line in the format: `Workflow result: pong-temporal`.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Skipping image OS validation for hb__retry_policy_fixed_ts: docker inspect returned 1
+Skipping image OS validation for hb__signal_increment_counter_py: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-ramp73x > /logs/artifacts/run-id && echo retry_policy_fixed_ts__ramP73X > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Temporal Retry Policy: Fixed-Interval Activity Retries
+
+## Background
+You are extending a Temporal TypeScript project that already wires up a connection to a real Temporal Cloud namespace using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. The skeleton provides a Worker and a Client script, but the Workflow and Activity implementations are missing. Your job is to configure a deliberately flaky Activity together with a custom Activity RetryPolicy so that the Workflow retries the Activity a fixed number of times with a fixed delay, observes the eventual failure, and converts it into a graceful workflow return value.
+
+## Requirements
+- Implement an Activity in `src/activities.ts` named `flakyTask` that:
+  - Appends a single line to `/workspace/attempts.log` on every invocation (one line per attempt). Each line must include the current attempt number, but the exact line format is up to you.
+  - Always fails by throwing a Temporal `ApplicationFailure` (retryable, i.e. `nonRetryable` must NOT be set to `true`).
+- Implement a Workflow in `src/workflows.ts` named `FlakyWorkflow` that:
+  - Proxies `flakyTask` with `startToCloseTimeout: '30 seconds'` and a custom Activity `RetryPolicy` of `maximumAttempts: 5`, `initialInterval: '2 seconds'`, and `backoffCoefficient: 1.0` (so the delay stays fixed at 2 seconds between attempts).
+  - Catches the eventual Activity failure once retries are exhausted and returns the string `"failed after 5 attempts"`. The Workflow itself must complete successfully (status `COMPLETED`), not fail.
+- Do NOT modify the existing connection / worker / client code in `src/worker.ts` or `src/client.ts`. The Worker registers activities from `./activities`, bundles workflows from `./workflows`, and polls the `retry-ts` task queue.
+- Running `npm run client` must start the Workflow against Temporal Cloud and write the returned string to a log file.
+
+## Implementation Hints
+- Use `proxyActivities<typeof activities>({ startToCloseTimeout: '30 seconds', retry: { maximumAttempts: 5, initialInterval: '2 seconds', backoffCoefficient: 1.0 } })` to get a typed handle to the activity inside the Workflow.
+- Inside the Workflow, wrap the activity call in `try { ... } catch (err) { return 'failed after 5 attempts'; }` so that the Workflow returns instead of failing once retries are exhausted.
+- For attempt accounting inside the activity, you can rely on `Context.current().info.attempt` from `@temporalio/activity`. The activity must append exactly one line to `/workspace/attempts.log` per invocation.
+- Throw a Temporal `ApplicationFailure` (imported from `@temporalio/common` or `@temporalio/activity`) so the failure is treated as retryable by the Activity RetryPolicy. Do NOT mark the failure as `nonRetryable`.
+- The Workflow ID must be `retry-${ZEALT_RUN_ID}` so concurrent runs do not collide, and the workflow must be started on the `retry-ts` task queue.
+- Use the existing `npm run worker` and `npm run client` scripts in `package.json` to start the Worker and trigger execution.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Log file: /home/user/myproject/output.log
+- Attempt log file: /workspace/attempts.log
+- Read `run-id` from the `ZEALT_RUN_ID` environment variable.
+- A Workflow Execution must be created on Temporal Cloud (namespace `$TEMPORAL_NAMESPACE`) with:
+  - Workflow Type: `FlakyWorkflow`
+  - Workflow ID: `retry-${ZEALT_RUN_ID}`
+  - Task Queue: `retry-ts`
+- The Workflow Execution must complete with status `COMPLETED` and a string result equal to `failed after 5 attempts`.
+- After running `npm run client`, the log file `/home/user/myproject/output.log` must contain a line in the format: `Workflow result: failed after 5 attempts`.
+- The file `/workspace/attempts.log` must exist and contain exactly 5 lines (one per Activity attempt).
+
+
+EOF
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-crbgqey > /logs/artifacts/run-id && echo signal_increment_counter_py__cRBGqey > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Temporal Counter Workflow with Signals and Queries (Python SDK)
+
+## Background
+Temporal Workflows can act like long-lived stateful services that receive messages from clients. **Signals** mutate workflow state asynchronously, and **Queries** read workflow state synchronously without affecting history. In this task, you will use the Temporal **Python SDK** with **Temporal Cloud** to build a counter workflow that accumulates values via Signals, exposes its state through a Query, and finishes when a `finish` Signal is received.
+
+## Requirements
+- Implement a Temporal Workflow named `CounterWorkflow` in Python that:
+  - Maintains an integer counter (initially `0`).
+  - Exposes a Signal handler `increment(n: int)` that adds `n` to the counter.
+  - Exposes a Signal handler `finish()` that releases the workflow's main wait so it can complete.
+  - Exposes a Query handler `get_count()` that returns the current counter value (an `int`).
+  - The workflow's main `run` method must wait until `finish` has been received, then return the final counter value (an `int`).
+- Implement a Worker that polls the task queue `counter-py` and hosts `CounterWorkflow`.
+- Implement a Client script that:
+  1. Starts the `CounterWorkflow` (workflow id `counter-${ZEALT_RUN_ID}`, task queue `counter-py`).
+  2. Sends three `increment` Signals with arguments `1`, `2`, and `3` (in order).
+  3. Sends a `get_count` Query and prints the returned value.
+  4. Sends a `finish` Signal.
+  5. Waits for the workflow result and writes a line in the form `final=<n>` to `/workspace/counter.out` (e.g. `final=6`).
+- Connect to **Temporal Cloud** using the environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`. Do **not** mock Temporal.
+
+## Implementation Hints
+- Install the `temporalio` Python SDK.
+- Use `temporalio.client.Client.connect(...)` with the API key, address, and namespace from environment variables. Temporal Cloud requires TLS; pass `tls=True` when using an API key.
+- Decorate workflow methods with `@workflow.defn`, `@workflow.run`, `@workflow.signal`, and `@workflow.query`.
+- Use `workflow.wait_condition(lambda: ...)` to block the main `run` method until the `finish` signal sets a flag.
+- The Worker must be running while the client sends signals/queries and awaits the result. Run the worker as a separate process (or background task) on the task queue `counter-py`.
+- Read the `ZEALT_RUN_ID` environment variable to scope the workflow id (`counter-${ZEALT_RUN_ID}`) so multiple runs don't collide.
+
+## Acceptance Criteria
+- Project path: `/home/user/counter-py`
+- Task queue: `counter-py`
+- Workflow id: `counter-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Workflow type name: `CounterWorkflow`
+- Output file: `/workspace/counter.out` — must contain a line `final=6` after the client completes.
+- The workflow execution must reach status `COMPLETED` on Temporal Cloud, with a numeric result of `6`.
+- The client must use the real Temporal Cloud connection (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Mocking the Temporal client or server is not allowed.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Skipping image OS validation for hb__subscription_signal_workflow_ts: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Skipping image OS validation for hb__activity_get_request_py: docker inspect returned 1
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+Running command: apt-get update && apt-get install -y curl ripgrep
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-jjdvrvz > /logs/artifacts/run-id && echo subscription_signal_workflow_ts__jJdvrVz > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Subscription Workflow with Signals & Queries (TypeScript)
+
+## Background
+You are building a **Subscription** service on top of Temporal Cloud using the Temporal.io TypeScript SDK. The workflow runs a recurring billing cycle and must accept external requests during the run: a user may **upgrade** their tier or **cancel** their subscription at any moment. The workflow also exposes its current state via a **query** so a client can inspect it without waiting for the workflow to finish.
+
+This pattern combines three of Temporal's message-passing primitives — Signals (to mutate workflow state from outside), Queries (to read workflow state from outside), and durable Timers (`workflow.sleep`) — together with an Activity that performs side effects (writing to a log file).
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. The current run id is provided as `ZEALT_RUN_ID`; use it to scope the workflow id.
+
+## Requirements
+Implement a TypeScript Temporal project that contains:
+
+- A **Workflow** named `SubscriptionWorkflow` that:
+  - Accepts a single object input with shape `{ userId: string, tier: string }`.
+  - Iterates through up to **12** billing periods. Between periods it must wait by calling the workflow `sleep` API with `2000` ms (`workflow.sleep(2000)`).
+  - In each period (and before exiting), it must invoke an Activity `chargeCard(userId, tier)` with the **current** tier (which may have been changed by an `upgrade` signal).
+  - Defines a Signal named `upgrade` that accepts a single `newTier: string` argument and updates the current tier going forward.
+  - Defines a Signal named `cancel` (no arguments) that causes the workflow to exit cleanly at the next opportunity. After receiving `cancel`, the workflow must not start any new billing period.
+  - Defines a Query named `getStatus` that returns the current state as `{ tier: string, billings: number, cancelled: boolean }` (where `billings` is the number of completed `chargeCard` calls so far).
+  - Returns a final object of shape `{ billings: number, finalTier: string, cancelled: boolean }` from the workflow. `billings` is the total number of completed `chargeCard` invocations; `finalTier` is the tier that was in effect at the end of the run; `cancelled` is `true` iff the `cancel` signal caused the early exit.
+
+- An **Activity** named `chargeCard` that takes `(userId: string, tier: string)` and appends a single line `<userId>:<tier>` (no extra spaces, terminated with a newline) to the file `/workspace/charges.log`. The activity must ensure `/workspace` exists before writing.
+
+- A **Worker** that connects to Temporal Cloud (API key + TLS) and polls the task queue `sub-ts`.
+
+- A **Client** entrypoint that, against the same Temporal Cloud namespace:
+  1. Starts `SubscriptionWorkflow` with input `{ userId: "u1", tier: "basic" }`, task queue `sub-ts`, and workflow id `sub-${ZEALT_RUN_ID}`.
+  2. After waiting **1 second** of real time, sends the `upgrade` signal with argument `"premium"`.
+  3. After waiting another **2 seconds** of real time (so ~3 seconds since start), calls the `getStatus` query and logs the returned object to stdout.
+  4. After waiting another **2 seconds** of real time (so ~5 seconds since start), sends the `cancel` signal.
+  5. Awaits the workflow's final result and prints it to stdout as `Final result: <json>` where `<json>` is `JSON.stringify(result)`.
+
+The project must expose an `npm start` script that starts the Worker, runs the Client, waits for the workflow to complete, prints the final result, and then exits cleanly with exit code `0`.
+
+## Implementation Hints
+- Install the official TypeScript SDK packages: `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`.
+- Inside the workflow, use `defineSignal`, `defineQuery`, `setHandler`, `condition`, and `sleep` from `@temporalio/workflow`. Do **NOT** use `setTimeout`, `Date`, or any non-deterministic API inside the workflow function.
+- Use `proxyActivities` from `@temporalio/workflow` to invoke `chargeCard` with a reasonable `startToCloseTimeout`.
+- Activities perform file I/O (workflows are sandboxed). In `chargeCard`, ensure `/workspace` exists and append `"<userId>:<tier>\n"` to `/workspace/charges.log`.
+- The client should use `Connection.connect` from `@temporalio/client` with `address`, `tls: true`, and `apiKey`. The worker should use `NativeConnection.connect` from `@temporalio/worker` with the same connection options. Pass `namespace` to both the `Client` constructor and `Worker.create`.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `process.env`.
+- Wait for incoming signals using `workflow.condition(...)` rather than busy-looping. The cancel signal should make the workflow break out of its billing loop without throwing — it must finish in `COMPLETED` status, **not** `CANCELED` or `FAILED`.
+- You may run the worker in the background of the same `npm start` script (with a shell `&`, `concurrently`, or by spawning it from the client script). Make sure both the client and the worker are using the **same** task queue and namespace.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `npm start` (executed from `/home/user/myproject`)
+- Task queue: `sub-ts`
+- Workflow type name: `SubscriptionWorkflow`
+- Activity type name: `chargeCard`
+- Signals: `upgrade(newTier: string)` and `cancel()`
+- Query: `getStatus()` returning `{ tier: string, billings: number, cancelled: boolean }`
+- Workflow ID: must equal `sub-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- Log file: `/workspace/charges.log` — each line is `<userId>:<tier>` for one completed `chargeCard` invocation.
+- When `npm start` is run, the script must:
+  - Start the workflow, send the `upgrade("premium")` and `cancel` signals at the times described above, invoke the `getStatus` query, and await the final workflow result.
+  - Print the final result to stdout in the form `Final result: <json>` where `<json>` is the `JSON.stringify` of the workflow's return value.
+  - Exit with exit code `0`.
+- The workflow execution `sub-${ZEALT_RUN_ID}` must exist in Temporal Cloud with terminal status `COMPLETED`, and its result must be a JSON object with fields `billings`, `finalTier`, and `cancelled` such that `cancelled === true`, `finalTier === "premium"`, and `billings >= 1`.
+
+
+EOF
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-hks8jd8 > /logs/artifacts/run-id && echo activity_get_request_py__hKs8Jd8 > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3-flash --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Temporal Activity that Performs a GitHub GET Request (Python)
+
+## Background
+You are building a Temporal application with the Temporal.io Python SDK (`temporalio`). The goal is to demonstrate the canonical pattern for wrapping an external HTTP call inside a Temporal **Activity** so it can be retried and recorded durably. The Activity will perform a simple `GET https://api.github.com/repos/{owner}/{repo}` request against the public GitHub REST API and return the `full_name` field from the JSON response. A **Workflow** then calls the Activity from a **Worker** that connects to **Temporal Cloud**.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. The unique run identifier is provided as `ZEALT_RUN_ID`.
+
+## Requirements
+- Implement a Python Temporal project under `/home/user/myproject` that contains:
+  - An **Activity** named `fetch_repo_full_name` that accepts two string arguments `owner` and `repo`, uses `httpx.AsyncClient` to issue `GET https://api.github.com/repos/{owner}/{repo}`, parses the JSON response, and returns the value of the `full_name` field as a string.
+  - A **Workflow** named `FetchRepoWorkflow` that accepts the same two string arguments `owner` and `repo`, calls the `fetch_repo_full_name` activity with a `start_to_close_timeout` of 30 seconds, and returns the string returned by the activity.
+  - A **Worker** that connects to Temporal Cloud using the API key, registers `FetchRepoWorkflow` and `fetch_repo_full_name`, and polls the task queue `repo-fetch-py`.
+  - A **Client** entrypoint that connects to Temporal Cloud, executes `FetchRepoWorkflow` with the arguments `owner="temporalio"` and `repo="temporal"`, waits for completion, and prints the returned string to stdout.
+- The Worker and Client must use the task queue `repo-fetch-py`.
+- The Workflow ID must be exactly `repo-fetch-py-${ZEALT_RUN_ID}` where `${ZEALT_RUN_ID}` is read from the `ZEALT_RUN_ID` environment variable so concurrent runs do not collide.
+- Provide a runnable entrypoint that starts the Worker and the Client together against Temporal Cloud (for example, a single `python main.py` command, or any `python -m` style entrypoint that does the same). After the workflow completes, the printed result must equal the GitHub repository full name.
+
+## Implementation Hints
+- Install the official Temporal Python SDK with `pip install temporalio` and the HTTP client with `pip install httpx`.
+- For Temporal Cloud, connect with `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)`.
+- Define the activity using `@activity.defn` from `temporalio` and the workflow using `@workflow.defn` plus `@workflow.run` on the async run method.
+- Inside the workflow, use `workflow.execute_activity(...)` and pass `start_to_close_timeout=timedelta(seconds=30)` to satisfy the 30-second timeout requirement.
+- Use `temporalio.worker.Worker` to register the workflow and activity on the `repo-fetch-py` task queue, and `Client.execute_workflow` to start `FetchRepoWorkflow` with the required arguments.
+- The activity must use `httpx.AsyncClient` (or `httpx.AsyncClient` via `async with`) to perform the GET request; do not call `requests` or any synchronous HTTP client inside an async activity.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
+- You may run the worker and the client in the same `asyncio` event loop (for example by starting the worker as a background task, executing the workflow, then cancelling the worker) — just make sure the workflow completes against Temporal Cloud and the result is printed before the process exits.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `python main.py` (executed from `/home/user/myproject`)
+- Task queue: `repo-fetch-py`
+- Workflow type name: `FetchRepoWorkflow`
+- Activity type name: `fetch_repo_full_name`
+- Workflow ID: must be exactly `repo-fetch-py-${ZEALT_RUN_ID}` using the value of the `ZEALT_RUN_ID` environment variable
+- When `python main.py` is executed, the workflow `FetchRepoWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the string returned from the activity must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the GitHub repository full name for `owner="temporalio"`, `repo="temporal"`.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured
+The verifier.env contains an API key (often the case for LLM-based verifiers). You will incur costs associated with the API calls.

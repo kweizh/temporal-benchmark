@@ -1,0 +1,58 @@
+{
+    "id": "c098b89b-2a87-4a4d-b30d-92e6ec5d3349",
+    "started_at": "2026-05-23T15:22:35.712750",
+    "updated_at": "2026-05-23T15:49:37.445537",
+    "finished_at": "2026-05-23T15:49:37.445537",
+    "n_total_trials": 18,
+    "stats": {
+        "n_completed_trials": 18,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "pochi__gemini-3-flash__tasks": {
+                "n_trials": 18,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 0.5
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "continue_as_new_loop_py__hKkQnML",
+                            "query_handler_workflow_ts__Hq9Pajy",
+                            "hello_workflow_ts__HDYEsmE",
+                            "fix_nondeterministic_workflow_py__LZEMrup",
+                            "retry_policy_fixed_py__h7A8YFi",
+                            "workflow_cancellation_cleanup_py__beHJtRz",
+                            "task_queue_debug_ts__cyaJeEZ",
+                            "retry_policy_fixed_ts__ramP73X",
+                            "signal_increment_counter_py__cRBGqey"
+                        ],
+                        "0.0": [
+                            "continue_as_new_loop_ts__g6fHADd",
+                            "parallel_activities_workflow_py__HVJLrhZ",
+                            "patch_versioning_ts__88VynbA",
+                            "fix_nondeterministic_workflow_ts__RdTRcLF",
+                            "hello_workflow_py__UrqS4ML",
+                            "reminder_sleep_workflow_py__XvuoeB4",
+                            "reminder_sleep_workflow_ts__6RWajH3",
+                            "subscription_signal_workflow_ts__jJdvrVz",
+                            "activity_get_request_py__hKs8Jd8"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 0,
+        "n_cache_tokens": 0,
+        "n_output_tokens": 536926,
+        "cost_usd": null
+    }
+}

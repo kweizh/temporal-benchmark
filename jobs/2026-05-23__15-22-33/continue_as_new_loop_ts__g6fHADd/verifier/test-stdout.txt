@@ -1,0 +1,61 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 5 items
+
+tests/test_final_state.py ...F.                                          [100%]
+
+=================================== FAILURES ===================================
+__________________ test_workflow_source_uses_continue_as_new ___________________
+
+    def test_workflow_source_uses_continue_as_new():
+        assert os.path.isfile(WORKFLOW_FILE), (
+            f"Workflow source file {WORKFLOW_FILE} must exist."
+        )
+        with open(WORKFLOW_FILE, "r") as fh:
+            source = fh.read()
+>       assert re.search(r"continueAsNew\(", source), (
+            "Expected the workflow source at "
+            f"{WORKFLOW_FILE} to call `continueAsNew(...)`. Source was:\n{source}"
+        )
+E       AssertionError: Expected the workflow source at /home/user/myproject/src/workflows.ts to call `continueAsNew(...)`. Source was:
+E         import { proxyActivities, continueAsNew } from '@temporalio/workflow';
+E         import type * as activities from './activities';
+E         
+E         const { incrementCounter } = proxyActivities<typeof activities>({
+E           startToCloseTimeout: '1 minute',
+E         });
+E         
+E         /**
+E          * Refactored to call `continueAsNew` every 10 iterations.
+E          */
+E         export async function LongLoopWorkflow(start: number, target: number): Promise<number> {
+E           let counter = start;
+E           let iterations = 0;
+E         
+E           while (counter < target) {
+E             counter = await incrementCounter(counter);
+E             iterations++;
+E         
+E             if (iterations >= 10 && counter < target) {
+E               await continueAsNew<typeof LongLoopWorkflow>(counter, target);
+E             }
+E           }
+E         
+E           return counter;
+E         }
+E         
+E       assert None
+E        +  where None = <function search at 0x7033adeabba0>('continueAsNew\\(', "import { proxyActivities, continueAsNew } from '@temporalio/workflow';\nimport type * as activities from './activitie... target) {\n      await continueAsNew<typeof LongLoopWorkflow>(counter, target);\n    }\n  }\n\n  return counter;\n}\n")
+E        +    where <function search at 0x7033adeabba0> = re.search
+
+tests/test_final_state.py:102: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_npm_start_succeeds
+PASSED tests/test_final_state.py::test_client_prints_final_result_25
+PASSED tests/test_final_state.py::test_loop_log_contains_exact_25_lines
+PASSED tests/test_final_state.py::test_workflow_chain_in_temporal_cloud
+FAILED tests/test_final_state.py::test_workflow_source_uses_continue_as_new
+========================= 1 failed, 4 passed in 17.63s =========================

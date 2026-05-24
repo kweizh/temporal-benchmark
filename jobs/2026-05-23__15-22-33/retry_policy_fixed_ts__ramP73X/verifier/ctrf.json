@@ -1,0 +1,61 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779521834198,
+            "stop": 1779521835737
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_output_log_contains_expected_result",
+                "status": "passed",
+                "duration": 1,
+                "start": 1779521834518,
+                "stop": 1779521834519,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_attempts_log_has_exactly_five_lines",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779521834519,
+                "stop": 1779521834519,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_with_expected_metadata",
+                "status": "passed",
+                "duration": 609,
+                "start": 1779521834520,
+                "stop": 1779521835129,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_result_matches_expected",
+                "status": "passed",
+                "duration": 606,
+                "start": 1779521835130,
+                "stop": 1779521835736,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

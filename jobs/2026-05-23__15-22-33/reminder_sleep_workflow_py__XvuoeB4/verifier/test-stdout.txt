@@ -1,0 +1,83 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 4 items
+
+tests/test_final_state.py FFFF                                           [100%]
+
+=================================== FAILURES ===================================
+_____________________________ test_run_sh_succeeds _____________________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File ... \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n')
+
+    def test_run_sh_succeeds(run_sh_output: subprocess.CompletedProcess):
+>       assert run_sh_output.returncode == 0, (
+            "`bash run.sh` did not exit successfully. "
+            f"stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: `bash run.sh` did not exit successfully. stdout=
+E         
+E         stderr=
+E         Traceback (most recent call last):
+E           File "/home/user/myproject/main.py", line 4, in <module>
+E             from temporalio.client import Client, TlsConfig
+E         ImportError: cannot import name 'TlsConfig' from 'temporalio.client' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: 'TLSConfig'?
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File ... \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n').returncode
+
+tests/test_final_state.py:40: AssertionError
+______________________ test_run_sh_prints_expected_result ______________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File ... \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n')
+
+    def test_run_sh_prints_expected_result(run_sh_output: subprocess.CompletedProcess):
+        combined = (run_sh_output.stdout or "") + (run_sh_output.stderr or "")
+>       assert EXPECTED_RESULT in combined, (
+            f"Expected combined output of `bash run.sh` to contain '{EXPECTED_RESULT}', "
+            f"got stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: Expected combined output of `bash run.sh` to contain 'Notified: wake up', got stdout=
+E         
+E         stderr=
+E         Traceback (most recent call last):
+E           File "/home/user/myproject/main.py", line 4, in <module>
+E             from temporalio.client import Client, TlsConfig
+E         ImportError: cannot import name 'TlsConfig' from 'temporalio.client' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: 'TLSConfig'?
+E         
+E       assert 'Notified: wake up' in 'Traceback (most recent call last):\n  File "/home/user/myproject/main.py", line 4, in <module>\n    from temporalio.c...m \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n'
+
+tests/test_final_state.py:48: AssertionError
+_________________ test_reminder_log_file_contains_notification _________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File ... \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n')
+
+    def test_reminder_log_file_contains_notification(run_sh_output: subprocess.CompletedProcess):
+>       assert run_sh_output.returncode == 0, (
+            "Skipping log file check because `bash run.sh` did not exit cleanly."
+        )
+E       AssertionError: Skipping log file check because `bash run.sh` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File ... \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n').returncode
+
+tests/test_final_state.py:55: AssertionError
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File ... \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n')
+
+    def test_workflow_completed_in_temporal_cloud(run_sh_output: subprocess.CompletedProcess):
+>       assert run_sh_output.returncode == 0, (
+            "Skipping cloud verification because `bash run.sh` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `bash run.sh` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='Traceback (most recent call last):\n  File ... \'temporalio.client\' (/usr/local/lib/python3.12/dist-packages/temporalio/client.py). Did you mean: \'TLSConfig\'?\n').returncode
+
+tests/test_final_state.py:97: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_run_sh_succeeds - AssertionError: `bas...
+FAILED tests/test_final_state.py::test_run_sh_prints_expected_result - Assert...
+FAILED tests/test_final_state.py::test_reminder_log_file_contains_notification
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+============================== 4 failed in 0.70s ===============================

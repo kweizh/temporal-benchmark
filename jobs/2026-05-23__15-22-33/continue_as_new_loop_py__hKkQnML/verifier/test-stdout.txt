@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 6 items
+
+tests/test_final_state.py ......                                         [100%]
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_loop_log_has_25_lines_with_values_1_to_25
+PASSED tests/test_final_state.py::test_loop_out_contains_result_25
+PASSED tests/test_final_state.py::test_workflow_source_uses_continue_as_new
+PASSED tests/test_final_state.py::test_workflow_completed_on_temporal_cloud
+PASSED tests/test_final_state.py::test_workflow_result_is_25
+PASSED tests/test_final_state.py::test_workflow_chain_has_at_least_two_continued_as_new_runs
+============================== 6 passed in 2.18s ===============================

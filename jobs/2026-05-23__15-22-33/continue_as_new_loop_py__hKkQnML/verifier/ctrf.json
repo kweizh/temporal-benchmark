@@ -1,0 +1,79 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 6,
+            "passed": 6,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779521342328,
+            "stop": 1779521344509
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_loop_log_has_25_lines_with_values_1_to_25",
+                "status": "passed",
+                "duration": 1,
+                "start": 1779521342610,
+                "stop": 1779521342611,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_loop_out_contains_result_25",
+                "status": "passed",
+                "duration": 1,
+                "start": 1779521342612,
+                "stop": 1779521342613,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_source_uses_continue_as_new",
+                "status": "passed",
+                "duration": 2,
+                "start": 1779521342613,
+                "stop": 1779521342615,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_on_temporal_cloud",
+                "status": "passed",
+                "duration": 619,
+                "start": 1779521342615,
+                "stop": 1779521343234,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_result_is_25",
+                "status": "passed",
+                "duration": 622,
+                "start": 1779521343235,
+                "stop": 1779521343857,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_chain_has_at_least_two_continued_as_new_runs",
+                "status": "passed",
+                "duration": 650,
+                "start": 1779521343858,
+                "stop": 1779521344508,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

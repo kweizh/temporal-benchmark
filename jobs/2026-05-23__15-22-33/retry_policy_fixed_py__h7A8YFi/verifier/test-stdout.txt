@@ -1,0 +1,15 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /tests
+plugins: asyncio-1.3.0, json-ctrf-0.5.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 3 items
+
+tests/test_final_state.py ...                                            [100%]
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_result_log_exists_and_matches
+PASSED tests/test_final_state.py::test_attempts_log_exists_and_has_five_lines
+PASSED tests/test_final_state.py::test_workflow_completed_on_temporal_cloud
+============================== 3 passed in 1.10s ===============================
