@@ -1,7 +1,0 @@
-{
-  "library_name": "Temporal.io",
-  "task_name": "continue_as_new_loop_ts",
-  "complexity_level": "much more complicated task that is not easy for LLM agents to solve",
-  "research_plan_path": "/Users/kw/code/zealt/temporal-benchmark/plan.md",
-  "output_dir": "/Users/kw/code/zealt/temporal-benchmark/scratchpad/pending-tasks"
-}
