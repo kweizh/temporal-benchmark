@@ -108,7 +108,7 @@ async def _verify_workflow_in_cloud() -> dict:
         f"got {len(scheduled_times)}."
     )
 
-    epoch_seconds = [t.timestamp() for t in scheduled_times]
+    epoch_seconds = [t.ToMicroseconds() / 1e6 for t in scheduled_times]
     spread = max(epoch_seconds) - min(epoch_seconds)
     assert spread <= 5.0, (
         f"Expected all 3 'fetch_url' activities to be scheduled in parallel within 5 seconds, "

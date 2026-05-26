@@ -99,7 +99,7 @@ def test_workflow_source_uses_continue_as_new():
     )
     with open(WORKFLOW_FILE, "r") as fh:
         source = fh.read()
-    assert re.search(r"continueAsNew\(", source), (
+    assert re.search(r"continueAsNew(?:<[^>]+>)?\(", source), (
         "Expected the workflow source at "
         f"{WORKFLOW_FILE} to call `continueAsNew(...)`. Source was:\n{source}"
     )
