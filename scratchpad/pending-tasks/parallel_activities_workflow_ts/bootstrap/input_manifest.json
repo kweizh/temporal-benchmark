@@ -1,0 +1,7 @@
+{
+  "library_name": "Temporal.io",
+  "task_name": "parallel_activities_workflow_ts",
+  "complexity_level": "multi-step parallel command set",
+  "research_plan_path": "plan.md",
+  "output_dir": "scratchpad/pending-tasks/"
+}

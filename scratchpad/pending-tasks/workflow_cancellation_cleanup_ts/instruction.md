@@ -1,0 +1,41 @@
+# Graceful Workflow Cancellation with Cleanup (Temporal TypeScript SDK)
+
+## Background
+Temporal Workflows can be canceled by clients. In the Temporal TypeScript SDK, cancellation is propagated through structured concurrency primitives: `CancellationScope.cancellable` defines the region whose work can be cancelled, while `CancellationScope.nonCancellable` shields cleanup/compensation work so it survives cancellation of the parent scope. A well-written workflow catches the cancellation as a `CancelledFailure` (use `isCancellation(err)` to detect it), runs cleanup inside a `nonCancellable` scope, and then rethrows so the workflow execution is recorded as `CANCELED` on the server. In this task you will implement this pattern end-to-end against **Temporal Cloud** using the TypeScript SDK.
+
+## Requirements
+- Implement a TypeScript Temporal project that contains:
+  - A long-running Activity named `doWork` that simulates a long unit of work. It must loop and call `heartbeat()` from `@temporalio/activity` at least once per second so the Worker can deliver cancellation to it. A total work duration of ~60 seconds is sufficient.
+  - A compensation Activity named `cleanup` that returns the literal string `"cleanup-done"` (logging is fine; no filesystem side effect is required).
+  - A Workflow type named `CancellableWorkflow` that:
+    - Invokes `doWork` inside a `CancellationScope.cancellable` scope.
+    - Wraps the `doWork` invocation in `try/catch`. When the caught error satisfies `isCancellation(err)`, the workflow MUST run `cleanup` inside a `CancellationScope.nonCancellable` scope so the cleanup activity completes even though the surrounding scope is being cancelled.
+    - After the cleanup activity completes, the workflow MUST rethrow the original cancellation so the execution ends with status `CANCELED` on the server.
+  - A Worker that connects to Temporal Cloud (via API key + TLS) and polls the task queue `cancel-cleanup-ts`.
+  - A Client entrypoint that connects to Temporal Cloud, starts `CancellableWorkflow`, waits roughly 3 seconds, calls `handle.cancel()`, awaits the workflow result expecting a cancellation (use `isCancellation` on the caught error to detect it), and then prints the literal line `cleanup-done observed` to stdout.
+- Use the Workflow ID prefix `cancel-wf-` combined with the value of the `ZEALT_RUN_ID` environment variable (e.g., `cancel-wf-${ZEALT_RUN_ID}`) so concurrent runs do not collide.
+- Provide an `npm start` script that runs the Worker and the Client together, ensures the Worker is up before the Client starts the workflow, and exits with status `0` once the client has observed the cancellation (even though the workflow itself ended in `CANCELED`).
+- Connect to **Temporal Cloud** using the environment variables `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hardcode or mock credentials, and do NOT mock the Temporal client or server.
+
+## Implementation Hints
+- Install the official TypeScript SDK packages: `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`.
+- For the Client, use `Connection.connect` from `@temporalio/client` with `address`, `tls: true`, and `apiKey` options. For the Worker, use `NativeConnection.connect` from `@temporalio/worker` with the same connection options. Pass `namespace` to both the `Client` constructor and `Worker.create`.
+- Use `proxyActivities` from `@temporalio/workflow` to invoke `doWork` and `cleanup`. Give `doWork` a `startToCloseTimeout` longer than its work loop and a `heartbeatTimeout` such as `'10s'` so cancellation is delivered promptly. Set `cancellationType: ActivityCancellationType.TRY_CANCEL` so the workflow does not have to wait for `doWork` to finish reporting before continuing to cleanup.
+- Inside the activity `doWork`, use a loop that calls `heartbeat()` and `await` a short sleep (e.g., 500ms) so cancellation can be received; rethrow on cancellation.
+- Inside the workflow, use the documented `nestedCancellation` / `handleExternalWorkflowCancellationWhileActivityRunning` pattern: wrap `doWork` in `CancellationScope.cancellable`, catch via `isCancellation(err)`, then call `await CancellationScope.nonCancellable(() => cleanup())`, and finally `throw err` to surface the cancellation.
+- In the client, after calling `handle.cancel()`, await `handle.result()` inside a `try/catch`. Use `isCancellation` on the caught error to confirm the cancellation, then print `cleanup-done observed`.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `process.env`.
+- You may run the Worker as a child process spawned by the client script, or via `concurrently`, as long as the Worker is ready before the client starts the workflow and the whole `npm start` process exits cleanly with code `0`.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `npm start` (executed from `/home/user/myproject`)
+- Task queue: `cancel-cleanup-ts`
+- Workflow type name: `CancellableWorkflow`
+- Activity type names: `doWork`, `cleanup`
+- Workflow ID: must start with `cancel-wf-` and include the value of the `ZEALT_RUN_ID` environment variable.
+- When `npm start` is executed against Temporal Cloud, the workflow `CancellableWorkflow` MUST be started, cancelled by the client after ~3 seconds, run its cleanup activity, and the process MUST exit with status `0`.
+- The combined stdout of `npm start` MUST contain the substring `cleanup-done observed`.
+- The completed workflow execution MUST be visible in Temporal Cloud with status `CANCELED`.
+- The workflow event history MUST contain at least one `ActivityTaskCompleted` event for the activity type `cleanup`.
+

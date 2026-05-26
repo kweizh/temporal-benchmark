@@ -1,0 +1,53 @@
+# Workflow Update Handler with Validator (TypeScript)
+
+## Background
+You are building a **BankBalance** service on top of Temporal Cloud using the Temporal.io TypeScript SDK. Unlike a Signal, a Temporal **Update** is a synchronous, trackable request that can validate input, mutate workflow state, **and return a value** to the caller. Updates support an optional, non-async **validator** that runs before the update is written to history; throwing an `ApplicationFailure` from the validator rejects the update without recording it.
+
+This task exercises Temporal's Update message-passing primitive via `defineUpdate` + `setHandler` (with `validator`), combined with a Signal to terminate the workflow cleanly.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. The current run id is provided as `ZEALT_RUN_ID`; use it to scope the workflow id.
+
+## Requirements
+Implement a TypeScript Temporal project that contains:
+
+- A **Workflow** named `BankBalanceWorkflow` that:
+  - Maintains an internal numeric `balance` that starts at `0`.
+  - Defines an **Update** named `deposit` that accepts a single `amount: number` argument and **returns the new balance** (a `number`) after the deposit has been applied.
+  - The `deposit` Update must have an Update **validator** (non-async) that **rejects non-positive amounts** by throwing `ApplicationFailure` (e.g., `ApplicationFailure.create({ message: ..., type: 'InvalidAmount' })`). A rejected update must not mutate the balance and must not record a `WorkflowExecutionUpdateAccepted` event for that update.
+  - Defines a **Signal** named `finish` (no arguments) that causes the workflow to stop accepting new work and return the **final balance** as the workflow's result (a `number`).
+  - Uses `workflow.condition` (not busy-loops) to wait for the `finish` signal and **must not** use any non-deterministic API (`Date.now()`, `Math.random()`, `setTimeout`, etc.).
+
+- A **Worker** that connects to Temporal Cloud (API key + TLS) and polls the task queue `update-handler-ts`.
+
+- A **Client** entrypoint that, against the same Temporal Cloud namespace:
+  1. Starts `BankBalanceWorkflow` with task queue `update-handler-ts` and workflow id `update-wf-${ZEALT_RUN_ID}`.
+  2. Sends **three valid `deposit` updates** with amounts `100`, `50`, and `25` (in that order), using `WorkflowHandle.executeUpdate` so that the returned new balance is awaited for each call. For each update, print the returned balance to stdout on its own line in the form `Updated balance: <n>` (where `<n>` is the integer balance after that deposit, e.g. `Updated balance: 100`, `Updated balance: 150`, `Updated balance: 175`).
+  3. Sends the `finish` signal.
+  4. Awaits the workflow's final result and prints it to stdout on its own line in the form `Final balance: <n>` (e.g., `Final balance: 175`).
+
+The project must expose an `npm start` script that starts the Worker, runs the Client, waits for the workflow to complete, prints the per-update balances and the final balance, and then exits cleanly with exit code `0`.
+
+## Implementation Hints
+- Install the official TypeScript SDK packages: `@temporalio/client`, `@temporalio/worker`, `@temporalio/workflow`, `@temporalio/activity`.
+- Inside the workflow, use `defineUpdate`, `defineSignal`, `setHandler`, and `condition` from `@temporalio/workflow`. Use `ApplicationFailure` from `@temporalio/common` (or `@temporalio/workflow`) inside the validator to reject invalid amounts.
+- Define the Update via `defineUpdate<number, [number]>('deposit')` so that the return type is `number` and the argument is `(amount: number)`.
+- Pass the validator function via the third argument (`UpdateHandlerOptions`) of `setHandler`. Validators must be **non-async** and must throw on invalid input.
+- The client should use `Connection.connect` from `@temporalio/client` with `address`, `tls: true`, and `apiKey`. The worker should use `NativeConnection.connect` from `@temporalio/worker` with the same connection options. Pass `namespace` to both the `Client` constructor and `Worker.create`.
+- Use `WorkflowHandle.executeUpdate` from the client to send each `deposit` update and `await` the returned new balance.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `process.env`.
+- You may run the Worker in the background of the same `npm start` script (with a shell `&`, `concurrently`, or by spawning it from the client script). Make sure both the client and the worker are using the **same** task queue and namespace.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `npm start` (executed from `/home/user/myproject`)
+- Task queue: `update-handler-ts`
+- Workflow type name: `BankBalanceWorkflow`
+- Update: `deposit(amount: number) -> number` with a validator that rejects non-positive amounts via `ApplicationFailure`
+- Signal: `finish()` (no arguments)
+- Workflow ID: must equal `update-wf-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- When `npm start` is run, the script must:
+  - Start the workflow, send the three `deposit` updates and the `finish` signal as described above, and await the final workflow result.
+  - Print one line per update in the form `Updated balance: <n>` and print the final result line in the form `Final balance: <n>`.
+  - Exit with exit code `0`.
+- The workflow execution `update-wf-${ZEALT_RUN_ID}` must exist in Temporal Cloud with terminal status `COMPLETED`, and its returned result must equal the integer `175`.
+

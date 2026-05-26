@@ -1,0 +1,55 @@
+# Temporal Query Handler Workflow (Python)
+
+## Background
+Temporal.io's Python SDK lets a Workflow expose synchronous **Query** handlers (`@workflow.query`) so external clients can inspect the running Workflow's internal state without affecting its execution, and **Signal** handlers (`@workflow.signal`) so external clients can asynchronously mutate state or control execution. In this task, you implement a Python `StatefulWorkflow` that maintains an internal counter, exposes the counter via a Query, and accepts a Signal to stop incrementing early.
+
+A Client script then starts the Workflow, performs a mid-run Query to observe the in-flight counter, sends a Signal to make the Workflow finish, awaits the final result, and prints the final counter to stdout.
+
+You must connect to **Temporal Cloud** using the API key configured via environment variables. Do **NOT** hard-code or invent credentials; read them from the environment.
+
+## Requirements
+Implement a Python Temporal project under `/home/user/myproject` that contains:
+
+- A **Workflow** class `StatefulWorkflow` decorated with `@workflow.defn` whose `run` method:
+  - Maintains an internal integer `counter`, initialized to `0`, and an internal boolean flag indicating the Workflow should stop.
+  - Loops, incrementing `counter` by one each iteration, sleeping/waiting roughly one second between increments so a mid-flight Query can observe a partial value.
+  - Exits the loop as soon as the `finish` Signal is received, and returns the final integer `counter` as the Workflow's result.
+  - Guarantees forward progress: even if no Signal arrives, the loop must terminate after at most a small bounded number of iterations (for example, 10) so the Workflow cannot run indefinitely if the Signal is lost.
+- A **Query** handler named `get_counter` (decorated with `@workflow.query`) that returns the current integer value of `counter`. The Query handler must be synchronous (`def`, not `async def`) and must not mutate Workflow state.
+- A **Signal** handler named `finish` (decorated with `@workflow.signal`) that flips the internal stop flag so the main loop exits.
+- A **Worker** that connects to Temporal Cloud (API key + TLS) and polls the task queue `query-handler-py`, registering the `StatefulWorkflow` workflow.
+- A **Client** entrypoint that:
+  - Reads `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from the environment.
+  - Starts `StatefulWorkflow` on task queue `query-handler-py` with Workflow ID `query-wf-${ZEALT_RUN_ID}`.
+  - Waits briefly (long enough that the counter has been incremented at least once mid-flight; for example, ~2 seconds) and then sends a `get_counter` Query.
+  - Sends the `finish` Signal to the Workflow.
+  - Awaits the final Workflow result.
+  - Prints two lines to stdout:
+    - `Mid counter: <int>` where `<int>` is the value returned by the mid-run Query.
+    - `Final counter: <int>` where `<int>` is the final Workflow result.
+
+- Provide a startup mechanism so a single shell command can spin up the worker, run the client, send the mid-run Query, send the Signal, await the result, print both lines, and exit cleanly with exit code `0`.
+
+## Implementation Hints
+- Install the official Python SDK with `pip install temporalio`.
+- Use `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)` for both the worker and client.
+- Use `temporalio.worker.Worker(client, task_queue=..., workflows=[...])` for the worker.
+- Decorate the Workflow class with `@workflow.defn`, the run method with `@workflow.run`, the query method with `@workflow.query`, and the signal method with `@workflow.signal`.
+- Inside the workflow, use `await asyncio.sleep(1)` (or `workflow.wait_condition` with a timeout) between increments so the loop yields control and mid-run Queries can observe a partial counter value.
+- From the client, call `handle.query(StatefulWorkflow.get_counter)` for the Query and `handle.signal(StatefulWorkflow.finish)` for the Signal; then `await handle.result()` for the final value.
+- You can launch the worker in the background of the same process (for example, `asyncio.create_task(worker.run())`) or as a separate process — either approach is acceptable as long as a single shell command exits cleanly with the printed output.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `bash run.sh` (executed from `/home/user/myproject`)
+- Task queue: `query-handler-py`
+- Workflow type name: `StatefulWorkflow`
+- Query name: `get_counter`
+- Signal name: `finish`
+- Workflow ID: must equal `query-wf-${ZEALT_RUN_ID}` (read `ZEALT_RUN_ID` from the environment).
+- When `bash run.sh` is executed, the worker must connect to Temporal Cloud, the workflow must run to completion, and the client must print both of the following lines to stdout in this format:
+  - `Mid counter: <int>` where `<int>` is a non-negative integer returned by the mid-run Query.
+  - `Final counter: <int>` where `<int>` is a positive integer (`>= 1`) equal to the Workflow's final returned value.
+- The Temporal Cloud workflow execution with ID `query-wf-${ZEALT_RUN_ID}` must reach `COMPLETED` status, and its returned result must be an integer equal to the value printed in the `Final counter:` line.
+- The Workflow must be registered on task queue `query-handler-py`.
+
