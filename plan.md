@@ -29,7 +29,15 @@
     *   [Documentation](https://docs.temporal.io/develop/typescript/workers)
 *   **Client**: Used to start, signal, query, and describe Workflows.
     *   [Documentation](https://docs.temporal.io/develop/typescript/client/temporal-client)
+
+### Consistency Guarantees
+There are 2 categories of APIs from the Temporal backend: one with a guarantee of strong consistency, and one without.
+*   The `describe` API (used in the UI) is backed by APIs which guarantee strong consistency. This same group of APIs is also used during workflow execution.
+*   The `list` API (used in the UI) is backed by APIs which only guarantee eventual consistency.
+*   When a status needs to be checked, you should use the `describe` API of Temporal to get the latest status.
+
 ### Code Snippet: TypeScript Cloud Connection
+
 ```typescript
 import { Connection, Client } from '@temporalio/client';
 import { loadClientConnectConfig } from '@temporalio/envconfig';
@@ -51,7 +59,22 @@ async function run() {
   console.log(`Started workflow ${handle.workflowId}`);
 }
 ```
+
+In typescript, there may be types when using the SDK, for example:
+
+```typescript
+while (counter < target) {
+  counter = await incrementCounter(counter);
+  iterations++;
+
+  if (iterations >= 10 && counter < target) {
+    await continueAsNew<typeof LongLoopWorkflow>(counter, target);
+  }
+}
+```
+
 ### Code Snippet: Python Cloud Connection
+
 ```python
 import os
 import asyncio
@@ -74,6 +97,14 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 ```
+
+Please note that the timestamp in protobuf needs to be handled carefully, the `ToMicroseconds()` method converts the timestamp to microseconds.
+If any timestamp is needed, it should be handled like:
+
+```python
+epoch_seconds = [t.ToMicroseconds() / 1e6 for t in scheduled_times]
+```
+
 ## 3. Real-World Use Cases & Templates
 *   **Subscription Management**: Handling recurring billing, trial periods, and cancellation logic over months.
     *   [TS Template](https://github.com/temporalio/subscription-workflow-project-template-typescript)
