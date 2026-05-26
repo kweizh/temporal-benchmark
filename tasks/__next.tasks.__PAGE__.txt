@@ -1,45 +1,8 @@
 1:"$Sreact.fragment"
 2:"$Sreact.suspense"
 3:I[42654,["/temporal-benchmark/_next/static/chunks/babff0e7418ab052.js","/temporal-benchmark/_next/static/chunks/3ecbb78a8ff87549.js","/temporal-benchmark/_next/static/chunks/920e868464ee59b5.js","/temporal-benchmark/_next/static/chunks/f9f579c42c486944.js"],"TasksPageClient"]
-19:I[75049,["/temporal-benchmark/_next/static/chunks/d2c13bb33c4fcd54.js","/temporal-benchmark/_next/static/chunks/c21188132e0e0d48.js"],"OutletBoundary"]
-4:T1212,# Temporal Activity that Performs a GitHub GET Request (Python)
-
-## Background
-You are building a Temporal application with the Temporal.io Python SDK (`temporalio`). The goal is to demonstrate the canonical pattern for wrapping an external HTTP call inside a Temporal **Activity** so it can be retried and recorded durably. The Activity will perform a simple `GET https://api.github.com/repos/{owner}/{repo}` request against the public GitHub REST API and return the `full_name` field from the JSON response. A **Workflow** then calls the Activity from a **Worker** that connects to **Temporal Cloud**.
-
-Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. The unique run identifier is provided as `ZEALT_RUN_ID`.
-
-## Requirements
-- Implement a Python Temporal project under `/home/user/myproject` that contains:
-  - An **Activity** named `fetch_repo_full_name` that accepts two string arguments `owner` and `repo`, uses `httpx.AsyncClient` to issue `GET https://api.github.com/repos/{owner}/{repo}`, parses the JSON response, and returns the value of the `full_name` field as a string.
-  - A **Workflow** named `FetchRepoWorkflow` that accepts the same two string arguments `owner` and `repo`, calls the `fetch_repo_full_name` activity with a `start_to_close_timeout` of 30 seconds, and returns the string returned by the activity.
-  - A **Worker** that connects to Temporal Cloud using the API key, registers `FetchRepoWorkflow` and `fetch_repo_full_name`, and polls the task queue `repo-fetch-py`.
-  - A **Client** entrypoint that connects to Temporal Cloud, executes `FetchRepoWorkflow` with the arguments `owner="temporalio"` and `repo="temporal"`, waits for completion, and prints the returned string to stdout.
-- The Worker and Client must use the task queue `repo-fetch-py`.
-- The Workflow ID must be exactly `repo-fetch-py-${ZEALT_RUN_ID}` where `${ZEALT_RUN_ID}` is read from the `ZEALT_RUN_ID` environment variable so concurrent runs do not collide.
-- Provide a runnable entrypoint that starts the Worker and the Client together against Temporal Cloud (for example, a single `python main.py` command, or any `python -m` style entrypoint that does the same). After the workflow completes, the printed result must equal the GitHub repository full name.
-
-## Implementation Hints
-- Install the official Temporal Python SDK with `pip install temporalio` and the HTTP client with `pip install httpx`.
-- For Temporal Cloud, connect with `temporalio.client.Client.connect(address, namespace=..., api_key=..., tls=True)`.
-- Define the activity using `@activity.defn` from `temporalio` and the workflow using `@workflow.defn` plus `@workflow.run` on the async run method.
-- Inside the workflow, use `workflow.execute_activity(...)` and pass `start_to_close_timeout=timedelta(seconds=30)` to satisfy the 30-second timeout requirement.
-- Use `temporalio.worker.Worker` to register the workflow and activity on the `repo-fetch-py` task queue, and `Client.execute_workflow` to start `FetchRepoWorkflow` with the required arguments.
-- The activity must use `httpx.AsyncClient` (or `httpx.AsyncClient` via `async with`) to perform the GET request; do not call `requests` or any synchronous HTTP client inside an async activity.
-- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
-- You may run the worker and the client in the same `asyncio` event loop (for example by starting the worker as a background task, executing the workflow, then cancelling the worker) — just make sure the workflow completes against Temporal Cloud and the result is printed before the process exits.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Start command: `python main.py` (executed from `/home/user/myproject`)
-- Task queue: `repo-fetch-py`
-- Workflow type name: `FetchRepoWorkflow`
-- Activity type name: `fetch_repo_full_name`
-- Workflow ID: must be exactly `repo-fetch-py-${ZEALT_RUN_ID}` using the value of the `ZEALT_RUN_ID` environment variable
-- When `python main.py` is executed, the workflow `FetchRepoWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the string returned from the activity must be printed to stdout.
-- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the GitHub repository full name for `owner="temporalio"`, `repo="temporal"`.
-
-5:T1104,# Long-Running Workflow with Continue-As-New (Python SDK)
+17:I[75049,["/temporal-benchmark/_next/static/chunks/d2c13bb33c4fcd54.js","/temporal-benchmark/_next/static/chunks/c21188132e0e0d48.js"],"OutletBoundary"]
+4:T1104,# Long-Running Workflow with Continue-As-New (Python SDK)
 
 ## Background
 Long-running Temporal Workflows can accumulate large Event Histories. To keep history bounded, the Temporal Python SDK exposes `workflow.continue_as_new(...)`, which atomically completes the current Workflow run and starts a fresh run (with a new Run ID but the same Workflow ID), forwarding any state needed to resume work. In this task, you will use the Temporal **Python SDK** with **Temporal Cloud** to build a workflow that performs a long incrementing loop, checkpointing itself by calling `continue_as_new` every 10 iterations until it reaches a target.
@@ -83,7 +46,7 @@ Long-running Temporal Workflows can accumulate large Event Histories. To keep hi
 - There must be at least 2 prior runs in the same Workflow Execution chain that ended with status `CONTINUED_AS_NEW` (i.e., the workflow continued-as-new at least twice before finishing).
 - The client must use the real Temporal Cloud connection (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Mocking the Temporal client or server is not allowed.
 
-6:T16b8,# Continue-As-New Loop Workflow (TypeScript)
+5:T16b8,# Continue-As-New Loop Workflow (TypeScript)
 
 ## Background
 You are building a long-running counter on top of Temporal Cloud using the Temporal.io TypeScript SDK. A naive workflow that loops thousands of times in one Run Id will eventually accumulate a huge event history and approach Temporal's event history limits. To stay healthy, long loops should periodically call `continueAsNew` so the workflow closes its current Run Id and starts a fresh one with the same Workflow Id, carrying its current state forward.
@@ -133,7 +96,7 @@ The project must expose an `npm start` script that starts the Worker, runs the C
 - When `npm start` is run with `start = 0` and `target = 25`, the script must start the workflow, await its final result, print `Final result: 25` to stdout, and exit with code `0`.
 - After the run, the workflow chain `loop-${ZEALT_RUN_ID}` in Temporal Cloud must exist, its terminal Run Id must have status `COMPLETED`, and the chain must span multiple Run Ids (the original run plus at least 2 continued runs, reflecting the continue-as-new boundaries crossed at counter values 10 and 20).
 
-7:Tf6e,# Fix a Non-Deterministic Temporal Workflow (Python SDK)
+6:Tf6e,# Fix a Non-Deterministic Temporal Workflow (Python SDK)
 
 ## Background
 Temporal Workflows must be **deterministic** because the Temporal Server can replay them at any time to reconstruct state. Using `datetime.datetime.now()`, `random.choice(...)`, network I/O, or other non-deterministic constructs directly inside the Workflow function will produce a Non-Deterministic Error during replay and may cause the Workflow to fail in production.
@@ -181,7 +144,7 @@ A Python virtual environment is preinstalled at `/home/user/discount-py/.venv` w
 - The Workflow result `discount` field MUST be an integer in `[0, 5, 10, 15, 20]`.
 - The log file MUST contain a line in the format: `Workflow result: <json_dict>` where the dict has the required `user_id`, `discount`, and `decided_at` fields.
 
-8:Te06,# Fix a Non-Deterministic Temporal Workflow (TypeScript)
+7:Te06,# Fix a Non-Deterministic Temporal Workflow (TypeScript)
 
 ## Background
 A teammate wrote a Temporal Workflow in TypeScript that picks a percentage discount for a user. The Workflow currently performs random number generation and reads wall-clock time directly inside the Workflow body, which violates Temporal's [deterministic execution constraints](https://docs.temporal.io/develop/typescript/workflows/basics#workflow-logic-requirements). Even when the TypeScript SDK provides deterministic replacements for some APIs, the team's coding standard forbids the bare use of `Math.random` and `new Date(` inside Workflow code so that the codebase remains explicit about side effects and replay-safety.
@@ -216,43 +179,7 @@ The project is already wired to connect to Temporal Cloud using `TEMPORAL_API_KE
 - The Workflow result's `discount` field must be one of `0`, `5`, `10`, `15`, or `20`.
 - The log file must contain a line in the format: `Discount: <number>` where `<number>` is the discount returned by the Workflow.
 
-9:Td87,# Hello World Temporal Workflow (Python)
-
-## Background
-You are building your first Temporal application using the Temporal.io Python SDK (`temporalio`). The goal is to connect to **Temporal Cloud** using an API key, run a Worker that hosts a simple Workflow and Activity, and use a Client to start the Workflow and print its result.
-
-Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment.
-
-## Requirements
-- Implement a Python Temporal project that contains:
-  - An **Activity** named `greet` that takes a string `name` and returns `Hello, <name>!`.
-  - A **Workflow** named `HelloWorkflow` that accepts a string `name`, calls the `greet` activity, and returns its result.
-  - A **Worker** that connects to Temporal Cloud (via API key + TLS) and polls the task queue `hello-world-py`.
-  - A **Client** entrypoint that connects to Temporal Cloud, executes `HelloWorkflow` with the input `"Temporal"`, waits for completion, and prints the returned greeting to stdout.
-- The Workflow ID must use the prefix `hello-py-` and include the current `run-id` so concurrent runs do not collide (e.g. `hello-py-${ZEALT_RUN_ID}`).
-- The Worker and Client must use the task queue `hello-world-py`.
-- Provide a `run.sh` start script that starts the Worker in the background, runs the Client, waits for the workflow result, prints it, and then exits cleanly (the Worker may be terminated after the Client finishes).
-
-## Implementation Hints
-- Install the official Python SDK package: `temporalio`.
-- Use `temporalio.client.Client.connect(target, namespace=..., api_key=..., tls=True)` to connect to Temporal Cloud from both the Worker and Client.
-- Define the Activity with the `@activity.defn` decorator and the Workflow with the `@workflow.defn` decorator (use `workflow.execute_activity` from inside the workflow with a reasonable `start_to_close_timeout`).
-- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
-- The Worker should be started with `temporalio.worker.Worker(client, task_queue=..., workflows=[...], activities=[...])` and call `await worker.run()`.
-- Use `client.execute_workflow(HelloWorkflow.run, "Temporal", id=..., task_queue="hello-world-py")` from the Client to start the workflow and await its result.
-- You can run the worker in the background of the same `run.sh` script (for example with a shell `&` and `kill` after the client finishes) - just make sure the workflow completes and its result is printed before the script exits.
-
-## Acceptance Criteria
-- Project path: /home/user/myproject
-- Start command: `bash run.sh` (executed from `/home/user/myproject`)
-- Task queue: `hello-world-py`
-- Workflow type name: `HelloWorkflow`
-- Activity type name: `greet`
-- Workflow ID: must start with `hello-py-` and include the value of the `ZEALT_RUN_ID` environment variable
-- When `bash run.sh` is executed, the workflow `HelloWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting greeting string returned from the activity must be printed to stdout.
-- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the greeting produced by the `greet` activity for the input `"Temporal"`.
-
-a:Td04,# Hello World Temporal Workflow (TypeScript)
+8:Td04,# Hello World Temporal Workflow (TypeScript)
 
 ## Background
 You are building your first Temporal application using the Temporal.io TypeScript SDK. The goal is to connect to **Temporal Cloud** using an API key, run a Worker that hosts a simple Workflow and Activity, and use a Client to start the Workflow and print its result.
@@ -287,7 +214,7 @@ Temporal Cloud credentials are already provided to the environment as the follow
 - When `npm start` is executed, the workflow `HelloWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting greeting string returned from the activity must be printed to stdout.
 - The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the greeting produced by the `greet` activity for the input `"Temporal"`.
 
-b:T1401,# Temporal Workflow with Parallel Activities via `asyncio.gather` (Python)
+9:T1401,# Temporal Workflow with Parallel Activities via `asyncio.gather` (Python)
 
 ## Background
 You are building a Temporal application with the Temporal.io Python SDK (`temporalio`). The goal is to demonstrate the canonical pattern for fan-out parallelism inside a Temporal **Workflow**: invoking many **Activities** concurrently with `asyncio.gather` and aggregating their results. Each Activity issues a single `GET` request to a URL and returns its HTTP status code; the Workflow then returns a mapping of URL to status code.
@@ -326,7 +253,7 @@ Temporal Cloud credentials are already provided to the environment as the follow
 - The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must be a JSON object containing each of the three input URLs (`https://www.example.com`, `https://api.github.com`, `https://httpbin.org/status/200`) as a key, each mapping to the integer `200`.
 - The activities must be scheduled in parallel, not sequentially: all three `fetch_url` activity-task-scheduled events must appear in the workflow history within a small time window of each other (a few seconds).
 
-c:Tbff,# Safely Add a New Activity to a Running Workflow Using Patching
+a:Tbff,# Safely Add a New Activity to a Running Workflow Using Patching
 
 ## Background
 A TypeScript Temporal worker is already deployed for an order-processing service. The existing `OrderWorkflow(orderId)` runs `chargeCard` followed by `shipOrder`. The team wants to insert a new step `notifyCustomer` between the existing two steps, but workflow executions for the previous version may still be in flight and replaying. A naive code change would cause non-determinism errors. You must use Temporal's versioning-with-patching mechanism so that both old and new executions remain correct.
@@ -359,7 +286,7 @@ The project at `/home/user/myproject` is preconfigured to connect to a real Temp
 - The new branch MUST cause the `notifyCustomer` activity to append a line containing `notified:order-new-${ZEALT_RUN_ID}` to `/workspace/notify.log`.
 - The original branch MUST NOT produce a `notified:` line for `order-old-${ZEALT_RUN_ID}` (the old execution predates the patch).
 
-d:Tec3,# Temporal Query Handler Workflow (TypeScript)
+b:Tec3,# Temporal Query Handler Workflow (TypeScript)
 
 ## Background
 Temporal.io supports synchronous read-only **Query** handlers that let a client peek at a running Workflow's internal state without affecting its execution. In this task, you implement a `ProgressWorkflow` that iterates through a number of steps, calling an Activity for each step, and exposes its progress via a Query handler. A client script then mid-run queries the workflow to observe progress before awaiting the final result.
@@ -400,7 +327,7 @@ You must connect to **Temporal Cloud** using the API key configured via environm
 - The workflow must be registered on task queue `progress-ts`.
 - Read the value of `run-id` from the `ZEALT_RUN_ID` environment variable; the workflow id must be `progress-${ZEALT_RUN_ID}`.
 
-e:T1087,# Reminder Workflow with Durable Timer (Python)
+c:T1087,# Reminder Workflow with Durable Timer (Python)
 
 ## Background
 You are building a durable Reminder service using the Temporal.io **Python SDK**. The workflow should accept a message and a delay (in seconds), wait for that duration using a Temporal durable timer, and then invoke an Activity that delivers the notification by writing it to a log file.
@@ -444,7 +371,7 @@ Temporal Cloud credentials are already provided to the environment as the follow
 - When `bash run.sh` is executed, the workflow `ReminderWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting string returned from the activity must be printed to stdout.
 - The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the string `Notified: wake up`.
 
-f:T10ff,# Reminder Workflow with `workflow.sleep` (TypeScript)
+d:T10ff,# Reminder Workflow with `workflow.sleep` (TypeScript)
 
 ## Background
 You are building a durable **Reminder** application on top of Temporal Cloud using the Temporal.io TypeScript SDK. The workflow receives a message and a delay (in seconds), uses the deterministic `sleep` primitive inside the workflow to wait, and then invokes a `Notify` activity that records the reminder to a local log file and returns the reminder string.
@@ -485,7 +412,7 @@ Temporal Cloud credentials are already provided to the environment as the follow
 - When `npm start` is executed, the workflow `ReminderWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and its return value (the same `Notified: <message>` string produced by the `Notify` activity) must be printed to stdout.
 - The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the string returned by the `Notify` activity for the configured input.
 
-10:Td2b,# Temporal Python: Workflow with Fixed-Delay Retry Policy
+e:Td2b,# Temporal Python: Workflow with Fixed-Delay Retry Policy
 
 ## Background
 Temporal automatically retries failing Activities according to a configurable `RetryPolicy`. In this task you will build a small Temporal Python application that exercises a *fixed-delay* retry policy: every retry waits the same amount of time (no exponential backoff) and the Activity is retried a bounded number of times before the failure is surfaced to the Workflow code.
@@ -519,7 +446,7 @@ The Worker and Client must connect to **real Temporal Cloud** using the standard
 - Retry behavior: `maximum_attempts=5`, fixed `2s` delay between attempts (`initial_interval=2s`, `backoff_coefficient=1.0`).
 - After running your solution, `/workspace/attempts.log` must contain exactly 5 non-empty lines and the Workflow returns `"failed after 5 attempts"`.
 
-11:Tf06,# Temporal Retry Policy: Fixed-Interval Activity Retries
+f:Tf06,# Temporal Retry Policy: Fixed-Interval Activity Retries
 
 ## Background
 You are extending a Temporal TypeScript project that already wires up a connection to a real Temporal Cloud namespace using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. The skeleton provides a Worker and a Client script, but the Workflow and Activity implementations are missing. Your job is to configure a deliberately flaky Activity together with a custom Activity RetryPolicy so that the Workflow retries the Activity a fixed number of times with a fixed delay, observes the eventual failure, and converts it into a graceful workflow return value.
@@ -555,7 +482,7 @@ You are extending a Temporal TypeScript project that already wires up a connecti
 - After running `npm run client`, the log file `/home/user/myproject/output.log` must contain a line in the format: `Workflow result: failed after 5 attempts`.
 - The file `/workspace/attempts.log` must exist and contain exactly 5 lines (one per Activity attempt).
 
-12:Tc43,# Temporal Counter Workflow with Signals and Queries (Python SDK)
+10:Tc43,# Temporal Counter Workflow with Signals and Queries (Python SDK)
 
 ## Background
 Temporal Workflows can act like long-lived stateful services that receive messages from clients. **Signals** mutate workflow state asynchronously, and **Queries** read workflow state synchronously without affecting history. In this task, you will use the Temporal **Python SDK** with **Temporal Cloud** to build a counter workflow that accumulates values via Signals, exposes its state through a Query, and finishes when a `finish` Signal is received.
@@ -593,7 +520,7 @@ Temporal Workflows can act like long-lived stateful services that receive messag
 - The workflow execution must reach status `COMPLETED` on Temporal Cloud, with a numeric result of `6`.
 - The client must use the real Temporal Cloud connection (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Mocking the Temporal client or server is not allowed.
 
-13:T19b2,# Subscription Workflow with Signals & Queries (TypeScript)
+11:T19b2,# Subscription Workflow with Signals & Queries (TypeScript)
 
 ## Background
 You are building a **Subscription** service on top of Temporal Cloud using the Temporal.io TypeScript SDK. The workflow runs a recurring billing cycle and must accept external requests during the run: a user may **upgrade** their tier or **cancel** their subscription at any moment. The workflow also exposes its current state via a **query** so a client can inspect it without waiting for the workflow to finish.
@@ -653,7 +580,7 @@ The project must expose an `npm start` script that starts the Worker, runs the C
   - Exit with exit code `0`.
 - The workflow execution `sub-${ZEALT_RUN_ID}` must exist in Temporal Cloud with terminal status `COMPLETED`, and its result must be a JSON object with fields `billings`, `finalTier`, and `cancelled` such that `cancelled === true`, `finalTier === "premium"`, and `billings >= 1`.
 
-14:Td55,# Debug a Stuck Temporal Workflow (Task Queue Mismatch)
+12:Td55,# Debug a Stuck Temporal Workflow (Task Queue Mismatch)
 
 ## Background
 You are on call for a TypeScript Temporal project that connects to Temporal Cloud. A teammate left for the day and complained that a workflow they kick off with `npm run client` "just hangs forever". Running `npm run worker` and then `npm run client` produces a `Started workflow ...` line, but the workflow never completes — its server-side status stays in `Running` (with the workflow task scheduled but not started) indefinitely. Your job is to find the root cause, fix it with a minimal change, and prove that the workflow now runs to completion against the real Temporal Cloud namespace.
@@ -685,7 +612,7 @@ The project under `/home/user/myproject` already contains a working `PingWorkflo
 - The Workflow Execution must complete successfully with the string result `pong-temporal`.
 - After running `npm run client`, the log file `/home/user/myproject/output.log` must contain a line in the format: `Workflow result: pong-temporal`.
 
-15:T1101,# Graceful Workflow Cancellation with Shielded Cleanup (Temporal Python SDK)
+13:T1101,# Graceful Workflow Cancellation with Shielded Cleanup (Temporal Python SDK)
 
 ## Background
 Temporal Workflows can be canceled by clients. In Python, a cancellation is delivered to the workflow as an `asyncio.CancelledError` raised at the next `await` point. A well-written workflow can catch this exception, run any required cleanup (release locks, free resources, write audit logs), and then re-raise the error so the workflow is recorded as `CANCELED` on the server. Because cleanup work also runs inside the cancelled task, it must be **shielded** (e.g. with `asyncio.shield`) so the cancellation does not abort the cleanup itself. In this task you will implement this pattern end-to-end against **Temporal Cloud** using the **Python SDK**.
@@ -725,8 +652,8 @@ Temporal Workflows can be canceled by clients. In Python, a cancellation is deli
 - The workflow event history must include at least one `ActivityTaskScheduled` event for the activity type `release_resources`.
 - The client must use the real Temporal Cloud connection (`TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`). Mocking the Temporal client or server is not allowed.
 
-0:{"buildId":"S-D8CiMR7C3pZcRfhRP0N","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-background text-foreground font-sans selection:bg-primary/20","children":[["$","div",null,{"className":"fixed inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-40"}],["$","$2",null,{"fallback":["$","div",null,{"className":"container mx-auto py-8 text-center","children":"Loading tasks..."}],"children":["$","$L3",null,{"tasksData":[{"taskName":"activity_get_request_py","instruction":"$4","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"activity_get_request_py__hKs8Jd8","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":126.617,"latency_breakdown":{"env_setup":10.063,"agent_setup":25.623,"agent_exec":69.646,"verifier":2.103},"taskName":"activity_get_request_py","jobId":"hKs8Jd8","exec_duration":69.646}]},{"taskName":"continue_as_new_loop_py","instruction":"$5","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"continue_as_new_loop_py__hKkQnML","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":398.547,"latency_breakdown":{"env_setup":22.722,"agent_setup":39.866,"agent_exec":319.898,"verifier":2.734},"taskName":"continue_as_new_loop_py","jobId":"hKkQnML","exec_duration":319.898}]},{"taskName":"continue_as_new_loop_ts","instruction":"$6","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"continue_as_new_loop_ts__g6fHADd","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":219.731,"latency_breakdown":{"env_setup":22.557,"agent_setup":42.351,"agent_exec":112.156,"verifier":18.202},"taskName":"continue_as_new_loop_ts","jobId":"g6fHADd","exec_duration":112.156}]},{"taskName":"fix_nondeterministic_workflow_py","instruction":"$7","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"fix_nondeterministic_workflow_py__LZEMrup","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":184.874,"latency_breakdown":{"env_setup":5.621,"agent_setup":23.02,"agent_exec":126.68,"verifier":2.258},"taskName":"fix_nondeterministic_workflow_py","jobId":"LZEMrup","exec_duration":126.68}]},{"taskName":"fix_nondeterministic_workflow_ts","instruction":"$8","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"fix_nondeterministic_workflow_ts__RdTRcLF","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":420.467,"latency_breakdown":{"env_setup":4.407,"agent_setup":26.12,"agent_exec":367.461,"verifier":3.176},"taskName":"fix_nondeterministic_workflow_ts","jobId":"RdTRcLF","exec_duration":367.461}]},{"taskName":"hello_workflow_py","instruction":"$9","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"hello_workflow_py__UrqS4ML","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":161.822,"latency_breakdown":{"env_setup":7.814,"agent_setup":23.252,"agent_exec":112.689,"verifier":5.214},"taskName":"hello_workflow_py","jobId":"UrqS4ML","exec_duration":112.689}]},{"taskName":"hello_workflow_ts","instruction":"$a","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"hello_workflow_ts__HDYEsmE","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":520.267,"latency_breakdown":{"env_setup":22.192,"agent_setup":36.277,"agent_exec":417.88,"verifier":15.816},"taskName":"hello_workflow_ts","jobId":"HDYEsmE","exec_duration":417.88}]},{"taskName":"parallel_activities_workflow_py","instruction":"$b","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"parallel_activities_workflow_py__HVJLrhZ","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":152.653,"latency_breakdown":{"env_setup":22.179,"agent_setup":25.155,"agent_exec":82.602,"verifier":5.348},"taskName":"parallel_activities_workflow_py","jobId":"HVJLrhZ","exec_duration":82.602}]},{"taskName":"patch_versioning_ts","instruction":"$c","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"patch_versioning_ts__88VynbA","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":245.654,"latency_breakdown":{"env_setup":5.255,"agent_setup":22.516,"agent_exec":166.285,"verifier":33.025},"taskName":"patch_versioning_ts","jobId":"88VynbA","exec_duration":166.285}]},{"taskName":"query_handler_workflow_ts","instruction":"$d","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"query_handler_workflow_ts__Hq9Pajy","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":310.819,"latency_breakdown":{"env_setup":22.283,"agent_setup":37.454,"agent_exec":228.927,"verifier":1.688},"taskName":"query_handler_workflow_ts","jobId":"Hq9Pajy","exec_duration":228.927}]},{"taskName":"reminder_sleep_workflow_py","instruction":"$e","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"reminder_sleep_workflow_py__XvuoeB4","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":135.595,"latency_breakdown":{"env_setup":5.816,"agent_setup":22.193,"agent_exec":93.539,"verifier":1.35},"taskName":"reminder_sleep_workflow_py","jobId":"XvuoeB4","exec_duration":93.539}]},{"taskName":"reminder_sleep_workflow_ts","instruction":"$f","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"reminder_sleep_workflow_ts__6RWajH3","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":215.953,"latency_breakdown":{"env_setup":3.794,"agent_setup":20.621,"agent_exec":171.488,"verifier":2.075},"taskName":"reminder_sleep_workflow_ts","jobId":"6RWajH3","exec_duration":171.488}]},{"taskName":"retry_policy_fixed_py","instruction":"$10","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"retry_policy_fixed_py__h7A8YFi","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":170.518,"latency_breakdown":{"env_setup":4.686,"agent_setup":21.583,"agent_exec":128.534,"verifier":1.753},"taskName":"retry_policy_fixed_py","jobId":"h7A8YFi","exec_duration":128.534}]},{"taskName":"retry_policy_fixed_ts","instruction":"$11","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"retry_policy_fixed_ts__ramP73X","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":254.524,"latency_breakdown":{"env_setup":12.351,"agent_setup":20.758,"agent_exec":201.158,"verifier":2.023},"taskName":"retry_policy_fixed_ts","jobId":"ramP73X","exec_duration":201.158}]},{"taskName":"signal_increment_counter_py","instruction":"$12","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"signal_increment_counter_py__cRBGqey","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":212.981,"latency_breakdown":{"env_setup":15.452,"agent_setup":20.969,"agent_exec":161.15,"verifier":1.932},"taskName":"signal_increment_counter_py","jobId":"cRBGqey","exec_duration":161.15}]},{"taskName":"subscription_signal_workflow_ts","instruction":"$13","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"subscription_signal_workflow_ts__jJdvrVz","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":882.343,"latency_breakdown":{"env_setup":7.527,"agent_setup":24.85,"agent_exec":533.667,"verifier":301.115},"taskName":"subscription_signal_workflow_ts","jobId":"jJdvrVz","exec_duration":533.667}]},{"taskName":"task_queue_debug_ts","instruction":"$14","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"task_queue_debug_ts__cyaJeEZ","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":197.749,"latency_breakdown":{"env_setup":9.088,"agent_setup":22.237,"agent_exec":143.462,"verifier":2.195},"taskName":"task_queue_debug_ts","jobId":"cyaJeEZ","exec_duration":143.462}]},{"taskName":"workflow_cancellation_cleanup_py","instruction":"$15","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"workflow_cancellation_cleanup_py__beHJtRz","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":214.45,"latency_breakdown":{"env_setup":4.112,"agent_setup":22.337,"agent_exec":172.283,"verifier":2.085},"taskName":"workflow_cancellation_cleanup_py","jobId":"beHJtRz","exec_duration":172.283}]}]}]}]]}],["$L16","$L17"],"$L18"]}],"loading":null,"isPartial":false}
-16:["$","script","script-0",{"src":"/temporal-benchmark/_next/static/chunks/920e868464ee59b5.js","async":true}]
-17:["$","script","script-1",{"src":"/temporal-benchmark/_next/static/chunks/f9f579c42c486944.js","async":true}]
-18:["$","$L19",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@1a"}]}]
-1a:null
+0:{"buildId":"Nz3skXAX--aelkP_WOUBa","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"min-h-screen bg-background text-foreground font-sans selection:bg-primary/20","children":[["$","div",null,{"className":"fixed inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#2a2a2a_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-40"}],["$","$2",null,{"fallback":["$","div",null,{"className":"container mx-auto py-8 text-center","children":"Loading tasks..."}],"children":["$","$L3",null,{"tasksData":[{"taskName":"continue_as_new_loop_py","instruction":"$4","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"continue_as_new_loop_py__hKkQnML","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":398.547,"latency_breakdown":{"env_setup":22.722,"agent_setup":39.866,"agent_exec":319.898,"verifier":2.734},"taskName":"continue_as_new_loop_py","jobId":"hKkQnML","exec_duration":319.898}]},{"taskName":"continue_as_new_loop_ts","instruction":"$5","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"continue_as_new_loop_ts__g6fHADd","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":219.731,"latency_breakdown":{"env_setup":22.557,"agent_setup":42.351,"agent_exec":112.156,"verifier":18.202},"taskName":"continue_as_new_loop_ts","jobId":"g6fHADd","exec_duration":112.156}]},{"taskName":"fix_nondeterministic_workflow_py","instruction":"$6","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"fix_nondeterministic_workflow_py__LZEMrup","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":184.874,"latency_breakdown":{"env_setup":5.621,"agent_setup":23.02,"agent_exec":126.68,"verifier":2.258},"taskName":"fix_nondeterministic_workflow_py","jobId":"LZEMrup","exec_duration":126.68}]},{"taskName":"fix_nondeterministic_workflow_ts","instruction":"$7","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"fix_nondeterministic_workflow_ts__RdTRcLF","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":420.467,"latency_breakdown":{"env_setup":4.407,"agent_setup":26.12,"agent_exec":367.461,"verifier":3.176},"taskName":"fix_nondeterministic_workflow_ts","jobId":"RdTRcLF","exec_duration":367.461}]},{"taskName":"hello_workflow_ts","instruction":"$8","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"hello_workflow_ts__HDYEsmE","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":520.267,"latency_breakdown":{"env_setup":22.192,"agent_setup":36.277,"agent_exec":417.88,"verifier":15.816},"taskName":"hello_workflow_ts","jobId":"HDYEsmE","exec_duration":417.88}]},{"taskName":"parallel_activities_workflow_py","instruction":"$9","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"parallel_activities_workflow_py__HVJLrhZ","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":152.653,"latency_breakdown":{"env_setup":22.179,"agent_setup":25.155,"agent_exec":82.602,"verifier":5.348},"taskName":"parallel_activities_workflow_py","jobId":"HVJLrhZ","exec_duration":82.602}]},{"taskName":"patch_versioning_ts","instruction":"$a","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"patch_versioning_ts__88VynbA","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":245.654,"latency_breakdown":{"env_setup":5.255,"agent_setup":22.516,"agent_exec":166.285,"verifier":33.025},"taskName":"patch_versioning_ts","jobId":"88VynbA","exec_duration":166.285}]},{"taskName":"query_handler_workflow_ts","instruction":"$b","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"query_handler_workflow_ts__Hq9Pajy","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":310.819,"latency_breakdown":{"env_setup":22.283,"agent_setup":37.454,"agent_exec":228.927,"verifier":1.688},"taskName":"query_handler_workflow_ts","jobId":"Hq9Pajy","exec_duration":228.927}]},{"taskName":"reminder_sleep_workflow_py","instruction":"$c","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"reminder_sleep_workflow_py__XvuoeB4","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":135.595,"latency_breakdown":{"env_setup":5.816,"agent_setup":22.193,"agent_exec":93.539,"verifier":1.35},"taskName":"reminder_sleep_workflow_py","jobId":"XvuoeB4","exec_duration":93.539}]},{"taskName":"reminder_sleep_workflow_ts","instruction":"$d","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"reminder_sleep_workflow_ts__6RWajH3","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":215.953,"latency_breakdown":{"env_setup":3.794,"agent_setup":20.621,"agent_exec":171.488,"verifier":2.075},"taskName":"reminder_sleep_workflow_ts","jobId":"6RWajH3","exec_duration":171.488}]},{"taskName":"retry_policy_fixed_py","instruction":"$e","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"retry_policy_fixed_py__h7A8YFi","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":170.518,"latency_breakdown":{"env_setup":4.686,"agent_setup":21.583,"agent_exec":128.534,"verifier":1.753},"taskName":"retry_policy_fixed_py","jobId":"h7A8YFi","exec_duration":128.534}]},{"taskName":"retry_policy_fixed_ts","instruction":"$f","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"retry_policy_fixed_ts__ramP73X","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":254.524,"latency_breakdown":{"env_setup":12.351,"agent_setup":20.758,"agent_exec":201.158,"verifier":2.023},"taskName":"retry_policy_fixed_ts","jobId":"ramP73X","exec_duration":201.158}]},{"taskName":"signal_increment_counter_py","instruction":"$10","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"signal_increment_counter_py__cRBGqey","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":212.981,"latency_breakdown":{"env_setup":15.452,"agent_setup":20.969,"agent_exec":161.15,"verifier":1.932},"taskName":"signal_increment_counter_py","jobId":"cRBGqey","exec_duration":161.15}]},{"taskName":"subscription_signal_workflow_ts","instruction":"$11","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"subscription_signal_workflow_ts__jJdvrVz","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":false,"reward":0,"error":false,"latency_sec":882.343,"latency_breakdown":{"env_setup":7.527,"agent_setup":24.85,"agent_exec":533.667,"verifier":301.115},"taskName":"subscription_signal_workflow_ts","jobId":"jJdvrVz","exec_duration":533.667}]},{"taskName":"task_queue_debug_ts","instruction":"$12","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"task_queue_debug_ts__cyaJeEZ","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":197.749,"latency_breakdown":{"env_setup":9.088,"agent_setup":22.237,"agent_exec":143.462,"verifier":2.195},"taskName":"task_queue_debug_ts","jobId":"cyaJeEZ","exec_duration":143.462}]},{"taskName":"workflow_cancellation_cleanup_py","instruction":"$13","trials":[{"job_name":"2026-05-23__15-22-33","trial_name":"workflow_cancellation_cleanup_py__beHJtRz","model":"gemini-3-flash","rawModel":"google/gemini-3-flash","agent":"Pochi","passed":true,"reward":1,"error":false,"latency_sec":214.45,"latency_breakdown":{"env_setup":4.112,"agent_setup":22.337,"agent_exec":172.283,"verifier":2.085},"taskName":"workflow_cancellation_cleanup_py","jobId":"beHJtRz","exec_duration":172.283}]}]}]}]]}],["$L14","$L15"],"$L16"]}],"loading":null,"isPartial":false}
+14:["$","script","script-0",{"src":"/temporal-benchmark/_next/static/chunks/920e868464ee59b5.js","async":true}]
+15:["$","script","script-1",{"src":"/temporal-benchmark/_next/static/chunks/f9f579c42c486944.js","async":true}]
+16:["$","$L17",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@18"}]}]
+18:null
