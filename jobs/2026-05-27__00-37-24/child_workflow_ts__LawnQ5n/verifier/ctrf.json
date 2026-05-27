@@ -1,0 +1,55 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 0,
+            "failed": 3,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779814158230,
+            "stop": 1779814458737
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_npm_start_succeeds",
+                "status": "failed",
+                "duration": 300184,
+                "start": 1779814158459,
+                "stop": 1779814458643,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "@pytest.fixture(scope=\"module\")\n    def npm_start_output() -> subprocess.CompletedProcess:\n        \"\"\"Run `npm start` once and reuse its output across tests.\"\"\"\n        env = os.environ.copy()\n>       result = subprocess.run(\n            [\"npm\", \"start\"],\n            cwd=PROJECT_DIR,\n            capture_output=True,\n            text=True,\n            env=env,\n            timeout=300,\n        )\n\ntests/test_final_state.py:25: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/lib/python3.12/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\nusr/lib/python3.12/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\nusr/lib/python3.12/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: 0 args: ['npm', 'start']>, endtime = 91622.054989003\norig_timeout = 300\nstdout_seq = [b'\\n> myproject@1.0.0 start\\n> ./run.sh\\n\\n', b'Worker started on task queue: child-workflow-ts\\n', b'12\\n']\nstderr_seq = [b\"2026-05-26T16:49:22.478Z [INFO] asset workflow-bundle-f6a9177ea0e1bd0d74b9.js 1.37 MiB [emitted] [immutable] (name:...o Nexus services registered, not polling for Nexus tasks { sdkComponent: 'worker', taskQueue: 'child-workflow-ts' }\\n\"]\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['npm', 'start']' timed out after 300 seconds\n\nusr/lib/python3.12/subprocess.py:1253: TimeoutExpired"
+            },
+            {
+                "name": "test_final_state.py::test_npm_start_prints_expected_result",
+                "status": "failed",
+                "duration": 46,
+                "start": 1779814458643,
+                "stop": 1779814458689,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "@pytest.fixture(scope=\"module\")\n    def npm_start_output() -> subprocess.CompletedProcess:\n        \"\"\"Run `npm start` once and reuse its output across tests.\"\"\"\n        env = os.environ.copy()\n>       result = subprocess.run(\n            [\"npm\", \"start\"],\n            cwd=PROJECT_DIR,\n            capture_output=True,\n            text=True,\n            env=env,\n            timeout=300,\n        )\n\ntests/test_final_state.py:25: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/lib/python3.12/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\nusr/lib/python3.12/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\nusr/lib/python3.12/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: 0 args: ['npm', 'start']>, endtime = 91622.054989003\norig_timeout = 300\nstdout_seq = [b'\\n> myproject@1.0.0 start\\n> ./run.sh\\n\\n', b'Worker started on task queue: child-workflow-ts\\n', b'12\\n']\nstderr_seq = [b\"2026-05-26T16:49:22.478Z [INFO] asset workflow-bundle-f6a9177ea0e1bd0d74b9.js 1.37 MiB [emitted] [immutable] (name:...o Nexus services registered, not polling for Nexus tasks { sdkComponent: 'worker', taskQueue: 'child-workflow-ts' }\\n\"]\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['npm', 'start']' timed out after 300 seconds\n\nusr/lib/python3.12/subprocess.py:1253: TimeoutExpired"
+            },
+            {
+                "name": "test_final_state.py::test_workflows_completed_in_temporal_cloud",
+                "status": "failed",
+                "duration": 47,
+                "start": 1779814458690,
+                "stop": 1779814458737,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "@pytest.fixture(scope=\"module\")\n    def npm_start_output() -> subprocess.CompletedProcess:\n        \"\"\"Run `npm start` once and reuse its output across tests.\"\"\"\n        env = os.environ.copy()\n>       result = subprocess.run(\n            [\"npm\", \"start\"],\n            cwd=PROJECT_DIR,\n            capture_output=True,\n            text=True,\n            env=env,\n            timeout=300,\n        )\n\ntests/test_final_state.py:25: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/lib/python3.12/subprocess.py:550: in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\nusr/lib/python3.12/subprocess.py:1209: in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\nusr/lib/python3.12/subprocess.py:2116: in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <Popen: returncode: 0 args: ['npm', 'start']>, endtime = 91622.054989003\norig_timeout = 300\nstdout_seq = [b'\\n> myproject@1.0.0 start\\n> ./run.sh\\n\\n', b'Worker started on task queue: child-workflow-ts\\n', b'12\\n']\nstderr_seq = [b\"2026-05-26T16:49:22.478Z [INFO] asset workflow-bundle-f6a9177ea0e1bd0d74b9.js 1.37 MiB [emitted] [immutable] (name:...o Nexus services registered, not polling for Nexus tasks { sdkComponent: 'worker', taskQueue: 'child-workflow-ts' }\\n\"]\nskip_check_and_raise = False\n\n    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,\n                       skip_check_and_raise=False):\n        \"\"\"Convenience for checking if a timeout has expired.\"\"\"\n        if endtime is None:\n            return\n        if skip_check_and_raise or _time() > endtime:\n>           raise TimeoutExpired(\n                    self.args, orig_timeout,\n                    output=b''.join(stdout_seq) if stdout_seq else None,\n                    stderr=b''.join(stderr_seq) if stderr_seq else None)\nE           subprocess.TimeoutExpired: Command '['npm', 'start']' timed out after 300 seconds\n\nusr/lib/python3.12/subprocess.py:1253: TimeoutExpired"
+            }
+        ]
+    }
+}

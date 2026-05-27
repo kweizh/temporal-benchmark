@@ -1,0 +1,82 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py F.F                                            [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_npm_start_succeeds ____________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> npm run build && ts-node sr...es/cjs/loader:255:19) {\n  diagnosticCodes: [\n    2591, 2591, 2591,\n    7006, 2591, 7006,\n    2591, 2591\n  ]\n}\n")
+
+    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit successfully. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit successfully. stdout=
+E         
+E         > myproject@1.0.0 start
+E         > npm run build && ts-node src/start.ts
+E         
+E         
+E         > myproject@1.0.0 build
+E         > tsc
+E         
+E         
+E         stderr=
+E         /home/user/myproject/node_modules/ts-node/src/index.ts:859
+E             return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+E                    ^
+E         TSError: ⨯ Unable to compile TypeScript:
+E         src/start.ts(1,23): error TS2591: Cannot find name 'child_process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/start.ts(6,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/start.ts(14,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/start.ts(17,22): error TS7006: Parameter 'code' implicitly has an 'any' type.
+E         src/start.ts(19,5): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/start.ts(22,23): error TS7006: Parameter 'err' implicitly has an 'any' type.
+E         src/start.ts(25,5): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/start.ts(31,3): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         
+E             at createTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:859:12)
+E             at reportTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:863:19)
+E             at getOutput (/home/user/myproject/node_modules/ts-node/src/index.ts:1077:36)
+E             at Object.compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1433:41)
+E             at Module.m._compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1617:30)
+E             at node:internal/modules/cjs/loader:1961:10
+E             at Object.require.extensions.<computed> [as .ts] (/home/user/myproject/node_modules/ts-node/src/index.ts:1621:12)
+E             at Module.load (node:internal/modules/cjs/loader:1553:32)
+E             at Module._load (node:internal/modules/cjs/loader:1355:12)
+E             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+E           diagnosticCodes: [
+E             2591, 2591, 2591,
+E             7006, 2591, 7006,
+E             2591, 2591
+E           ]
+E         }
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> npm run build && ts-node sr...es/cjs/loader:255:19) {\n  diagnosticCodes: [\n    2591, 2591, 2591,\n    7006, 2591, 7006,\n    2591, 2591\n  ]\n}\n").returncode
+
+tests/test_final_state.py:37: AssertionError
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> npm run build && ts-node sr...es/cjs/loader:255:19) {\n  diagnosticCodes: [\n    2591, 2591, 2591,\n    7006, 2591, 7006,\n    2591, 2591\n  ]\n}\n")
+
+    def test_workflow_completed_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> npm run build && ts-node sr...es/cjs/loader:255:19) {\n  diagnosticCodes: [\n    2591, 2591, 2591,\n    7006, 2591, 7006,\n    2591, 2591\n  ]\n}\n").returncode
+
+tests/test_final_state.py:108: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_npm_start_prints_final_counter
+FAILED tests/test_final_state.py::test_npm_start_succeeds - AssertionError: `...
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+========================= 2 failed, 1 passed in 4.38s ==========================

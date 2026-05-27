@@ -1,0 +1,132 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_npm_start_exits_cleanly _________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...les/cjs/loader:255:19) {\n  diagnosticCodes: [\n    1295, 1295,\n    2305, 1295,\n    1295, 1295,\n    1295\n  ]\n}\n')
+
+    def test_npm_start_exits_cleanly(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit with status 0 even though the workflow was "
+            "expected to end as CANCELED. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit with status 0 even though the workflow was expected to end as CANCELED. stdout=
+E         
+E         > myproject@1.0.0 start
+E         > ts-node src/index.ts
+E         
+E         
+E         stderr=
+E         /home/user/myproject/node_modules/ts-node/src/index.ts:859
+E             return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+E                    ^
+E         TSError: ⨯ Unable to compile TypeScript:
+E         src/index.ts(1,10): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(1,22): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(1,30): error TS2305: Module '"@temporalio/client"' has no exported member 'isCancellation'.
+E         src/index.ts(2,10): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(2,28): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(3,13): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(4,13): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         
+E             at createTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:859:12)
+E             at reportTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:863:19)
+E             at getOutput (/home/user/myproject/node_modules/ts-node/src/index.ts:1077:36)
+E             at Object.compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1433:41)
+E             at Module.m._compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1617:30)
+E             at node:internal/modules/cjs/loader:1961:10
+E             at Object.require.extensions.<computed> [as .ts] (/home/user/myproject/node_modules/ts-node/src/index.ts:1621:12)
+E             at Module.load (node:internal/modules/cjs/loader:1553:32)
+E             at Module._load (node:internal/modules/cjs/loader:1355:12)
+E             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+E           diagnosticCodes: [
+E             1295, 1295,
+E             2305, 1295,
+E             1295, 1295,
+E             1295
+E           ]
+E         }
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...les/cjs/loader:255:19) {\n  diagnosticCodes: [\n    1295, 1295,\n    2305, 1295,\n    1295, 1295,\n    1295\n  ]\n}\n').returncode
+
+tests/test_final_state.py:37: AssertionError
+_________________ test_npm_start_prints_cleanup_done_observed __________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...les/cjs/loader:255:19) {\n  diagnosticCodes: [\n    1295, 1295,\n    2305, 1295,\n    1295, 1295,\n    1295\n  ]\n}\n')
+
+    def test_npm_start_prints_cleanup_done_observed(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+        combined = (npm_start_output.stdout or "") + (npm_start_output.stderr or "")
+>       assert EXPECTED_LOG in combined, (
+            f"Expected combined output of `npm start` to contain '{EXPECTED_LOG}', "
+            f"got stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: Expected combined output of `npm start` to contain 'cleanup-done observed', got stdout=
+E         
+E         > myproject@1.0.0 start
+E         > ts-node src/index.ts
+E         
+E         
+E         stderr=
+E         /home/user/myproject/node_modules/ts-node/src/index.ts:859
+E             return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+E                    ^
+E         TSError: ⨯ Unable to compile TypeScript:
+E         src/index.ts(1,10): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(1,22): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(1,30): error TS2305: Module '"@temporalio/client"' has no exported member 'isCancellation'.
+E         src/index.ts(2,10): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(2,28): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(3,13): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         src/index.ts(4,13): error TS1295: ECMAScript imports and exports cannot be written in a CommonJS file under 'verbatimModuleSyntax'. Adjust the 'type' field in the nearest 'package.json' to make this file an ECMAScript module, or adjust your 'verbatimModuleSyntax', 'module', and 'moduleResolution' settings in TypeScript.
+E         
+E             at createTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:859:12)
+E             at reportTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:863:19)
+E             at getOutput (/home/user/myproject/node_modules/ts-node/src/index.ts:1077:36)
+E             at Object.compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1433:41)
+E             at Module.m._compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1617:30)
+E             at node:internal/modules/cjs/loader:1961:10
+E             at Object.require.extensions.<computed> [as .ts] (/home/user/myproject/node_modules/ts-node/src/index.ts:1621:12)
+E             at Module.load (node:internal/modules/cjs/loader:1553:32)
+E             at Module._load (node:internal/modules/cjs/loader:1355:12)
+E             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+E           diagnosticCodes: [
+E             1295, 1295,
+E             2305, 1295,
+E             1295, 1295,
+E             1295
+E           ]
+E         }
+E         
+E       assert 'cleanup-done observed' in '\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n/home/user/myproject/node_modules/ts-node/src/index.ts:859\n    ...ules/cjs/loader:255:19) {\n  diagnosticCodes: [\n    1295, 1295,\n    2305, 1295,\n    1295, 1295,\n    1295\n  ]\n}\n'
+
+tests/test_final_state.py:48: AssertionError
+____________ test_workflow_canceled_and_cleanup_completed_in_cloud _____________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...les/cjs/loader:255:19) {\n  diagnosticCodes: [\n    1295, 1295,\n    2305, 1295,\n    1295, 1295,\n    1295\n  ]\n}\n')
+
+    def test_workflow_canceled_and_cleanup_completed_in_cloud(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...les/cjs/loader:255:19) {\n  diagnosticCodes: [\n    1295, 1295,\n    2305, 1295,\n    1295, 1295,\n    1295\n  ]\n}\n').returncode
+
+tests/test_final_state.py:136: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_npm_start_exits_cleanly - AssertionErr...
+FAILED tests/test_final_state.py::test_npm_start_prints_cleanup_done_observed
+FAILED tests/test_final_state.py::test_workflow_canceled_and_cleanup_completed_in_cloud
+============================== 3 failed in 3.20s ===============================

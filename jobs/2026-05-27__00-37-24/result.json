@@ -1,0 +1,57 @@
+{
+    "id": "d584177d-7982-4165-9196-989d05d9d79c",
+    "started_at": "2026-05-27T00:37:26.666923",
+    "updated_at": "2026-05-27T00:54:38.547337",
+    "finished_at": "2026-05-27T00:54:38.547337",
+    "n_total_trials": 14,
+    "stats": {
+        "n_completed_trials": 14,
+        "n_errored_trials": 1,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "pochi__gemini-3-flash__tasks2": {
+                "n_trials": 13,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.35714285714285715
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "continue_as_new_loop_ts__sPv4zFh",
+                            "parallel_activities_workflow_py__dWLZZnH",
+                            "hello_workflow_py__LiLSsew",
+                            "activity_get_request_py__Y4zJufC",
+                            "workflow_update_handler_ts__v8ZtRKL"
+                        ],
+                        "0.0": [
+                            "money_transfer_saga_py__JcvKYMs",
+                            "money_transfer_saga_ts__TukrZBJ",
+                            "activity_get_request_ts__gV3PGBh",
+                            "query_handler_workflow_py__g9CKD64",
+                            "signal_increment_counter_ts__CqqAGYn",
+                            "workflow_cancellation_cleanup_ts__J8qo7FA",
+                            "parallel_activities_workflow_ts__YtpVeeJ",
+                            "child_workflow_ts__LawnQ5n"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "NonZeroAgentExitCodeError": [
+                        "heartbeat_activity_py__QSTaXYw"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": 0,
+        "n_cache_tokens": 0,
+        "n_output_tokens": 276162,
+        "cost_usd": null
+    }
+}
