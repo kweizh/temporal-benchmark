@@ -1,0 +1,76 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_npm_start_exits_cleanly _________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-cancel-cleanup-ts@1.0.0 start\n> ts-node ./src/start.ts\n\n', stderr='sh: 1: ts-node: not found\n')
+
+    def test_npm_start_exits_cleanly(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit with status 0 even though the workflow was "
+            "expected to end as CANCELED. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit with status 0 even though the workflow was expected to end as CANCELED. stdout=
+E         
+E         > temporal-cancel-cleanup-ts@1.0.0 start
+E         > ts-node ./src/start.ts
+E         
+E         
+E         stderr=
+E         sh: 1: ts-node: not found
+E         
+E       assert 127 == 0
+E        +  where 127 = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-cancel-cleanup-ts@1.0.0 start\n> ts-node ./src/start.ts\n\n', stderr='sh: 1: ts-node: not found\n').returncode
+
+tests/test_final_state.py:37: AssertionError
+_________________ test_npm_start_prints_cleanup_done_observed __________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-cancel-cleanup-ts@1.0.0 start\n> ts-node ./src/start.ts\n\n', stderr='sh: 1: ts-node: not found\n')
+
+    def test_npm_start_prints_cleanup_done_observed(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+        combined = (npm_start_output.stdout or "") + (npm_start_output.stderr or "")
+>       assert EXPECTED_LOG in combined, (
+            f"Expected combined output of `npm start` to contain '{EXPECTED_LOG}', "
+            f"got stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: Expected combined output of `npm start` to contain 'cleanup-done observed', got stdout=
+E         
+E         > temporal-cancel-cleanup-ts@1.0.0 start
+E         > ts-node ./src/start.ts
+E         
+E         
+E         stderr=
+E         sh: 1: ts-node: not found
+E         
+E       assert 'cleanup-done observed' in '\n> temporal-cancel-cleanup-ts@1.0.0 start\n> ts-node ./src/start.ts\n\nsh: 1: ts-node: not found\n'
+
+tests/test_final_state.py:48: AssertionError
+____________ test_workflow_canceled_and_cleanup_completed_in_cloud _____________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-cancel-cleanup-ts@1.0.0 start\n> ts-node ./src/start.ts\n\n', stderr='sh: 1: ts-node: not found\n')
+
+    def test_workflow_canceled_and_cleanup_completed_in_cloud(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 127 == 0
+E        +  where 127 = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-cancel-cleanup-ts@1.0.0 start\n> ts-node ./src/start.ts\n\n', stderr='sh: 1: ts-node: not found\n').returncode
+
+tests/test_final_state.py:136: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_npm_start_exits_cleanly - AssertionErr...
+FAILED tests/test_final_state.py::test_npm_start_prints_cleanup_done_observed
+FAILED tests/test_final_state.py::test_workflow_canceled_and_cleanup_completed_in_cloud
+============================== 3 failed in 0.71s ===============================

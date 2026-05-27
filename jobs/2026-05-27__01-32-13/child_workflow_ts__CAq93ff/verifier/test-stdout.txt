@@ -1,0 +1,71 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py F.F                                            [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_npm_start_succeeds ____________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> child-workflow-ts@1.0.0 start\n> node scripts/start.... https://github.com/npm/cli/releases/tag/v11.15.0\nnpm notice To update run: npm install -g npm@11.15.0\nnpm notice\n')
+
+    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit successfully. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit successfully. stdout=
+E         
+E         > child-workflow-ts@1.0.0 start
+E         > node scripts/start.js
+E         
+E         
+E         > child-workflow-ts@1.0.0 worker
+E         > ts-node src/worker.ts
+E         
+E         
+E         > child-workflow-ts@1.0.0 client
+E         > ts-node src/client.ts
+E         
+E         
+E         stderr=
+E         sh: 1: ts-node: not found
+E         sh: 1: ts-node: not found
+E         Error: Client exited with code 127
+E             at ChildProcess.<anonymous> (/home/user/myproject/scripts/start.js:29:16)
+E             at ChildProcess.emit (node:events:509:28)
+E             at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+E         npm notice
+E         npm notice New minor version of npm available! 11.12.1 -> 11.15.0
+E         npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.15.0
+E         npm notice To update run: npm install -g npm@11.15.0
+E         npm notice
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> child-workflow-ts@1.0.0 start\n> node scripts/start.... https://github.com/npm/cli/releases/tag/v11.15.0\nnpm notice To update run: npm install -g npm@11.15.0\nnpm notice\n').returncode
+
+tests/test_final_state.py:37: AssertionError
+__________________ test_workflows_completed_in_temporal_cloud __________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> child-workflow-ts@1.0.0 start\n> node scripts/start.... https://github.com/npm/cli/releases/tag/v11.15.0\nnpm notice To update run: npm install -g npm@11.15.0\nnpm notice\n')
+
+    def test_workflows_completed_in_temporal_cloud(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+        # Ensure the agent's start command actually ran before querying.
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> child-workflow-ts@1.0.0 start\n> node scripts/start.... https://github.com/npm/cli/releases/tag/v11.15.0\nnpm notice To update run: npm install -g npm@11.15.0\nnpm notice\n').returncode
+
+tests/test_final_state.py:127: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_npm_start_prints_expected_result
+FAILED tests/test_final_state.py::test_npm_start_succeeds - AssertionError: `...
+FAILED tests/test_final_state.py::test_workflows_completed_in_temporal_cloud
+========================= 2 failed, 1 passed in 2.87s ==========================

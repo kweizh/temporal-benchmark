@@ -1,0 +1,61 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 0,
+            "failed": 3,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779816871651,
+            "stop": 1779816874297
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_progress_json_exists_and_is_partial",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 12,
+                "start": 1779816871671,
+                "stop": 1779816871683,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_progress_json_exists_and_is_partial():\n>       assert os.path.isfile(PROGRESS_JSON), (\n            f\"Expected mid-run query output at {PROGRESS_JSON}, but it does not exist.\"\n        )\nE       AssertionError: Expected mid-run query output at /workspace/progress.json, but it does not exist.\nE       assert False\nE        +  where False = <function isfile at 0x7d34a829c220>('/workspace/progress.json')\nE        +    where <function isfile at 0x7d34a829c220> = <module 'posixpath' (frozen)>.isfile\nE        +      where <module 'posixpath' (frozen)> = os.path\n\ntests/test_final_state.py:20: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_progress_log_has_exactly_five_lines",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779816871683,
+                "stop": 1779816871686,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_progress_log_has_exactly_five_lines():\n>       assert os.path.isfile(PROGRESS_LOG), (\n            f\"Expected activity log at {PROGRESS_LOG}, but it does not exist.\"\n        )\nE       AssertionError: Expected activity log at /workspace/progress.log, but it does not exist.\nE       assert False\nE        +  where False = <function isfile at 0x7d34a829c220>('/workspace/progress.log')\nE        +    where <function isfile at 0x7d34a829c220> = <module 'posixpath' (frozen)>.isfile\nE        +      where <module 'posixpath' (frozen)> = os.path\n\ntests/test_final_state.py:47: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_on_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 2611,
+                "start": 1779816871686,
+                "stop": 1779816874297,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_workflow_completed_on_temporal_cloud():\n        run_id = _run_id()\n        workflow_id = f\"progress-{run_id}\"\n    \n        for var in (\"TEMPORAL_API_KEY\", \"TEMPORAL_ADDRESS\", \"TEMPORAL_NAMESPACE\"):\n            assert os.environ.get(var), f\"Required Temporal env var {var} is missing.\"\n    \n        verifier_script = r\"\"\"\n    const { Connection, Client } = require('@temporalio/client');\n    \n    async function main() {\n      const workflowId = process.env.VERIFY_WORKFLOW_ID;\n      if (!workflowId) {\n        throw new Error('VERIFY_WORKFLOW_ID is not set');\n      }\n      const connection = await Connection.connect({\n        address: process.env.TEMPORAL_ADDRESS,\n        tls: true,\n        apiKey: process.env.TEMPORAL_API_KEY,\n        metadata: { 'temporal-namespace': process.env.TEMPORAL_NAMESPACE },\n      });\n      const client = new Client({\n        connection,\n        namespace: process.env.TEMPORAL_NAMESPACE,\n      });\n      const handle = client.workflow.getHandle(workflowId);\n      const desc = await handle.describe();\n      const result = await handle.result();\n      const payload = {\n        status: desc.status && desc.status.name ? desc.status.name : String(desc.status),\n        taskQueue: desc.taskQueue,\n        result: result,\n      };\n      process.stdout.write(JSON.stringify(payload));\n      await connection.close();\n    }\n    \n    main().catch((err) => {\n      process.stderr.write(String(err && err.stack ? err.stack : err));\n      process.exit(1);\n    });\n    \"\"\"\n    \n        env = os.environ.copy()\n        env[\"VERIFY_WORKFLOW_ID\"] = workflow_id\n    \n        project_dir = \"/home/user/myproject\"\n        proc = subprocess.run(\n            [\"node\", \"-e\", verifier_script],\n            cwd=project_dir,\n            env=env,\n            capture_output=True,\n            text=True,\n            timeout=120,\n        )\n>       assert proc.returncode == 0, (\n            f\"Temporal Cloud verifier script failed (rc={proc.returncode}).\\n\"\n            f\"STDOUT: {proc.stdout}\\nSTDERR: {proc.stderr}\"\n        )\nE       AssertionError: Temporal Cloud verifier script failed (rc=1).\nE         STDOUT: \nE         STDERR: WorkflowNotFoundError: workflow not found for ID: progress-zr-qk4lylg\nE             at WorkflowClient.rethrowGrpcError (/home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:395:23)\nE             at WorkflowClient._describeWorkflowHandler (/home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:814:18)\nE             at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\nE             at async Object.describe (/home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:867:29)\nE             at async main ([eval]:20:16)\nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['node', '-e', \"\\nconst { Connection, Client } = require('@temporalio/client');\\n\\nasync functio.../home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:867:29)\\n    at async main ([eval]:20:16)').returncode\n\ntests/test_final_state.py:117: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

@@ -1,0 +1,73 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 4,
+            "passed": 0,
+            "failed": 4,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779816965537,
+            "stop": 1779816966168
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_run_sh_succeeds",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 392,
+                "start": 1779816965766,
+                "stop": 1779816966158,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\\n\\n\u00d7 ...r Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n')\n\n    def test_run_sh_succeeds(run_sh_output: subprocess.CompletedProcess):\n>       assert run_sh_output.returncode == 0, (\n            \"`bash run.sh` did not exit successfully. \"\n            f\"stdout=\\n{run_sh_output.stdout}\\nstderr=\\n{run_sh_output.stderr}\"\n        )\nE       AssertionError: `bash run.sh` did not exit successfully. stdout=\nE         \nE         stderr=\nE         error: externally-managed-environment\nE         \nE         \u00d7 This environment is externally managed\nE         \u2570\u2500> To install Python packages system-wide, try apt install\nE             python3-xyz, where xyz is the package you are trying to\nE             install.\nE             \nE             If you wish to install a non-Debian-packaged Python package,\nE             create a virtual environment using python3 -m venv path/to/venv.\nE             Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make\nE             sure you have python3-full installed.\nE             \nE             If you wish to install a non-Debian packaged Python application,\nE             it may be easiest to use pipx install xyz, which will manage a\nE             virtual environment for you. Make sure you have pipx installed.\nE             \nE             See /usr/share/doc/python3.12/README.venv for more information.\nE         \nE         note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.\nE         hint: See PEP 668 for the detailed specification.\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\\n\\n\u00d7 ...r Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n').returncode\n\ntests/test_final_state.py:40: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_run_sh_prints_expected_result",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779816966158,
+                "stop": 1779816966161,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\\n\\n\u00d7 ...r Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n')\n\n    def test_run_sh_prints_expected_result(run_sh_output: subprocess.CompletedProcess):\n        combined = (run_sh_output.stdout or \"\") + (run_sh_output.stderr or \"\")\n>       assert EXPECTED_RESULT in combined, (\n            f\"Expected combined output of `bash run.sh` to contain '{EXPECTED_RESULT}', \"\n            f\"got stdout=\\n{run_sh_output.stdout}\\nstderr=\\n{run_sh_output.stderr}\"\n        )\nE       AssertionError: Expected combined output of `bash run.sh` to contain 'Notified: wake up', got stdout=\nE         \nE         stderr=\nE         error: externally-managed-environment\nE         \nE         \u00d7 This environment is externally managed\nE         \u2570\u2500> To install Python packages system-wide, try apt install\nE             python3-xyz, where xyz is the package you are trying to\nE             install.\nE             \nE             If you wish to install a non-Debian-packaged Python package,\nE             create a virtual environment using python3 -m venv path/to/venv.\nE             Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make\nE             sure you have python3-full installed.\nE             \nE             If you wish to install a non-Debian packaged Python application,\nE             it may be easiest to use pipx install xyz, which will manage a\nE             virtual environment for you. Make sure you have pipx installed.\nE             \nE             See /usr/share/doc/python3.12/README.venv for more information.\nE         \nE         note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.\nE         hint: See PEP 668 for the detailed specification.\nE         \nE       assert 'Notified: wake up' in 'error: externally-managed-environment\\n\\n\u00d7 This environment is externally managed\\n\u2570\u2500> To install Python packages sys...ur Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n'\n\ntests/test_final_state.py:48: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_reminder_log_file_contains_notification",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779816966161,
+                "stop": 1779816966164,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\\n\\n\u00d7 ...r Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n')\n\n    def test_reminder_log_file_contains_notification(run_sh_output: subprocess.CompletedProcess):\n>       assert run_sh_output.returncode == 0, (\n            \"Skipping log file check because `bash run.sh` did not exit cleanly.\"\n        )\nE       AssertionError: Skipping log file check because `bash run.sh` did not exit cleanly.\nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\\n\\n\u00d7 ...r Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n').returncode\n\ntests/test_final_state.py:55: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 2,
+                "start": 1779816966165,
+                "stop": 1779816966167,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\\n\\n\u00d7 ...r Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n')\n\n    def test_workflow_completed_in_temporal_cloud(run_sh_output: subprocess.CompletedProcess):\n>       assert run_sh_output.returncode == 0, (\n            \"Skipping cloud verification because `bash run.sh` did not exit cleanly.\"\n        )\nE       AssertionError: Skipping cloud verification because `bash run.sh` did not exit cleanly.\nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\\n\\n\u00d7 ...r Python installation or OS, by passing --break-system-packages.\\nhint: See PEP 668 for the detailed specification.\\n').returncode\n\ntests/test_final_state.py:97: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

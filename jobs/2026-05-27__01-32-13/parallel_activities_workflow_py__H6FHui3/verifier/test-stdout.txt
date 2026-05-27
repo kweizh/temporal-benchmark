@@ -1,0 +1,336 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: anyio-4.13.0, json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_python_main_succeeds ___________________________
+
+python_main_output = CompletedProcess(args=['python', 'main.py'], returncode=1, stdout='', stderr='__mro_entries__ on urllib.request.Reques...f"Failed validating workflow {defn.name}") from err\nRuntimeError: Failed validating workflow ParallelFetchWorkflow\n')
+
+    def test_python_main_succeeds(python_main_output: subprocess.CompletedProcess):
+>       assert python_main_output.returncode == 0, (
+            "`python main.py` did not exit successfully. "
+            f"stdout=\n{python_main_output.stdout}\nstderr=\n{python_main_output.stderr}"
+        )
+E       AssertionError: `python main.py` did not exit successfully. stdout=
+E         
+E         stderr=
+E         __mro_entries__ on urllib.request.Request restricted
+E         Traceback (most recent call last):
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_workflow.py", line 171, in __init__
+E             workflow_runner.prepare_workflow(defn)
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 80, in prepare_workflow
+E             self.create_instance(
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 99, in create_instance
+E             return _Instance(det, self.runner_class, self.restrictions)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 127, in __init__
+E             self._create_instance()
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 138, in _create_instance
+E             self._run_code(
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 183, in _run_code
+E             exec(code, self.globals_and_locals, self.globals_and_locals)
+E           File "<string>", line 2, in <module>
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E             return self.current(*args, **kwargs)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 251, in _import
+E             new_spec.loader.exec_module(new_mod)
+E           File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E           File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E           File "/home/user/myproject/main.py", line 6, in <module>
+E             import httpx
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E             return self.current(*args, **kwargs)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E             mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "<frozen importlib._bootstrap>", line 1466, in __import__
+E           File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E           File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E           File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E           File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E           File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E           File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E           File "/usr/local/lib/python3.12/dist-packages/httpx/__init__.py", line 2, in <module>
+E             from ._api import *
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E             return self.current(*args, **kwargs)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E             mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "<frozen importlib._bootstrap>", line 1470, in __import__
+E           File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E           File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E           File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E           File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E           File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E           File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E           File "/usr/local/lib/python3.12/dist-packages/httpx/_api.py", line 6, in <module>
+E             from ._client import Client
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E             return self.current(*args, **kwargs)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E             mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "<frozen importlib._bootstrap>", line 1470, in __import__
+E           File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E           File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E           File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E           File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E           File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E           File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E           File "/usr/local/lib/python3.12/dist-packages/httpx/_client.py", line 13, in <module>
+E             from ._auth import Auth, BasicAuth, FunctionAuth
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E             return self.current(*args, **kwargs)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E             mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "<frozen importlib._bootstrap>", line 1470, in __import__
+E           File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E           File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E           File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E           File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E           File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E           File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E           File "/usr/local/lib/python3.12/dist-packages/httpx/_auth.py", line 12, in <module>
+E             from ._models import Cookies, Request, Response
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E             return self.current(*args, **kwargs)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E             mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "<frozen importlib._bootstrap>", line 1470, in __import__
+E           File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E           File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E           File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E           File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E           File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E           File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E           File "/usr/local/lib/python3.12/dist-packages/httpx/_models.py", line 1079, in <module>
+E             class Cookies(typing.MutableMapping[str, str]):
+E           File "/usr/local/lib/python3.12/dist-packages/httpx/_models.py", line 1243, in Cookies
+E             class _CookieCompatRequest(urllib.request.Request):
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_restrictions.py", line 1012, in __getattribute__
+E             state.assert_child_not_restricted(__name)
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_restrictions.py", line 844, in assert_child_not_restricted
+E             raise RestrictedWorkflowAccessError(
+E         temporalio.worker.workflow_sandbox._restrictions.RestrictedWorkflowAccessError: Cannot access urllib.request.Request.__mro_entries__ from inside a workflow. If this is code from a module not used in a workflow or known to only be used deterministically from a workflow, mark the import as pass through.
+E         
+E         The above exception was the direct cause of the following exception:
+E         
+E         Traceback (most recent call last):
+E           File "/home/user/myproject/main.py", line 83, in <module>
+E             main()
+E           File "/home/user/myproject/main.py", line 79, in main
+E             asyncio.run(run_workflow())
+E           File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+E             return runner.run(main)
+E                    ^^^^^^^^^^^^^^^^
+E           File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+E             return self._loop.run_until_complete(task)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+E             return future.result()
+E                    ^^^^^^^^^^^^^^^
+E           File "/home/user/myproject/main.py", line 50, in run_workflow
+E             worker = Worker(
+E                      ^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_worker.py", line 394, in __init__
+E             self._init_from_config(client, config)
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_worker.py", line 515, in _init_from_config
+E             self._workflow_worker = _WorkflowWorker(
+E                                     ^^^^^^^^^^^^^^^^
+E           File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_workflow.py", line 175, in __init__
+E             raise RuntimeError(f"Failed validating workflow {defn.name}") from err
+E         RuntimeError: Failed validating workflow ParallelFetchWorkflow
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python', 'main.py'], returncode=1, stdout='', stderr='__mro_entries__ on urllib.request.Reques...f"Failed validating workflow {defn.name}") from err\nRuntimeError: Failed validating workflow ParallelFetchWorkflow\n').returncode
+
+tests/test_final_state.py:39: AssertionError
+_______________________ test_python_main_prints_all_urls _______________________
+
+python_main_output = CompletedProcess(args=['python', 'main.py'], returncode=1, stdout='', stderr='__mro_entries__ on urllib.request.Reques...f"Failed validating workflow {defn.name}") from err\nRuntimeError: Failed validating workflow ParallelFetchWorkflow\n')
+
+    def test_python_main_prints_all_urls(
+        python_main_output: subprocess.CompletedProcess,
+    ):
+        combined = (python_main_output.stdout or "") + (python_main_output.stderr or "")
+        for url in EXPECTED_URLS:
+>           assert url in combined, (
+                f"Expected combined output of `python main.py` to contain {url!r}, "
+                f"got stdout=\n{python_main_output.stdout}\nstderr=\n{python_main_output.stderr}"
+            )
+E           AssertionError: Expected combined output of `python main.py` to contain 'https://www.example.com', got stdout=
+E             
+E             stderr=
+E             __mro_entries__ on urllib.request.Request restricted
+E             Traceback (most recent call last):
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_workflow.py", line 171, in __init__
+E                 workflow_runner.prepare_workflow(defn)
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 80, in prepare_workflow
+E                 self.create_instance(
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 99, in create_instance
+E                 return _Instance(det, self.runner_class, self.restrictions)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 127, in __init__
+E                 self._create_instance()
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 138, in _create_instance
+E                 self._run_code(
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_runner.py", line 183, in _run_code
+E                 exec(code, self.globals_and_locals, self.globals_and_locals)
+E               File "<string>", line 2, in <module>
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E                 return self.current(*args, **kwargs)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 251, in _import
+E                 new_spec.loader.exec_module(new_mod)
+E               File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E               File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E               File "/home/user/myproject/main.py", line 6, in <module>
+E                 import httpx
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E                 return self.current(*args, **kwargs)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E                 mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "<frozen importlib._bootstrap>", line 1466, in __import__
+E               File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E               File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E               File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E               File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E               File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E               File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E               File "/usr/local/lib/python3.12/dist-packages/httpx/__init__.py", line 2, in <module>
+E                 from ._api import *
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E                 return self.current(*args, **kwargs)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E                 mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "<frozen importlib._bootstrap>", line 1470, in __import__
+E               File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E               File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E               File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E               File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E               File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E               File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E               File "/usr/local/lib/python3.12/dist-packages/httpx/_api.py", line 6, in <module>
+E                 from ._client import Client
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E                 return self.current(*args, **kwargs)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E                 mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "<frozen importlib._bootstrap>", line 1470, in __import__
+E               File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E               File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E               File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E               File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E               File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E               File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E               File "/usr/local/lib/python3.12/dist-packages/httpx/_client.py", line 13, in <module>
+E                 from ._auth import Auth, BasicAuth, FunctionAuth
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E                 return self.current(*args, **kwargs)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E                 mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "<frozen importlib._bootstrap>", line 1470, in __import__
+E               File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E               File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E               File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E               File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E               File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E               File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E               File "/usr/local/lib/python3.12/dist-packages/httpx/_auth.py", line 12, in <module>
+E                 from ._models import Cookies, Request, Response
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 518, in __call__
+E                 return self.current(*args, **kwargs)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_importer.py", line 253, in _import
+E                 mod = importlib.__import__(name, globals, locals, fromlist, level)
+E                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "<frozen importlib._bootstrap>", line 1470, in __import__
+E               File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+E               File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+E               File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+E               File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+E               File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+E               File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+E               File "/usr/local/lib/python3.12/dist-packages/httpx/_models.py", line 1079, in <module>
+E                 class Cookies(typing.MutableMapping[str, str]):
+E               File "/usr/local/lib/python3.12/dist-packages/httpx/_models.py", line 1243, in Cookies
+E                 class _CookieCompatRequest(urllib.request.Request):
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_restrictions.py", line 1012, in __getattribute__
+E                 state.assert_child_not_restricted(__name)
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/workflow_sandbox/_restrictions.py", line 844, in assert_child_not_restricted
+E                 raise RestrictedWorkflowAccessError(
+E             temporalio.worker.workflow_sandbox._restrictions.RestrictedWorkflowAccessError: Cannot access urllib.request.Request.__mro_entries__ from inside a workflow. If this is code from a module not used in a workflow or known to only be used deterministically from a workflow, mark the import as pass through.
+E             
+E             The above exception was the direct cause of the following exception:
+E             
+E             Traceback (most recent call last):
+E               File "/home/user/myproject/main.py", line 83, in <module>
+E                 main()
+E               File "/home/user/myproject/main.py", line 79, in main
+E                 asyncio.run(run_workflow())
+E               File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+E                 return runner.run(main)
+E                        ^^^^^^^^^^^^^^^^
+E               File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+E                 return self._loop.run_until_complete(task)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+E                 return future.result()
+E                        ^^^^^^^^^^^^^^^
+E               File "/home/user/myproject/main.py", line 50, in run_workflow
+E                 worker = Worker(
+E                          ^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_worker.py", line 394, in __init__
+E                 self._init_from_config(client, config)
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_worker.py", line 515, in _init_from_config
+E                 self._workflow_worker = _WorkflowWorker(
+E                                         ^^^^^^^^^^^^^^^^
+E               File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_workflow.py", line 175, in __init__
+E                 raise RuntimeError(f"Failed validating workflow {defn.name}") from err
+E             RuntimeError: Failed validating workflow ParallelFetchWorkflow
+E             
+E           assert 'https://www.example.com' in '__mro_entries__ on urllib.request.Request restricted\nTraceback (most recent call last):\n  File "/usr/local/lib/pyth...(f"Failed validating workflow {defn.name}") from err\nRuntimeError: Failed validating workflow ParallelFetchWorkflow\n'
+
+tests/test_final_state.py:50: AssertionError
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+python_main_output = CompletedProcess(args=['python', 'main.py'], returncode=1, stdout='', stderr='__mro_entries__ on urllib.request.Reques...f"Failed validating workflow {defn.name}") from err\nRuntimeError: Failed validating workflow ParallelFetchWorkflow\n')
+
+    def test_workflow_completed_in_temporal_cloud(
+        python_main_output: subprocess.CompletedProcess,
+    ):
+>       assert python_main_output.returncode == 0, (
+            "Skipping cloud verification because `python main.py` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `python main.py` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['python', 'main.py'], returncode=1, stdout='', stderr='__mro_entries__ on urllib.request.Reques...f"Failed validating workflow {defn.name}") from err\nRuntimeError: Failed validating workflow ParallelFetchWorkflow\n').returncode
+
+tests/test_final_state.py:124: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_python_main_succeeds - AssertionError:...
+FAILED tests/test_final_state.py::test_python_main_prints_all_urls - Assertio...
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+============================== 3 failed in 1.07s ===============================

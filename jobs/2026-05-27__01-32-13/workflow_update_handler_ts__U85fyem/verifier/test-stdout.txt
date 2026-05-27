@@ -1,0 +1,126 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_npm_start_succeeds ____________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> update-handler-ts@1.0.0 start\n> node -r ts-node/reg.../pre_execution:243:5) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'internal/preload' ]\n}\n\nNode.js v24.15.0\n")
+
+    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit successfully. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit successfully. stdout=
+E         
+E         > update-handler-ts@1.0.0 start
+E         > node -r ts-node/register src/start.ts
+E         
+E         
+E         stderr=
+E         node:internal/modules/cjs/loader:1479
+E           throw err;
+E           ^
+E         
+E         Error: Cannot find module 'ts-node/register'
+E         Require stack:
+E         - internal/preload
+E             at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)
+E             at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)
+E             at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)
+E             at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)
+E             at Module._load (node:internal/modules/cjs/loader:1262:25)
+E             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+E             at Module.require (node:internal/modules/cjs/loader:1576:12)
+E             at node:internal/modules/cjs/loader:2122:12
+E             at loadPreloadModules (node:internal/process/pre_execution:711:5)
+E             at initializeModuleLoaders (node:internal/process/pre_execution:243:5) {
+E           code: 'MODULE_NOT_FOUND',
+E           requireStack: [ 'internal/preload' ]
+E         }
+E         
+E         Node.js v24.15.0
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> update-handler-ts@1.0.0 start\n> node -r ts-node/reg.../pre_execution:243:5) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'internal/preload' ]\n}\n\nNode.js v24.15.0\n").returncode
+
+tests/test_final_state.py:43: AssertionError
+________________ test_npm_start_prints_expected_lines_in_order _________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> update-handler-ts@1.0.0 start\n> node -r ts-node/reg.../pre_execution:243:5) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'internal/preload' ]\n}\n\nNode.js v24.15.0\n")
+
+    def test_npm_start_prints_expected_lines_in_order(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+        combined = (npm_start_output.stdout or "") + "\n" + (npm_start_output.stderr or "")
+        # Use a regex anchored to line boundaries to confirm each expected line
+        # appears at least once on its own line, and that the expected lines appear
+        # in the required order.
+        last_index = -1
+        for expected in EXPECTED_LINES:
+            pattern = re.compile(r"^\s*" + re.escape(expected) + r"\s*$", re.MULTILINE)
+            match = pattern.search(combined, last_index + 1 if last_index >= 0 else 0)
+>           assert match is not None, (
+                f"Expected `npm start` output to contain a line equal to "
+                f"{expected!r}. Got:\n"
+                f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+            )
+E           AssertionError: Expected `npm start` output to contain a line equal to 'Updated balance: 100'. Got:
+E             stdout=
+E             
+E             > update-handler-ts@1.0.0 start
+E             > node -r ts-node/register src/start.ts
+E             
+E             
+E             stderr=
+E             node:internal/modules/cjs/loader:1479
+E               throw err;
+E               ^
+E             
+E             Error: Cannot find module 'ts-node/register'
+E             Require stack:
+E             - internal/preload
+E                 at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)
+E                 at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)
+E                 at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)
+E                 at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)
+E                 at Module._load (node:internal/modules/cjs/loader:1262:25)
+E                 at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+E                 at Module.require (node:internal/modules/cjs/loader:1576:12)
+E                 at node:internal/modules/cjs/loader:2122:12
+E                 at loadPreloadModules (node:internal/process/pre_execution:711:5)
+E                 at initializeModuleLoaders (node:internal/process/pre_execution:243:5) {
+E               code: 'MODULE_NOT_FOUND',
+E               requireStack: [ 'internal/preload' ]
+E             }
+E             
+E             Node.js v24.15.0
+E             
+E           assert None is not None
+
+tests/test_final_state.py:60: AssertionError
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> update-handler-ts@1.0.0 start\n> node -r ts-node/reg.../pre_execution:243:5) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'internal/preload' ]\n}\n\nNode.js v24.15.0\n")
+
+    def test_workflow_completed_in_temporal_cloud(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> update-handler-ts@1.0.0 start\n> node -r ts-node/reg.../pre_execution:243:5) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ 'internal/preload' ]\n}\n\nNode.js v24.15.0\n").returncode
+
+tests/test_final_state.py:101: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_npm_start_succeeds - AssertionError: `...
+FAILED tests/test_final_state.py::test_npm_start_prints_expected_lines_in_order
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+============================== 3 failed in 2.01s ===============================

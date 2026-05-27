@@ -1,0 +1,113 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+___________________ test_progress_json_exists_and_is_partial ___________________
+
+    def test_progress_json_exists_and_is_partial():
+>       assert os.path.isfile(PROGRESS_JSON), (
+            f"Expected mid-run query output at {PROGRESS_JSON}, but it does not exist."
+        )
+E       AssertionError: Expected mid-run query output at /workspace/progress.json, but it does not exist.
+E       assert False
+E        +  where False = <function isfile at 0x7d34a829c220>('/workspace/progress.json')
+E        +    where <function isfile at 0x7d34a829c220> = <module 'posixpath' (frozen)>.isfile
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+tests/test_final_state.py:20: AssertionError
+___________________ test_progress_log_has_exactly_five_lines ___________________
+
+    def test_progress_log_has_exactly_five_lines():
+>       assert os.path.isfile(PROGRESS_LOG), (
+            f"Expected activity log at {PROGRESS_LOG}, but it does not exist."
+        )
+E       AssertionError: Expected activity log at /workspace/progress.log, but it does not exist.
+E       assert False
+E        +  where False = <function isfile at 0x7d34a829c220>('/workspace/progress.log')
+E        +    where <function isfile at 0x7d34a829c220> = <module 'posixpath' (frozen)>.isfile
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+tests/test_final_state.py:47: AssertionError
+__________________ test_workflow_completed_on_temporal_cloud ___________________
+
+    def test_workflow_completed_on_temporal_cloud():
+        run_id = _run_id()
+        workflow_id = f"progress-{run_id}"
+    
+        for var in ("TEMPORAL_API_KEY", "TEMPORAL_ADDRESS", "TEMPORAL_NAMESPACE"):
+            assert os.environ.get(var), f"Required Temporal env var {var} is missing."
+    
+        verifier_script = r"""
+    const { Connection, Client } = require('@temporalio/client');
+    
+    async function main() {
+      const workflowId = process.env.VERIFY_WORKFLOW_ID;
+      if (!workflowId) {
+        throw new Error('VERIFY_WORKFLOW_ID is not set');
+      }
+      const connection = await Connection.connect({
+        address: process.env.TEMPORAL_ADDRESS,
+        tls: true,
+        apiKey: process.env.TEMPORAL_API_KEY,
+        metadata: { 'temporal-namespace': process.env.TEMPORAL_NAMESPACE },
+      });
+      const client = new Client({
+        connection,
+        namespace: process.env.TEMPORAL_NAMESPACE,
+      });
+      const handle = client.workflow.getHandle(workflowId);
+      const desc = await handle.describe();
+      const result = await handle.result();
+      const payload = {
+        status: desc.status && desc.status.name ? desc.status.name : String(desc.status),
+        taskQueue: desc.taskQueue,
+        result: result,
+      };
+      process.stdout.write(JSON.stringify(payload));
+      await connection.close();
+    }
+    
+    main().catch((err) => {
+      process.stderr.write(String(err && err.stack ? err.stack : err));
+      process.exit(1);
+    });
+    """
+    
+        env = os.environ.copy()
+        env["VERIFY_WORKFLOW_ID"] = workflow_id
+    
+        project_dir = "/home/user/myproject"
+        proc = subprocess.run(
+            ["node", "-e", verifier_script],
+            cwd=project_dir,
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+>       assert proc.returncode == 0, (
+            f"Temporal Cloud verifier script failed (rc={proc.returncode}).\n"
+            f"STDOUT: {proc.stdout}\nSTDERR: {proc.stderr}"
+        )
+E       AssertionError: Temporal Cloud verifier script failed (rc=1).
+E         STDOUT: 
+E         STDERR: WorkflowNotFoundError: workflow not found for ID: progress-zr-qk4lylg
+E             at WorkflowClient.rethrowGrpcError (/home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:395:23)
+E             at WorkflowClient._describeWorkflowHandler (/home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:814:18)
+E             at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+E             at async Object.describe (/home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:867:29)
+E             at async main ([eval]:20:16)
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['node', '-e', "\nconst { Connection, Client } = require('@temporalio/client');\n\nasync functio.../home/user/myproject/node_modules/@temporalio/client/lib/workflow-client.js:867:29)\n    at async main ([eval]:20:16)').returncode
+
+tests/test_final_state.py:117: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_progress_json_exists_and_is_partial - ...
+FAILED tests/test_final_state.py::test_progress_log_has_exactly_five_lines - ...
+FAILED tests/test_final_state.py::test_workflow_completed_on_temporal_cloud
+============================== 3 failed in 2.64s ===============================

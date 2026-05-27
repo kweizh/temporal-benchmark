@@ -1,0 +1,61 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 0,
+            "failed": 3,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779817593658,
+            "stop": 1779817594288
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_npm_start_succeeds",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 391,
+                "start": 1779817593890,
+                "stop": 1779817594281,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout=\"\\n> money-transfer-saga@1.0.0 start\\n> bash -c 'node -r ...FOUND',\\n  requireStack: [ 'internal/preload' ]\\n}\\n\\nNode.js v24.15.0\\nbash: line 1: kill: (697) - No such process\\n\")\n\n    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"`npm start` did not exit successfully. \"\n            f\"stdout=\\n{npm_start_output.stdout}\\nstderr=\\n{npm_start_output.stderr}\"\n        )\nE       AssertionError: `npm start` did not exit successfully. stdout=\nE         \nE         > money-transfer-saga@1.0.0 start\nE         > bash -c 'node -r ts-node/register src/worker.ts & WORKER_PID=$!; node -r ts-node/register src/client.ts; kill $WORKER_PID'\nE         \nE         \nE         stderr=\nE         node:internal/modules/cjs/loader:1479\nE           throw err;\nE           ^\nE         \nE         Error: Cannot find module 'ts-node/register'\nE         Require stack:\nE         - internal/preload\nE             at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)\nE             at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)\nE             at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)\nE             at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)\nE             at Module._load (node:internal/modules/cjs/loader:1262:25)\nE             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\nE             at Module.require (node:internal/modules/cjs/loader:1576:12)\nE             at node:internal/modules/cjs/loader:2122:12\nE             at loadPreloadModules (node:internal/process/pre_execution:711:5)\nE             at initializeModuleLoaders (node:internal/process/pre_execution:243:5) {\nE           code: 'MODULE_NOT_FOUND',\nE           requireStack: [ 'internal/preload' ]\nE         }\nE         \nE         Node.js v24.15.0\nE         node:internal/modules/cjs/loader:1479\nE           throw err;\nE           ^\nE         \nE         Error: Cannot find module 'ts-node/register'\nE         Require stack:\nE         - internal/preload\nE             at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)\nE             at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)\nE             at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)\nE             at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)\nE             at Module._load (node:internal/modules/cjs/loader:1262:25)\nE             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\nE             at Module.require (node:internal/modules/cjs/loader:1576:12)\nE             at node:internal/modules/cjs/loader:2122:12\nE             at loadPreloadModules (node:internal/process/pre_execution:711:5)\nE             at initializeModuleLoaders (node:internal/process/pre_execution:243:5) {\nE           code: 'MODULE_NOT_FOUND',\nE           requireStack: [ 'internal/preload' ]\nE         }\nE         \nE         Node.js v24.15.0\nE         bash: line 1: kill: (697) - No such process\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout=\"\\n> money-transfer-saga@1.0.0 start\\n> bash -c 'node -r ...FOUND',\\n  requireStack: [ 'internal/preload' ]\\n}\\n\\nNode.js v24.15.0\\nbash: line 1: kill: (697) - No such process\\n\").returncode\n\ntests/test_final_state.py:41: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_accounts_file_final_state",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779817594281,
+                "stop": 1779817594284,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout=\"\\n> money-transfer-saga@1.0.0 start\\n> bash -c 'node -r ...FOUND',\\n  requireStack: [ 'internal/preload' ]\\n}\\n\\nNode.js v24.15.0\\nbash: line 1: kill: (697) - No such process\\n\")\n\n    def test_accounts_file_final_state(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"Skipping accounts file check because `npm start` did not exit cleanly.\"\n        )\nE       AssertionError: Skipping accounts file check because `npm start` did not exit cleanly.\nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout=\"\\n> money-transfer-saga@1.0.0 start\\n> bash -c 'node -r ...FOUND',\\n  requireStack: [ 'internal/preload' ]\\n}\\n\\nNode.js v24.15.0\\nbash: line 1: kill: (697) - No such process\\n\").returncode\n\ntests/test_final_state.py:48: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_workflows_in_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779817594285,
+                "stop": 1779817594288,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout=\"\\n> money-transfer-saga@1.0.0 start\\n> bash -c 'node -r ...FOUND',\\n  requireStack: [ 'internal/preload' ]\\n}\\n\\nNode.js v24.15.0\\nbash: line 1: kill: (697) - No such process\\n\")\n\n    def test_workflows_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"Skipping cloud verification because `npm start` did not exit cleanly.\"\n        )\nE       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.\nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout=\"\\n> money-transfer-saga@1.0.0 start\\n> bash -c 'node -r ...FOUND',\\n  requireStack: [ 'internal/preload' ]\\n}\\n\\nNode.js v24.15.0\\nbash: line 1: kill: (697) - No such process\\n\").returncode\n\ntests/test_final_state.py:129: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

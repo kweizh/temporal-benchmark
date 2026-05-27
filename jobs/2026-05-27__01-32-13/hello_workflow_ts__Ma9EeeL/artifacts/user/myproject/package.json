@@ -1,0 +1,23 @@
+{
+  "name": "hello-world-temporal-ts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "start": "concurrently -k --success first \"npm:worker\" \"npm:client\"",
+    "worker": "tsx src/worker.ts",
+    "client": "tsx src/client.ts",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@temporalio/activity": "^1.11.0",
+    "@temporalio/client": "^1.11.0",
+    "@temporalio/worker": "^1.11.0",
+    "@temporalio/workflow": "^1.11.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.5"
+  }
+}

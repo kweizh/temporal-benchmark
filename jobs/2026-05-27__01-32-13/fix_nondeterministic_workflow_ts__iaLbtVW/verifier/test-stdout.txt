@@ -1,0 +1,32 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 6 items
+
+tests/test_final_state.py .F....                                         [100%]
+
+=================================== FAILURES ===================================
+________________________ test_workflows_ts_no_new_date _________________________
+
+    def test_workflows_ts_no_new_date():
+        with open(WORKFLOWS_FILE) as f:
+            content = f.read()
+>       assert not re.search(r"new Date\(", content), (
+            "src/workflows.ts must NOT contain 'new Date(' after the fix."
+        )
+E       AssertionError: src/workflows.ts must NOT contain 'new Date(' after the fix.
+E       assert not <re.Match object; span=(446, 455), match='new Date('>
+E        +  where <re.Match object; span=(446, 455), match='new Date('> = <function search at 0x767551897ba0>('new Date\\(', '// DiscountWorkflow picks a percentage discount for a user.\n//\n// NOTE: This implementation is intentionally broken...onst discount = await pickDiscount();\n  const decidedAt = Date.now();\n  return { userId, discount, decidedAt };\n}\n')
+E        +    where <function search at 0x767551897ba0> = re.search
+
+tests/test_final_state.py:56: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_workflows_ts_no_math_random
+PASSED tests/test_final_state.py::test_workflow_completed
+PASSED tests/test_final_state.py::test_history_has_pick_discount_and_no_nope
+PASSED tests/test_final_state.py::test_workflow_result_discount
+PASSED tests/test_final_state.py::test_output_log_contains_discount
+FAILED tests/test_final_state.py::test_workflows_ts_no_new_date - AssertionEr...
+========================= 1 failed, 5 passed in 1.41s ==========================

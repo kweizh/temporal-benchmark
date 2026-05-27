@@ -1,0 +1,111 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 5 items
+
+tests/test_final_state.py FFFFF                                          [100%]
+
+=================================== FAILURES ===================================
+_____________________________ test_run_sh_succeeds _____________________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=127, stdout='', stderr='run.sh: line 4: python: command not found\n')
+
+    def test_run_sh_succeeds(run_sh_output: subprocess.CompletedProcess):
+>       assert run_sh_output.returncode == 0, (
+            "`bash run.sh` did not exit successfully. "
+            f"stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: `bash run.sh` did not exit successfully. stdout=
+E         
+E         stderr=
+E         run.sh: line 4: python: command not found
+E         
+E       assert 127 == 0
+E        +  where 127 = CompletedProcess(args=['bash', 'run.sh'], returncode=127, stdout='', stderr='run.sh: line 4: python: command not found\n').returncode
+
+tests/test_final_state.py:41: AssertionError
+________________________ test_run_sh_prints_mid_counter ________________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=127, stdout='', stderr='run.sh: line 4: python: command not found\n')
+
+    def test_run_sh_prints_mid_counter(run_sh_output: subprocess.CompletedProcess):
+        combined = _combined_output(run_sh_output)
+        match = MID_PATTERN.search(combined)
+>       assert match, (
+            "Expected combined output of `bash run.sh` to contain a line matching "
+            "'^Mid counter: <int>$'. "
+            f"stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: Expected combined output of `bash run.sh` to contain a line matching '^Mid counter: <int>$'. stdout=
+E         
+E         stderr=
+E         run.sh: line 4: python: command not found
+E         
+E       assert None
+
+tests/test_final_state.py:50: AssertionError
+_______________________ test_run_sh_prints_final_counter _______________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=127, stdout='', stderr='run.sh: line 4: python: command not found\n')
+
+    def test_run_sh_prints_final_counter(run_sh_output: subprocess.CompletedProcess):
+        combined = _combined_output(run_sh_output)
+        match = FINAL_PATTERN.search(combined)
+>       assert match, (
+            "Expected combined output of `bash run.sh` to contain a line matching "
+            "'^Final counter: <int>$'. "
+            f"stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: Expected combined output of `bash run.sh` to contain a line matching '^Final counter: <int>$'. stdout=
+E         
+E         stderr=
+E         run.sh: line 4: python: command not found
+E         
+E       assert None
+
+tests/test_final_state.py:64: AssertionError
+_______________ test_final_counter_is_not_less_than_mid_counter ________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=127, stdout='', stderr='run.sh: line 4: python: command not found\n')
+
+    def test_final_counter_is_not_less_than_mid_counter(
+        run_sh_output: subprocess.CompletedProcess,
+    ):
+        combined = _combined_output(run_sh_output)
+        mid_match = MID_PATTERN.search(combined)
+        final_match = FINAL_PATTERN.search(combined)
+>       assert mid_match and final_match, (
+            "Both `Mid counter:` and `Final counter:` lines must be present. "
+            f"stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: Both `Mid counter:` and `Final counter:` lines must be present. stdout=
+E         
+E         stderr=
+E         run.sh: line 4: python: command not found
+E         
+E       assert (None)
+
+tests/test_final_state.py:81: AssertionError
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=127, stdout='', stderr='run.sh: line 4: python: command not found\n')
+
+    def test_workflow_completed_in_temporal_cloud(
+        run_sh_output: subprocess.CompletedProcess,
+    ):
+>       assert run_sh_output.returncode == 0, (
+            "Skipping cloud verification because `bash run.sh` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `bash run.sh` did not exit cleanly.
+E       assert 127 == 0
+E        +  where 127 = CompletedProcess(args=['bash', 'run.sh'], returncode=127, stdout='', stderr='run.sh: line 4: python: command not found\n').returncode
+
+tests/test_final_state.py:141: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_run_sh_succeeds - AssertionError: `bas...
+FAILED tests/test_final_state.py::test_run_sh_prints_mid_counter - AssertionE...
+FAILED tests/test_final_state.py::test_run_sh_prints_final_counter - Assertio...
+FAILED tests/test_final_state.py::test_final_counter_is_not_less_than_mid_counter
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+============================== 5 failed in 0.29s ===============================

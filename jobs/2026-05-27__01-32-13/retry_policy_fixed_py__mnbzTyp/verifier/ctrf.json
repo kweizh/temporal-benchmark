@@ -1,0 +1,64 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "9.0.3"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 0,
+            "failed": 3,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779817011079,
+            "stop": 1779817014212
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_result_log_exists_and_matches",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 31,
+                "start": 1779817012102,
+                "stop": 1779817012133,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_result_log_exists_and_matches():\n>       assert os.path.isfile(RESULT_LOG), f\"{RESULT_LOG} was not created by the task.\"\nE       AssertionError: /workspace/result.log was not created by the task.\nE       assert False\nE        +  where False = <function isfile at 0x768f8e77c220>('/workspace/result.log')\nE        +    where <function isfile at 0x768f8e77c220> = <module 'posixpath' (frozen)>.isfile\nE        +      where <module 'posixpath' (frozen)> = os.path\n\ntests/test_final_state.py:21: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_attempts_log_exists_and_has_five_lines",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779817012133,
+                "stop": 1779817012136,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_attempts_log_exists_and_has_five_lines():\n>       assert os.path.isfile(ATTEMPTS_LOG), f\"{ATTEMPTS_LOG} was not created by the task.\"\nE       AssertionError: /workspace/attempts.log was not created by the task.\nE       assert False\nE        +  where False = <function isfile at 0x768f8e77c220>('/workspace/attempts.log')\nE        +    where <function isfile at 0x768f8e77c220> = <module 'posixpath' (frozen)>.isfile\nE        +      where <module 'posixpath' (frozen)> = os.path\n\ntests/test_final_state.py:32: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_on_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 2076,
+                "start": 1779817012136,
+                "stop": 1779817014212,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "tags": [
+                    "asyncio"
+                ],
+                "trace": "self = <temporalio.service._BridgeServiceClient object at 0x768f8b03aff0>\nrpc = 'describe_workflow_execution'\nreq = namespace: \"REDACTED\"\nexecution {\n  workflow_id: \"retry-py-zr-mnbztyp\"\n}\n\nresp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.DescribeWorkflowExecutionResponse'>\n\n    async def _rpc_call(\n        self,\n        rpc: str,\n        req: google.protobuf.message.Message,\n        resp_type: type[ServiceResponse],\n        *,\n        service: str,\n        retry: bool,\n        metadata: Mapping[str, str | bytes],\n        timeout: timedelta | None,\n    ) -> ServiceResponse:\n        global LOG_PROTOS\n        if LOG_PROTOS:\n            logger.debug(\"Service %s request to %s: %s\", service, rpc, req)\n        try:\n            client = await self._connected_client()\n>           resp = await client.call(\n                service=service,\n                rpc=rpc,\n                req=req,\n                resp_type=resp_type,\n                retry=retry,\n                metadata=metadata,\n                timeout=timeout,\n            )\n\nusr/local/lib/python3.12/dist-packages/temporalio/service.py:400: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <temporalio.bridge.client.Client object at 0x768f8d4c5a00>\n\n    async def call(\n        self,\n        *,\n        service: str,\n        rpc: str,\n        req: google.protobuf.message.Message,\n        resp_type: type[ProtoMessage],\n        retry: bool,\n        metadata: Mapping[str, str | bytes],\n        timeout: timedelta | None,\n    ) -> ProtoMessage:\n        \"\"\"Make RPC call using SDK Core.\"\"\"\n        # Prepare call\n        timeout_millis = round(timeout.total_seconds() * 1000) if timeout else None\n        call = RpcCall(rpc, req.SerializeToString(), retry, metadata, timeout_millis)\n    \n        # Do call (this throws an RPCError on failure)\n        if service == \"workflow\":\n            resp_fut = self._ref.call_workflow_service(call)\n        elif service == \"operator\":\n            resp_fut = self._ref.call_operator_service(call)\n        elif service == \"cloud\":\n            resp_fut = self._ref.call_cloud_service(call)\n        elif service == \"test\":\n            resp_fut = self._ref.call_test_service(call)\n        elif service == \"health\":\n            resp_fut = self._ref.call_health_service(call)\n        else:\n            raise ValueError(f\"Unrecognized service {service}\")\n    \n        # Convert response\n        resp = resp_type()\n>       resp.ParseFromString(await resp_fut)\n                             ^^^^^^^^^^^^^^\nE       temporal_sdk_bridge.RPCError: (5, 'workflow not found for ID: retry-py-zr-mnbztyp', b'\\x08\\x05\\x12.workflow not found for ID: retry-py-zr-mnbztyp\\x1aB\\n@type.googleapis.com/temporal.api.errordetails.v1.NotFoundFailure')\n\nusr/local/lib/python3.12/dist-packages/temporalio/bridge/client.py:164: RPCError\n\nDuring handling of the above exception, another exception occurred:\n\n    @pytest.mark.asyncio\n    async def test_workflow_completed_on_temporal_cloud():\n        address = os.environ[\"TEMPORAL_ADDRESS\"]\n        namespace = os.environ[\"TEMPORAL_NAMESPACE\"]\n        api_key = os.environ[\"TEMPORAL_API_KEY\"]\n        workflow_id = f\"retry-py-{_run_id()}\"\n    \n        client = await Client.connect(\n            address,\n            namespace=namespace,\n            api_key=api_key,\n            tls=True,\n        )\n    \n        handle = client.get_workflow_handle(workflow_id)\n>       desc = await handle.describe()\n               ^^^^^^^^^^^^^^^^^^^^^^^\n\ntests/test_final_state.py:56: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/local/lib/python3.12/dist-packages/temporalio/client.py:3199: in describe\n    return await self._client._impl.describe_workflow(\nusr/local/lib/python3.12/dist-packages/temporalio/client.py:8284: in describe_workflow\n    await self._client.workflow_service.describe_workflow_execution(\nusr/local/lib/python3.12/dist-packages/temporalio/bridge/services_generated.py:506: in describe_workflow_execution\n    return await self._client._rpc_call(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <temporalio.service._BridgeServiceClient object at 0x768f8b03aff0>\nrpc = 'describe_workflow_execution'\nreq = namespace: \"REDACTED\"\nexecution {\n  workflow_id: \"retry-py-zr-mnbztyp\"\n}\n\nresp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.DescribeWorkflowExecutionResponse'>\n\n    async def _rpc_call(\n        self,\n        rpc: str,\n        req: google.protobuf.message.Message,\n        resp_type: type[ServiceResponse],\n        *,\n        service: str,\n        retry: bool,\n        metadata: Mapping[str, str | bytes],\n        timeout: timedelta | None,\n    ) -> ServiceResponse:\n        global LOG_PROTOS\n        if LOG_PROTOS:\n            logger.debug(\"Service %s request to %s: %s\", service, rpc, req)\n        try:\n            client = await self._connected_client()\n            resp = await client.call(\n                service=service,\n                rpc=rpc,\n                req=req,\n                resp_type=resp_type,\n                retry=retry,\n                metadata=metadata,\n                timeout=timeout,\n            )\n            if LOG_PROTOS:\n                logger.debug(\"Service %s response from %s: %s\", service, rpc, resp)\n            return resp\n        except BridgeRPCError as err:\n            # Intentionally swallowing the cause instead of using \"from\"\n            status, message, details = err.args\n>           raise RPCError(message, RPCStatusCode(status), details)\nE           temporalio.service.RPCError: workflow not found for ID: retry-py-zr-mnbztyp\n\nusr/local/lib/python3.12/dist-packages/temporalio/service.py:415: RPCError",
+                "message": "The test failed in the call phase"
+            }
+        ]
+    }
+}

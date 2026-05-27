@@ -1,0 +1,51 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py F.F                                            [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_npm_start_succeeds ____________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-fetch-url-ts@1.0.0 start\n> concurrently -k -s first "npm:worker" "npm:client"\n\n', stderr='sh: 1: concurrently: not found\n')
+
+    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit successfully. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit successfully. stdout=
+E         
+E         > temporal-fetch-url-ts@1.0.0 start
+E         > concurrently -k -s first "npm:worker" "npm:client"
+E         
+E         
+E         stderr=
+E         sh: 1: concurrently: not found
+E         
+E       assert 127 == 0
+E        +  where 127 = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-fetch-url-ts@1.0.0 start\n> concurrently -k -s first "npm:worker" "npm:client"\n\n', stderr='sh: 1: concurrently: not found\n').returncode
+
+tests/test_final_state.py:35: AssertionError
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-fetch-url-ts@1.0.0 start\n> concurrently -k -s first "npm:worker" "npm:client"\n\n', stderr='sh: 1: concurrently: not found\n')
+
+    def test_workflow_completed_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):
+        # Ensure the agent's start command actually ran before querying.
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 127 == 0
+E        +  where 127 = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\n> temporal-fetch-url-ts@1.0.0 start\n> concurrently -k -s first "npm:worker" "npm:client"\n\n', stderr='sh: 1: concurrently: not found\n').returncode
+
+tests/test_final_state.py:109: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_npm_start_prints_non_empty_output
+FAILED tests/test_final_state.py::test_npm_start_succeeds - AssertionError: `...
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+========================= 2 failed, 1 passed in 0.68s ==========================

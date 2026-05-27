@@ -1,0 +1,19 @@
+{
+  "name": "update-handler-ts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node -r ts-node/register src/start.ts"
+  },
+  "dependencies": {
+    "@temporalio/client": "^1.11.2",
+    "@temporalio/worker": "^1.11.2",
+    "@temporalio/workflow": "^1.11.2",
+    "@temporalio/activity": "^1.11.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "@types/node": "^20.11.30"
+  }
+}

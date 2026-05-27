@@ -1,0 +1,72 @@
+{
+    "id": "21c81a2f-6b52-449a-a32f-2c5ae70b1574",
+    "started_at": "2026-05-27T01:32:15.501328",
+    "updated_at": "2026-05-27T01:46:46.365615",
+    "finished_at": "2026-05-27T01:46:46.365615",
+    "n_total_trials": 28,
+    "stats": {
+        "n_completed_trials": 28,
+        "n_errored_trials": 1,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "pochi__gpt-5.2-codex__tasks": {
+                "n_trials": 28,
+                "n_errors": 1,
+                "metrics": [
+                    {
+                        "mean": 0.10714285714285714
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "0.0": [
+                            "continue_as_new_loop_py__wjMBx3h",
+                            "continue_as_new_loop_ts__kw5mQSy",
+                            "parallel_activities_workflow_py__H6FHui3",
+                            "query_handler_workflow_ts__Qk4LYLG",
+                            "hello_workflow_ts__Ma9EeeL",
+                            "fix_nondeterministic_workflow_ts__iaLbtVW",
+                            "reminder_sleep_workflow_py__8zYtbv9",
+                            "retry_policy_fixed_py__mnbzTyp",
+                            "reminder_sleep_workflow_ts__KTdveAr",
+                            "workflow_cancellation_cleanup_py__8cYvfBb",
+                            "retry_policy_fixed_ts__psQTM8v",
+                            "signal_increment_counter_py__jsFxkyv",
+                            "subscription_signal_workflow_ts__xBDGwuk",
+                            "child_workflow_ts__CAq93ff",
+                            "heartbeat_activity_py__hLiKqy9",
+                            "parallel_activities_workflow_ts__eX6RMSK",
+                            "workflow_cancellation_cleanup_ts__rAomKbQ",
+                            "signal_increment_counter_ts__2q6QxLZ",
+                            "query_handler_workflow_py__UsELdPe",
+                            "workflow_update_handler_ts__U85fyem",
+                            "activity_get_request_py__ApTtuuK",
+                            "activity_get_request_ts__9bw45HT",
+                            "hello_workflow_py__pMAgpHM",
+                            "money_transfer_saga_py__om8WAdR",
+                            "money_transfer_saga_ts__dhRDzL9"
+                        ],
+                        "1.0": [
+                            "patch_versioning_ts__XkH4zUC",
+                            "fix_nondeterministic_workflow_py__buqkfRy",
+                            "task_queue_debug_ts__VqMUiVz"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "AgentTimeoutError": [
+                        "fix_nondeterministic_workflow_ts__iaLbtVW"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": 0,
+        "n_cache_tokens": 0,
+        "n_output_tokens": 428393,
+        "cost_usd": null
+    }
+}

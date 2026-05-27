@@ -1,0 +1,82 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 6,
+            "passed": 5,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779817463933,
+            "stop": 1779817465349
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_workflows_ts_no_math_random",
+                "status": "passed",
+                "duration": 1,
+                "start": 1779817464368,
+                "stop": 1779817464369,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflows_ts_no_new_date",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 31,
+                "start": 1779817464369,
+                "stop": 1779817464400,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "def test_workflows_ts_no_new_date():\n        with open(WORKFLOWS_FILE) as f:\n            content = f.read()\n>       assert not re.search(r\"new Date\\(\", content), (\n            \"src/workflows.ts must NOT contain 'new Date(' after the fix.\"\n        )\nE       AssertionError: src/workflows.ts must NOT contain 'new Date(' after the fix.\nE       assert not <re.Match object; span=(446, 455), match='new Date('>\nE        +  where <re.Match object; span=(446, 455), match='new Date('> = <function search at 0x767551897ba0>('new Date\\\\(', '// DiscountWorkflow picks a percentage discount for a user.\\n//\\n// NOTE: This implementation is intentionally broken...onst discount = await pickDiscount();\\n  const decidedAt = Date.now();\\n  return { userId, discount, decidedAt };\\n}\\n')\nE        +    where <function search at 0x767551897ba0> = re.search\n\ntests/test_final_state.py:56: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed",
+                "status": "passed",
+                "duration": 534,
+                "start": 1779817464400,
+                "stop": 1779817464934,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_history_has_pick_discount_and_no_nope",
+                "status": "passed",
+                "duration": 138,
+                "start": 1779817464935,
+                "stop": 1779817465073,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_result_discount",
+                "status": "passed",
+                "duration": 139,
+                "start": 1779817465073,
+                "stop": 1779817465212,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_output_log_contains_discount",
+                "status": "passed",
+                "duration": 137,
+                "start": 1779817465212,
+                "stop": 1779817465349,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

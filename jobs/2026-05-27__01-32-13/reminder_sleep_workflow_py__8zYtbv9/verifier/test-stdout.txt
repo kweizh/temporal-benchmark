@@ -1,0 +1,115 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 4 items
+
+tests/test_final_state.py FFFF                                           [100%]
+
+=================================== FAILURES ===================================
+_____________________________ test_run_sh_succeeds _____________________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\n\n× ...r Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n')
+
+    def test_run_sh_succeeds(run_sh_output: subprocess.CompletedProcess):
+>       assert run_sh_output.returncode == 0, (
+            "`bash run.sh` did not exit successfully. "
+            f"stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: `bash run.sh` did not exit successfully. stdout=
+E         
+E         stderr=
+E         error: externally-managed-environment
+E         
+E         × This environment is externally managed
+E         ╰─> To install Python packages system-wide, try apt install
+E             python3-xyz, where xyz is the package you are trying to
+E             install.
+E             
+E             If you wish to install a non-Debian-packaged Python package,
+E             create a virtual environment using python3 -m venv path/to/venv.
+E             Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+E             sure you have python3-full installed.
+E             
+E             If you wish to install a non-Debian packaged Python application,
+E             it may be easiest to use pipx install xyz, which will manage a
+E             virtual environment for you. Make sure you have pipx installed.
+E             
+E             See /usr/share/doc/python3.12/README.venv for more information.
+E         
+E         note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+E         hint: See PEP 668 for the detailed specification.
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\n\n× ...r Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n').returncode
+
+tests/test_final_state.py:40: AssertionError
+______________________ test_run_sh_prints_expected_result ______________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\n\n× ...r Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n')
+
+    def test_run_sh_prints_expected_result(run_sh_output: subprocess.CompletedProcess):
+        combined = (run_sh_output.stdout or "") + (run_sh_output.stderr or "")
+>       assert EXPECTED_RESULT in combined, (
+            f"Expected combined output of `bash run.sh` to contain '{EXPECTED_RESULT}', "
+            f"got stdout=\n{run_sh_output.stdout}\nstderr=\n{run_sh_output.stderr}"
+        )
+E       AssertionError: Expected combined output of `bash run.sh` to contain 'Notified: wake up', got stdout=
+E         
+E         stderr=
+E         error: externally-managed-environment
+E         
+E         × This environment is externally managed
+E         ╰─> To install Python packages system-wide, try apt install
+E             python3-xyz, where xyz is the package you are trying to
+E             install.
+E             
+E             If you wish to install a non-Debian-packaged Python package,
+E             create a virtual environment using python3 -m venv path/to/venv.
+E             Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+E             sure you have python3-full installed.
+E             
+E             If you wish to install a non-Debian packaged Python application,
+E             it may be easiest to use pipx install xyz, which will manage a
+E             virtual environment for you. Make sure you have pipx installed.
+E             
+E             See /usr/share/doc/python3.12/README.venv for more information.
+E         
+E         note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+E         hint: See PEP 668 for the detailed specification.
+E         
+E       assert 'Notified: wake up' in 'error: externally-managed-environment\n\n× This environment is externally managed\n╰─> To install Python packages sys...ur Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n'
+
+tests/test_final_state.py:48: AssertionError
+_________________ test_reminder_log_file_contains_notification _________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\n\n× ...r Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n')
+
+    def test_reminder_log_file_contains_notification(run_sh_output: subprocess.CompletedProcess):
+>       assert run_sh_output.returncode == 0, (
+            "Skipping log file check because `bash run.sh` did not exit cleanly."
+        )
+E       AssertionError: Skipping log file check because `bash run.sh` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\n\n× ...r Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n').returncode
+
+tests/test_final_state.py:55: AssertionError
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+run_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\n\n× ...r Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n')
+
+    def test_workflow_completed_in_temporal_cloud(run_sh_output: subprocess.CompletedProcess):
+>       assert run_sh_output.returncode == 0, (
+            "Skipping cloud verification because `bash run.sh` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `bash run.sh` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', 'run.sh'], returncode=1, stdout='', stderr='error: externally-managed-environment\n\n× ...r Python installation or OS, by passing --break-system-packages.\nhint: See PEP 668 for the detailed specification.\n').returncode
+
+tests/test_final_state.py:97: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_run_sh_succeeds - AssertionError: `bas...
+FAILED tests/test_final_state.py::test_run_sh_prints_expected_result - Assert...
+FAILED tests/test_final_state.py::test_reminder_log_file_contains_notification
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+============================== 4 failed in 0.63s ===============================

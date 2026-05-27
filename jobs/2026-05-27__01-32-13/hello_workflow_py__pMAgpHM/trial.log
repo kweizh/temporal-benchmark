@@ -1,0 +1,85 @@
+Skipping image OS validation for hb__hello_workflow_py: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-pmagphm > /logs/artifacts/run-id && echo hello_workflow_py__pMAgpHM > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model openai/gpt-5.2-codex --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Hello World Temporal Workflow (Python)
+
+## Background
+You are building your first Temporal application using the Temporal.io Python SDK (`temporalio`). The goal is to connect to **Temporal Cloud** using an API key, run a Worker that hosts a simple Workflow and Activity, and use a Client to start the Workflow and print its result.
+
+Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment.
+
+## Requirements
+- Implement a Python Temporal project that contains:
+  - An **Activity** named `greet` that takes a string `name` and returns `Hello, <name>!`.
+  - A **Workflow** registered with the type name `HelloWorkflow` that accepts a string `name`, calls the `greet` activity, and returns its result.
+  - A **Worker** that connects to Temporal Cloud (via API key + TLS) and polls the task queue `hello-world-py`.
+  - A **Client** entrypoint that connects to Temporal Cloud, starts (or executes) `HelloWorkflow` with the input `"Temporal"`, waits for completion, and prints the returned greeting to stdout.
+- The Workflow ID must use the prefix `hello-wf-` and include the current `run-id` so concurrent runs do not collide (e.g. `hello-wf-${ZEALT_RUN_ID}`).
+- The Worker and Client must use the task queue `hello-world-py`.
+- Provide a `python main.py` entrypoint that runs the Worker in the background, executes the Workflow via the Client, waits for the workflow result, prints it to stdout, and then exits cleanly (the Worker may be terminated after the Client finishes).
+
+## Implementation Hints
+- Install the official Python SDK: `pip install temporalio`.
+- Use `temporalio.client.Client.connect` with the `TEMPORAL_ADDRESS`, `namespace=TEMPORAL_NAMESPACE`, `api_key=TEMPORAL_API_KEY`, and `tls=True` options to connect to Temporal Cloud.
+- Define the Activity with the `@activity.defn(name="greet")` decorator and define the Workflow with `@workflow.defn(name="HelloWorkflow")`. Use `workflow.execute_activity` from inside the Workflow with a reasonable `start_to_close_timeout`.
+- Use `temporalio.worker.Worker` with `workflows=[HelloWorkflow]` and `activities=[greet]` polling the `hello-world-py` task queue.
+- Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`.
+- You can run the Worker and the Client in the same `python main.py` process using `asyncio` (for example via `asyncio.create_task` and `worker.run()` with a cancellation after the workflow finishes) — just make sure the workflow completes and its result is printed before the script exits.
+
+## Acceptance Criteria
+- Project path: /home/user/myproject
+- Start command: `python main.py` (executed from `/home/user/myproject`)
+- Task queue: `hello-world-py`
+- Workflow type name: `HelloWorkflow`
+- Activity type name: `greet`
+- Workflow ID: must start with `hello-wf-` and include the value of the `ZEALT_RUN_ID` environment variable
+- When `python main.py` is executed, the workflow `HelloWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting greeting string returned from the activity must be printed to stdout.
+- The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the greeting produced by the `greet` activity for the input `"Temporal"`.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured

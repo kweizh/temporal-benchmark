@@ -1,0 +1,354 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+___________________ test_output_file_exists_and_has_final_6 ____________________
+
+    def test_output_file_exists_and_has_final_6():
+>       assert os.path.isfile(OUTPUT_FILE), (
+            f"Expected output file {OUTPUT_FILE} to exist after task completion."
+        )
+E       AssertionError: Expected output file /workspace/counter.out to exist after task completion.
+E       assert False
+E        +  where False = <function isfile at 0x7c9104f90220>('/workspace/counter.out')
+E        +    where <function isfile at 0x7c9104f90220> = <module 'posixpath' (frozen)>.isfile
+E        +      where <module 'posixpath' (frozen)> = os.path
+
+tests/test_final_state.py:36: AssertionError
+__________________ test_workflow_completed_on_temporal_cloud ___________________
+
+self = <temporalio.service._BridgeServiceClient object at 0x7c910459b2c0>
+rpc = 'describe_workflow_execution'
+req = namespace: "REDACTED"
+execution {
+  workflow_id: "counter-zr-jsfxkyv"
+}
+
+resp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.DescribeWorkflowExecutionResponse'>
+
+    async def _rpc_call(
+        self,
+        rpc: str,
+        req: google.protobuf.message.Message,
+        resp_type: type[ServiceResponse],
+        *,
+        service: str,
+        retry: bool,
+        metadata: Mapping[str, str | bytes],
+        timeout: timedelta | None,
+    ) -> ServiceResponse:
+        global LOG_PROTOS
+        if LOG_PROTOS:
+            logger.debug("Service %s request to %s: %s", service, rpc, req)
+        try:
+            client = await self._connected_client()
+>           resp = await client.call(
+                service=service,
+                rpc=rpc,
+                req=req,
+                resp_type=resp_type,
+                retry=retry,
+                metadata=metadata,
+                timeout=timeout,
+            )
+
+usr/local/lib/python3.12/dist-packages/temporalio/service.py:400: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <temporalio.bridge.client.Client object at 0x7c910459b740>
+
+    async def call(
+        self,
+        *,
+        service: str,
+        rpc: str,
+        req: google.protobuf.message.Message,
+        resp_type: type[ProtoMessage],
+        retry: bool,
+        metadata: Mapping[str, str | bytes],
+        timeout: timedelta | None,
+    ) -> ProtoMessage:
+        """Make RPC call using SDK Core."""
+        # Prepare call
+        timeout_millis = round(timeout.total_seconds() * 1000) if timeout else None
+        call = RpcCall(rpc, req.SerializeToString(), retry, metadata, timeout_millis)
+    
+        # Do call (this throws an RPCError on failure)
+        if service == "workflow":
+            resp_fut = self._ref.call_workflow_service(call)
+        elif service == "operator":
+            resp_fut = self._ref.call_operator_service(call)
+        elif service == "cloud":
+            resp_fut = self._ref.call_cloud_service(call)
+        elif service == "test":
+            resp_fut = self._ref.call_test_service(call)
+        elif service == "health":
+            resp_fut = self._ref.call_health_service(call)
+        else:
+            raise ValueError(f"Unrecognized service {service}")
+    
+        # Convert response
+        resp = resp_type()
+>       resp.ParseFromString(await resp_fut)
+E       temporal_sdk_bridge.RPCError: (5, 'workflow not found for ID: counter-zr-jsfxkyv', b'\x08\x05\x12-workflow not found for ID: counter-zr-jsfxkyv\x1aB\n@type.googleapis.com/temporal.api.errordetails.v1.NotFoundFailure')
+
+usr/local/lib/python3.12/dist-packages/temporalio/bridge/client.py:164: RPCError
+
+During handling of the above exception, another exception occurred:
+
+    def test_workflow_completed_on_temporal_cloud():
+        async def _check():
+            client = await _connect_client()
+            workflow_id = f"counter-{_run_id()}"
+            handle = client.get_workflow_handle(workflow_id)
+            desc = await handle.describe()
+            assert desc.status == WorkflowExecutionStatus.COMPLETED, (
+                f"Workflow {workflow_id} is not COMPLETED on Temporal Cloud; "
+                f"status={desc.status!r}."
+            )
+            assert desc.workflow_type == "CounterWorkflow", (
+                f"Expected workflow type 'CounterWorkflow', "
+                f"got {desc.workflow_type!r}."
+            )
+            assert desc.task_queue == "counter-py", (
+                f"Expected workflow task queue 'counter-py', "
+                f"got {desc.task_queue!r}."
+            )
+    
+>       asyncio.run(_check())
+
+tests/test_final_state.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usr/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+usr/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+usr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+tests/test_final_state.py:51: in _check
+    desc = await handle.describe()
+usr/local/lib/python3.12/dist-packages/temporalio/client.py:3199: in describe
+    return await self._client._impl.describe_workflow(
+usr/local/lib/python3.12/dist-packages/temporalio/client.py:8284: in describe_workflow
+    await self._client.workflow_service.describe_workflow_execution(
+usr/local/lib/python3.12/dist-packages/temporalio/bridge/services_generated.py:506: in describe_workflow_execution
+    return await self._client._rpc_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <temporalio.service._BridgeServiceClient object at 0x7c910459b2c0>
+rpc = 'describe_workflow_execution'
+req = namespace: "REDACTED"
+execution {
+  workflow_id: "counter-zr-jsfxkyv"
+}
+
+resp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.DescribeWorkflowExecutionResponse'>
+
+    async def _rpc_call(
+        self,
+        rpc: str,
+        req: google.protobuf.message.Message,
+        resp_type: type[ServiceResponse],
+        *,
+        service: str,
+        retry: bool,
+        metadata: Mapping[str, str | bytes],
+        timeout: timedelta | None,
+    ) -> ServiceResponse:
+        global LOG_PROTOS
+        if LOG_PROTOS:
+            logger.debug("Service %s request to %s: %s", service, rpc, req)
+        try:
+            client = await self._connected_client()
+            resp = await client.call(
+                service=service,
+                rpc=rpc,
+                req=req,
+                resp_type=resp_type,
+                retry=retry,
+                metadata=metadata,
+                timeout=timeout,
+            )
+            if LOG_PROTOS:
+                logger.debug("Service %s response from %s: %s", service, rpc, resp)
+            return resp
+        except BridgeRPCError as err:
+            # Intentionally swallowing the cause instead of using "from"
+            status, message, details = err.args
+>           raise RPCError(message, RPCStatusCode(status), details)
+E           temporalio.service.RPCError: workflow not found for ID: counter-zr-jsfxkyv
+
+usr/local/lib/python3.12/dist-packages/temporalio/service.py:415: RPCError
+_________________________ test_workflow_result_is_six __________________________
+
+self = <temporalio.service._BridgeServiceClient object at 0x7c910192c650>
+rpc = 'get_workflow_execution_history'
+req = namespace: "REDACTED"
+execution {
+  workflow_id: "counter-zr-jsfxkyv"
+}
+wait_new_event: true
+history_event_filter_type: HISTORY_EVENT_FILTER_TYPE_CLOSE_EVENT
+skip_archival: true
+
+resp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.GetWorkflowExecutionHistoryResponse'>
+
+    async def _rpc_call(
+        self,
+        rpc: str,
+        req: google.protobuf.message.Message,
+        resp_type: type[ServiceResponse],
+        *,
+        service: str,
+        retry: bool,
+        metadata: Mapping[str, str | bytes],
+        timeout: timedelta | None,
+    ) -> ServiceResponse:
+        global LOG_PROTOS
+        if LOG_PROTOS:
+            logger.debug("Service %s request to %s: %s", service, rpc, req)
+        try:
+            client = await self._connected_client()
+>           resp = await client.call(
+                service=service,
+                rpc=rpc,
+                req=req,
+                resp_type=resp_type,
+                retry=retry,
+                metadata=metadata,
+                timeout=timeout,
+            )
+
+usr/local/lib/python3.12/dist-packages/temporalio/service.py:400: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <temporalio.bridge.client.Client object at 0x7c910192d4c0>
+
+    async def call(
+        self,
+        *,
+        service: str,
+        rpc: str,
+        req: google.protobuf.message.Message,
+        resp_type: type[ProtoMessage],
+        retry: bool,
+        metadata: Mapping[str, str | bytes],
+        timeout: timedelta | None,
+    ) -> ProtoMessage:
+        """Make RPC call using SDK Core."""
+        # Prepare call
+        timeout_millis = round(timeout.total_seconds() * 1000) if timeout else None
+        call = RpcCall(rpc, req.SerializeToString(), retry, metadata, timeout_millis)
+    
+        # Do call (this throws an RPCError on failure)
+        if service == "workflow":
+            resp_fut = self._ref.call_workflow_service(call)
+        elif service == "operator":
+            resp_fut = self._ref.call_operator_service(call)
+        elif service == "cloud":
+            resp_fut = self._ref.call_cloud_service(call)
+        elif service == "test":
+            resp_fut = self._ref.call_test_service(call)
+        elif service == "health":
+            resp_fut = self._ref.call_health_service(call)
+        else:
+            raise ValueError(f"Unrecognized service {service}")
+    
+        # Convert response
+        resp = resp_type()
+>       resp.ParseFromString(await resp_fut)
+E       temporal_sdk_bridge.RPCError: (5, 'workflow not found for ID: counter-zr-jsfxkyv', b'\x08\x05\x12-workflow not found for ID: counter-zr-jsfxkyv\x1aB\n@type.googleapis.com/temporal.api.errordetails.v1.NotFoundFailure')
+
+usr/local/lib/python3.12/dist-packages/temporalio/bridge/client.py:164: RPCError
+
+During handling of the above exception, another exception occurred:
+
+    def test_workflow_result_is_six():
+        async def _check():
+            client = await _connect_client()
+            workflow_id = f"counter-{_run_id()}"
+            handle = client.get_workflow_handle(workflow_id)
+            result = await handle.result()
+            assert result == 6, (
+                f"Expected workflow {workflow_id} to return 6 (1+2+3); got {result!r}."
+            )
+    
+>       asyncio.run(_check())
+
+tests/test_final_state.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usr/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+usr/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+usr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+tests/test_final_state.py:73: in _check
+    result = await handle.result()
+usr/local/lib/python3.12/dist-packages/temporalio/client.py:3041: in result
+    async for event in self._fetch_history_events_for_run(
+usr/local/lib/python3.12/dist-packages/temporalio/client.py:5500: in __anext__
+    await self.fetch_next_page()
+usr/local/lib/python3.12/dist-packages/temporalio/client.py:5464: in fetch_next_page
+    resp = await self._client.workflow_service.get_workflow_execution_history(
+usr/local/lib/python3.12/dist-packages/temporalio/bridge/services_generated.py:722: in get_workflow_execution_history
+    return await self._client._rpc_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <temporalio.service._BridgeServiceClient object at 0x7c910192c650>
+rpc = 'get_workflow_execution_history'
+req = namespace: "REDACTED"
+execution {
+  workflow_id: "counter-zr-jsfxkyv"
+}
+wait_new_event: true
+history_event_filter_type: HISTORY_EVENT_FILTER_TYPE_CLOSE_EVENT
+skip_archival: true
+
+resp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.GetWorkflowExecutionHistoryResponse'>
+
+    async def _rpc_call(
+        self,
+        rpc: str,
+        req: google.protobuf.message.Message,
+        resp_type: type[ServiceResponse],
+        *,
+        service: str,
+        retry: bool,
+        metadata: Mapping[str, str | bytes],
+        timeout: timedelta | None,
+    ) -> ServiceResponse:
+        global LOG_PROTOS
+        if LOG_PROTOS:
+            logger.debug("Service %s request to %s: %s", service, rpc, req)
+        try:
+            client = await self._connected_client()
+            resp = await client.call(
+                service=service,
+                rpc=rpc,
+                req=req,
+                resp_type=resp_type,
+                retry=retry,
+                metadata=metadata,
+                timeout=timeout,
+            )
+            if LOG_PROTOS:
+                logger.debug("Service %s response from %s: %s", service, rpc, resp)
+            return resp
+        except BridgeRPCError as err:
+            # Intentionally swallowing the cause instead of using "from"
+            status, message, details = err.args
+>           raise RPCError(message, RPCStatusCode(status), details)
+E           temporalio.service.RPCError: workflow not found for ID: counter-zr-jsfxkyv
+
+usr/local/lib/python3.12/dist-packages/temporalio/service.py:415: RPCError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_output_file_exists_and_has_final_6 - A...
+FAILED tests/test_final_state.py::test_workflow_completed_on_temporal_cloud
+FAILED tests/test_final_state.py::test_workflow_result_is_six - temporalio.se...
+============================== 3 failed in 1.91s ===============================

@@ -1,0 +1,61 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 0,
+            "failed": 3,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779817359077,
+            "stop": 1779817359748
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_npm_start_succeeds",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 398,
+                "start": 1779817359342,
+                "stop": 1779817359740,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\\n> temporal-counter-ts@1.0.0 start\\n> concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\\n\\n', stderr='sh: 1: concurrently: not found\\n')\n\n    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"`npm start` did not exit successfully. \"\n            f\"stdout=\\n{npm_start_output.stdout}\\nstderr=\\n{npm_start_output.stderr}\"\n        )\nE       AssertionError: `npm start` did not exit successfully. stdout=\nE         \nE         > temporal-counter-ts@1.0.0 start\nE         > concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\nE         \nE         \nE         stderr=\nE         sh: 1: concurrently: not found\nE         \nE       assert 127 == 0\nE        +  where 127 = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\\n> temporal-counter-ts@1.0.0 start\\n> concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\\n\\n', stderr='sh: 1: concurrently: not found\\n').returncode\n\ntests/test_final_state.py:37: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_npm_start_prints_final_counter",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779817359740,
+                "stop": 1779817359743,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\\n> temporal-counter-ts@1.0.0 start\\n> concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\\n\\n', stderr='sh: 1: concurrently: not found\\n')\n\n    def test_npm_start_prints_final_counter(npm_start_output: subprocess.CompletedProcess):\n        combined = (npm_start_output.stdout or \"\") + (npm_start_output.stderr or \"\")\n        # The client must print the final counter value (10) to stdout.\n>       assert re.search(r\"(?<!\\d)10(?!\\d)\", combined), (\n            f\"Expected combined output of `npm start` to contain the final counter value '10', \"\n            f\"got stdout=\\n{npm_start_output.stdout}\\nstderr=\\n{npm_start_output.stderr}\"\n        )\nE       AssertionError: Expected combined output of `npm start` to contain the final counter value '10', got stdout=\nE         \nE         > temporal-counter-ts@1.0.0 start\nE         > concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\nE         \nE         \nE         stderr=\nE         sh: 1: concurrently: not found\nE         \nE       assert None\nE        +  where None = <function search at 0x79e9b1dfbba0>('(?<!\\\\d)10(?!\\\\d)', '\\n> temporal-counter-ts@1.0.0 start\\n> concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\\n\\nsh: 1: concurrently: not found\\n')\nE        +    where <function search at 0x79e9b1dfbba0> = re.search\n\ntests/test_final_state.py:46: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 3,
+                "start": 1779817359744,
+                "stop": 1779817359747,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\\n> temporal-counter-ts@1.0.0 start\\n> concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\\n\\n', stderr='sh: 1: concurrently: not found\\n')\n\n    def test_workflow_completed_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):\n>       assert npm_start_output.returncode == 0, (\n            \"Skipping cloud verification because `npm start` did not exit cleanly.\"\n        )\nE       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.\nE       assert 127 == 0\nE        +  where 127 = CompletedProcess(args=['npm', 'start'], returncode=127, stdout='\\n> temporal-counter-ts@1.0.0 start\\n> concurrently --kill-others -s first -n worker,client \"npm run worker\" \"npm run client\"\\n\\n', stderr='sh: 1: concurrently: not found\\n').returncode\n\ntests/test_final_state.py:108: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}
