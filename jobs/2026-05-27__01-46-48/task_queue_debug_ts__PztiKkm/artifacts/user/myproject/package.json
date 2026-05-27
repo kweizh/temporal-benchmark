@@ -1,0 +1,21 @@
+{
+  "name": "temporal-task-queue-debug-ts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Temporal TypeScript project skeleton with a deliberate task queue mismatch between worker and client.",
+  "scripts": {
+    "worker": "ts-node src/worker.ts",
+    "client": "ts-node src/client.ts"
+  },
+  "dependencies": {
+    "@temporalio/activity": "^1.11.7",
+    "@temporalio/client": "^1.11.7",
+    "@temporalio/worker": "^1.11.7",
+    "@temporalio/workflow": "^1.11.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "reminder-temporal",
+  "version": "1.0.0",
+  "description": "Durable Reminder workflow on Temporal Cloud (TypeScript)",
+  "main": "lib/client.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "npm run build && node lib/start.js"
+  },
+  "dependencies": {
+    "@temporalio/activity": "^1.11.4",
+    "@temporalio/client": "^1.11.4",
+    "@temporalio/worker": "^1.11.4",
+    "@temporalio/workflow": "^1.11.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

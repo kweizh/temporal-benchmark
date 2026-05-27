@@ -1,0 +1,100 @@
+2026-05-26 18:12:33,907 INFO run – Connecting to Temporal Cloud at REDACTED (namespace: REDACTED)
+2026-05-26 18:12:34,401 INFO run – Starting worker on task queue: saga-py-zr-wyqpj7h
+2026-05-26 18:12:36,403 INFO run – OK_WORKFLOW_ID: saga-ok-py-zr-wyqpj7h
+2026-05-26 18:12:36,404 INFO run – Starting workflow run 1: saga-ok-py-zr-wyqpj7h
+2026-05-26 18:12:36,597 INFO temporalio.workflow – Starting transfer: A -> B, amount=30 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-13f5-75b8-9190-06c6ecb7bb4a', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:36,764 INFO temporalio.activity – Withdrew 30 from A (new balance: 70) ({'activity_id': '1', 'activity_type': 'withdraw', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-13f5-75b8-9190-06c6ecb7bb4a', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:37,103 INFO temporalio.activity – Deposited 30 to B (new balance: 30) ({'activity_id': '2', 'activity_type': 'deposit', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-13f5-75b8-9190-06c6ecb7bb4a', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:37,286 INFO temporalio.workflow – Transfer complete: A -> B, amount=30 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-13f5-75b8-9190-06c6ecb7bb4a', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:37,446 INFO run – Workflow saga-ok-py-zr-wyqpj7h completed with result: transferred 30 from A to B
+2026-05-26 18:12:37,447 INFO run – FAIL_WORKFLOW_ID: saga-fail-py-zr-wyqpj7h
+2026-05-26 18:12:37,447 INFO run – Starting workflow run 2: saga-fail-py-zr-wyqpj7h
+2026-05-26 18:12:37,637 INFO temporalio.workflow – Starting transfer: A -> B_FAIL, amount=50 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-1807-7616-818d-e33712afc344', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:37,803 INFO temporalio.activity – Withdrew 50 from A (new balance: 20) ({'activity_id': '1', 'activity_type': 'withdraw', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-1807-7616-818d-e33712afc344', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:38,137 WARNING temporalio.activity – Completing activity as failed ({'activity_id': '2', 'activity_type': 'deposit', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-1807-7616-818d-e33712afc344', 'workflow_type': 'MoneyTransferWorkflow'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 359, in _handle_start_activity_task
+    result = await self._execute_activity(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 714, in _execute_activity
+    return await impl.execute_activity(input)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 909, in execute_activity
+    return await input.fn(*input.args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/myproject/activities.py", line 60, in deposit
+    raise ApplicationError(
+temporalio.exceptions.ApplicationError: Deposit to 'B_FAIL' is not allowed (simulated failure)
+2026-05-26 18:12:38,538 WARNING temporalio.workflow – Deposit to B_FAIL failed (Activity task failed); running refund compensation ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-1807-7616-818d-e33712afc344', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:38,702 INFO temporalio.activity – Refunded 50 to A (new balance: 70) ({'activity_id': '3', 'activity_type': 'refund', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-1807-7616-818d-e33712afc344', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:12:39,062 INFO run – Shutting down worker…
+2026-05-26 18:12:39,063 INFO temporalio.worker._worker – Worker cancelled, shutting down
+2026-05-26 18:12:39,063 INFO temporalio.worker._worker – Beginning worker shutdown, will wait 0:00:00 before cancelling activities
+2026-05-26 18:12:39,213 INFO run – Worker stopped.
+2026-05-26 18:13:04,671 INFO run – Connecting to Temporal Cloud at REDACTED (namespace: REDACTED)
+2026-05-26 18:13:05,075 INFO run – Starting worker on task queue: saga-py-zr-wyqpj7h
+2026-05-26 18:13:07,078 INFO run – OK_WORKFLOW_ID: saga-ok-py-zr-wyqpj7h
+2026-05-26 18:13:07,078 INFO run – Starting workflow run 1: saga-ok-py-zr-wyqpj7h
+2026-05-26 18:13:07,243 INFO temporalio.workflow – Starting transfer: A -> B, amount=30 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-8bc8-770e-a322-94a68ee55269', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:07,391 INFO temporalio.activity – Withdrew 30 from A (new balance: 70) ({'activity_id': '1', 'activity_type': 'withdraw', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-8bc8-770e-a322-94a68ee55269', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:07,691 INFO temporalio.activity – Deposited 30 to B (new balance: 30) ({'activity_id': '2', 'activity_type': 'deposit', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-8bc8-770e-a322-94a68ee55269', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:07,849 INFO temporalio.workflow – Transfer complete: A -> B, amount=30 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-8bc8-770e-a322-94a68ee55269', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:07,989 INFO run – Workflow saga-ok-py-zr-wyqpj7h completed with result: transferred 30 from A to B
+2026-05-26 18:13:07,990 INFO run – FAIL_WORKFLOW_ID: saga-fail-py-zr-wyqpj7h
+2026-05-26 18:13:07,990 INFO run – Starting workflow run 2: saga-fail-py-zr-wyqpj7h
+2026-05-26 18:13:08,167 INFO temporalio.workflow – Starting transfer: A -> B_FAIL, amount=50 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-8f58-7bd0-a1db-cf1cff479fe1', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:08,307 INFO temporalio.activity – Withdrew 50 from A (new balance: 20) ({'activity_id': '1', 'activity_type': 'withdraw', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-8f58-7bd0-a1db-cf1cff479fe1', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:08,600 WARNING temporalio.activity – Completing activity as failed ({'activity_id': '2', 'activity_type': 'deposit', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-8f58-7bd0-a1db-cf1cff479fe1', 'workflow_type': 'MoneyTransferWorkflow'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 359, in _handle_start_activity_task
+    result = await self._execute_activity(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 714, in _execute_activity
+    return await impl.execute_activity(input)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 909, in execute_activity
+    return await input.fn(*input.args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/myproject/activities.py", line 60, in deposit
+    raise ApplicationError(
+temporalio.exceptions.ApplicationError: Deposit to 'B_FAIL' is not allowed (simulated failure)
+2026-05-26 18:13:08,759 WARNING temporalio.workflow – Deposit to B_FAIL failed (Activity task failed); running refund compensation ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657d-8f58-7bd0-a1db-cf1cff479fe1', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:08,899 INFO temporalio.activity – Refunded 50 to A (new balance: 70) ({'activity_id': '3', 'activity_type': 'refund', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_run_id': '019e657d-8f58-7bd0-a1db-cf1cff479fe1', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:09,182 INFO run – Workflow saga-fail-py-zr-wyqpj7h failed as expected (saga compensation ran): Workflow execution failed
+2026-05-26 18:13:09,183 INFO run – Shutting down worker…
+2026-05-26 18:13:09,183 INFO temporalio.worker._worker – Worker cancelled, shutting down
+2026-05-26 18:13:09,184 INFO temporalio.worker._worker – Beginning worker shutdown, will wait 0:00:00 before cancelling activities
+2026-05-26 18:13:09,307 INFO run – Worker stopped.
+2026-05-26 18:13:09,308 INFO run – All done. Final account state is in /workspace/accounts.json
+2026-05-26 18:13:39,053 INFO run – Connecting to Temporal Cloud at REDACTED (namespace: REDACTED)
+2026-05-26 18:13:39,471 INFO run – Starting worker on task queue: saga-py-zr-wyqpj7h
+2026-05-26 18:13:41,475 INFO run – OK_WORKFLOW_ID: saga-ok-py-zr-wyqpj7h
+2026-05-26 18:13:41,475 INFO run – Starting workflow run 1: saga-ok-py-zr-wyqpj7h
+2026-05-26 18:13:41,639 INFO temporalio.workflow – Starting transfer: A -> B, amount=30 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657e-1224-7393-9c1f-88e8a9dd0723', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:41,783 INFO temporalio.activity – Withdrew 30 from A (new balance: 40) ({'activity_id': '1', 'activity_type': 'withdraw', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_run_id': '019e657e-1224-7393-9c1f-88e8a9dd0723', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:42,088 INFO temporalio.activity – Deposited 30 to B (new balance: 60) ({'activity_id': '2', 'activity_type': 'deposit', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_run_id': '019e657e-1224-7393-9c1f-88e8a9dd0723', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:42,251 INFO temporalio.workflow – Transfer complete: A -> B, amount=30 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657e-1224-7393-9c1f-88e8a9dd0723', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-ok-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:42,395 INFO run – Workflow saga-ok-py-zr-wyqpj7h completed with result: transferred 30 from A to B
+2026-05-26 18:13:42,395 INFO run – FAIL_WORKFLOW_ID: saga-fail-py-zr-wyqpj7h
+2026-05-26 18:13:42,395 INFO run – Starting workflow run 2: saga-fail-py-zr-wyqpj7h
+2026-05-26 18:13:42,558 INFO temporalio.workflow – Starting transfer: A -> B_FAIL, amount=50 ({'attempt': 1, 'namespace': 'REDACTED', 'run_id': '019e657e-15bb-7136-815a-29e7b26d1fe1', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_type': 'MoneyTransferWorkflow'})
+2026-05-26 18:13:42,701 WARNING temporalio.activity – Completing activity as failed ({'activity_id': '1', 'activity_type': 'withdraw', 'attempt': 1, 'namespace': 'REDACTED', 'task_queue': 'saga-py-zr-wyqpj7h', 'workflow_id': 'saga-fail-py-zr-wyqpj7h', 'workflow_run_id': '019e657e-15bb-7136-815a-29e7b26d1fe1', 'workflow_type': 'MoneyTransferWorkflow'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 359, in _handle_start_activity_task
+    result = await self._execute_activity(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 714, in _execute_activity
+    return await impl.execute_activity(input)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/temporalio/worker/_activity.py", line 909, in execute_activity
+    return await input.fn(*input.args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/myproject/activities.py", line 38, in withdraw
+    raise ApplicationError(
+temporalio.exceptions.ApplicationError: Insufficient funds in 'A': has 40, need 50
+2026-05-26 18:13:43,002 INFO run – Workflow saga-fail-py-zr-wyqpj7h failed as expected (saga compensation ran): Workflow execution failed
+2026-05-26 18:13:43,002 INFO run – Shutting down worker…
+2026-05-26 18:13:43,003 INFO temporalio.worker._worker – Worker cancelled, shutting down
+2026-05-26 18:13:43,003 INFO temporalio.worker._worker – Beginning worker shutdown, will wait 0:00:00 before cancelling activities
+2026-05-26 18:13:43,132 INFO run – Worker stopped.
+2026-05-26 18:13:43,132 INFO run – All done. Final account state is in /workspace/accounts.json

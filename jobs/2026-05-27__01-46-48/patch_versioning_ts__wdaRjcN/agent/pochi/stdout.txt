@@ -1,0 +1,67 @@
+- Initializing MCP connections...
+You
+# Safely Add a New Activity to a Running Workflow Using Patching ## Background A TypeScript Temporal worker is already deployed for an order-processing service. The existing `OrderWorkflow(orderId)` runs `chargeCard` followed by `shipOrder`. The team wants to insert a new step `notifyCustomer` between the existing two steps, but workflow executions for the previous version may still be in flight and replaying. A naive code change would cause non-determinism errors. You must use Temporal's versioning-with-patching mechanism so that both old and new executions remain correct. The project at `/home/user/myproject` is preconfigured to connect to a real Temporal Cloud namespace using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` (already set as environment variables). ## Requirements * Modify `src/workflows.ts` so that the new `notifyCustomer` activity is invoked between `chargeCard` and `shipOrder`, guarded by Temporal's patching API so that already-running executions of the previous version do not break on replay. * The patch identifier must be exactly `add-notify-customer`. * Register the new `notifyCustomer` activity (already implemented in `src/activities.ts`) with the worker if it is not already registered. * Running `npm start` from `/home/user/myproject` must start the worker, which should poll the `order-ts` task queue and process both pre-existing and new workflow executions to completion. ## Implementation Hints * Read https://docs.temporal.io/develop/typescript/versioning for the patching API. * Use the `patched()` function from `@temporalio/workflow` to introduce the new branch. * Do NOT rename `OrderWorkflow` or change its argument shape; existing executions reference it by name. * The new branch should invoke `notifyCustomer(orderId)` after `chargeCard(orderId)` and before `shipOrder(orderId)`. * The old (pre-patch) branch must keep the original two-activity sequence so in-flight workflows continue to replay deterministically. * The verifier will inspect `src/workflows.ts` to confirm the patch identifier is present. * Read `run-id` from the `ZEALT_RUN_ID` environment variable; it is used only by the verifier to derive workflow IDs and is not needed by your worker code. ## Acceptance Criteria * Project path: /home/user/myproject * Start command: npm start * Task queue: order-ts * The file `/home/user/myproject/src/workflows.ts` MUST contain a call to `patched('add-notify-customer')`. * The worker registered by `npm start` MUST: * Replay and complete the pre-existing workflow execution started by the verifier before the worker came up (workflow ID `order-old-${ZEALT_RUN_ID}`). * Execute to completion a new workflow execution `order-new-${ZEALT_RUN_ID}` started by the verifier against the running worker. * The new branch MUST cause the `notifyCustomer` activity to append a line containing `notified:order-new-${ZEALT_RUN_ID}` to `/workspace/notify.log`. * The original branch MUST NOT produce a `notified:` line for `order-old-${ZEALT_RUN_ID}` (the old execution predates the patch).   
+
+Pochi
+💭 Thinking for 86 characters   
+📂 Listing files in /home/user/myproject recursively ✔ 
+Now let me read the key source files:   
+📖 Reading /home/user/myproject/src/workflows.ts ✔ 
+  
+📖 Reading /home/user/myproject/src/worker.ts ✔ 
+📖 Reading /home/user/myproject/package.json ✔ 
+Now I have a clear picture of the codebase. Let me analyze what needs to be done: 1. **`src/workflows.ts`**: Already imports `notifyCustomer` via `proxyActivities`, but needs the `patched()` call with `'add-notify-customer'` to guard the new step. 2. **`src/worker.ts`**: Already registers all activities via `activities` (which includes `notifyCustomer`). No changes needed. 3. The `sleep('10 seconds')` between `chargeCard` and `shipOrder` in the original workflow is a concern — it could have been part of the original execution history. I need to preserve it carefully. Looking at the current `OrderWorkflow`: - Old path: `chargeCard` → `sleep(10s)` → `shipOrder` - New path (with patch): `chargeCard` → `notifyCustomer` → `shipOrder` The `sleep` in the original workflow is after `chargeCard` and before `shipOrder`. For the patching to work correctly: - Old branch (pre-patch): must replay `chargeCard` → `sleep(10s)` → `shipOrder` exactly as before - New branch (post-patch): `chargeCard` → `notifyCustomer` → `shipOrder` The `patched()` call must come **before** the divergence point. Since old executions have `sleep` recorded in their history, the old branch must keep the `sleep`. The new branch can skip the sleep and insert `notifyCustomer` instead.   
+✏️  Writing /home/user/myproject/src/workflows.ts ✔ 
+Now let me verify the file looks correct and then test that it compiles:   
+📖 Reading /home/user/myproject/src/workflows.ts ✔ 
+Now let me verify that `patched` is exported from `@temporalio/workflow`:   
+🔍 Searching for export.*patched in *.ts files in /home/user/myproject/node_modules/@temporalio/workflow ✔ 
+`patched` is confirmed exported. Now let me do a quick TypeScript compilation check:   
+💫 Executing cd /home/user/myproject && npx tsc --noEmit 2>&1 ✔ 
+TypeScript compiles cleanly with no errors. Let me also verify the worker already has `notifyCustomer` registered (it imports `* as activities` which includes all three functions):   
+🔍 Searching for activities in worker.ts files in /home/user/myproject/src ✔ 
+The worker already registers all activities via `import * as activities from './activities'` and passes the entire `activities` object to `Worker.create`. Since `notifyCustomer` is exported from `activities.ts`, it's automatically registered. Let me do a final review of all three source files to confirm everything is consistent:   
+📖 Reading /home/user/myproject/src/worker.ts ✔ 
+Everything is in order. Here's a summary of what was done and why: ---   
+🎉 Task Completed
+The implementation is complete. Here's what was changed and why:
+
+## Change: `src/workflows.ts`
+
+Added `patched` to the import from `@temporalio/workflow` and restructured `OrderWorkflow` to branch on `patched('add-notify-customer')`:
+
+```typescript
+import { proxyActivities, sleep, patched } from '@temporalio/workflow';
+import type * as activities from './activities';
+
+const { chargeCard, shipOrder, notifyCustomer } = proxyActivities<typeof activities>({
+  startToCloseTimeout: '30 seconds',
+});
+
+export async function OrderWorkflow(orderId: string): Promise<void> {
+  await chargeCard(orderId);
+
+  if (patched('add-notify-customer')) {
+    await notifyCustomer(orderId);
+    await shipOrder(orderId);
+  } else {
+    await sleep('10 seconds');
+    await shipOrder(orderId);
+  }
+}
+```
+
+## How it satisfies all requirements
+
+**Determinism for old executions (`order-old-*`)**  
+`patched('add-notify-customer')` returns `false` when replaying a workflow that was started before the patch was introduced. The `else` branch preserves the exact original sequence — `chargeCard` → `sleep(10s)` → `shipOrder` — so replay succeeds without non-determinism errors. No `notified:` line is written to `/workspace/notify.log` for these executions.
+
+**New executions (`order-new-*`)**  
+`patched('add-notify-customer')` returns `true` for all new executions. These take the `if` branch: `chargeCard` → `notifyCustomer` → `shipOrder`, writing `notified:order-new-${ZEALT_RUN_ID}` to `/workspace/notify.log`.
+
+**Patch identifier**: Exactly `add-notify-customer` as required.
+
+**No changes to `src/worker.ts`** were needed — it already imports `* as activities` (which includes `notifyCustomer`) and registers them all with the worker on the `order-ts` task queue.
+
+TypeScript compiles cleanly (`tsc --noEmit` exits with no errors).   
+  

@@ -1,0 +1,68 @@
+{
+    "id": "84799826-87b0-41f7-a737-67152237b1df",
+    "started_at": "2026-05-27T01:46:50.611475",
+    "updated_at": "2026-05-27T02:17:45.223378",
+    "finished_at": "2026-05-27T02:17:45.223378",
+    "n_total_trials": 28,
+    "stats": {
+        "n_completed_trials": 28,
+        "n_errored_trials": 0,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "pochi__claude-4-6-sonnet__tasks": {
+                "n_trials": 28,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 0.6428571428571429
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "continue_as_new_loop_py__Z3DNfCN",
+                            "query_handler_workflow_ts__aKWJPEb",
+                            "patch_versioning_ts__wdaRjcN",
+                            "fix_nondeterministic_workflow_ts__nwxdtmB",
+                            "reminder_sleep_workflow_py__StnUDHi",
+                            "fix_nondeterministic_workflow_py__anXsTCg",
+                            "retry_policy_fixed_py__K7FCoNy",
+                            "workflow_cancellation_cleanup_py__aQhPE7s",
+                            "task_queue_debug_ts__PztiKkm",
+                            "signal_increment_counter_py__NF62B4q",
+                            "subscription_signal_workflow_ts__GCuicTt",
+                            "child_workflow_ts__dXaaEtc",
+                            "heartbeat_activity_py__uXS3YTk",
+                            "parallel_activities_workflow_ts__Q4jNPvF",
+                            "signal_increment_counter_ts__EskuGxy",
+                            "workflow_update_handler_ts__JhCqHt5",
+                            "activity_get_request_py__XUwYUDi",
+                            "hello_workflow_py__CHMrEDP"
+                        ],
+                        "0.0": [
+                            "continue_as_new_loop_ts__eVC2ouB",
+                            "parallel_activities_workflow_py__TUnQJys",
+                            "hello_workflow_ts__86pFuKz",
+                            "reminder_sleep_workflow_ts__hq4Kx2i",
+                            "retry_policy_fixed_ts__jdTrAPV",
+                            "workflow_cancellation_cleanup_ts__SpxBbMZ",
+                            "query_handler_workflow_py__RLjz9CH",
+                            "activity_get_request_ts__Nkabdus",
+                            "money_transfer_saga_py__wYqPJ7H",
+                            "money_transfer_saga_ts__mYX6VUG"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        },
+        "n_input_tokens": 0,
+        "n_cache_tokens": 0,
+        "n_output_tokens": 911416,
+        "cost_usd": null
+    }
+}

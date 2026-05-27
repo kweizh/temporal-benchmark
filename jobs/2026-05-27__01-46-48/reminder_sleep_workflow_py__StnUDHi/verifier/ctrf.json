@@ -1,0 +1,61 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 4,
+            "passed": 4,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779818113145,
+            "stop": 1779818118887
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_run_sh_succeeds",
+                "status": "passed",
+                "duration": 4836,
+                "start": 1779818113378,
+                "stop": 1779818118214,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_run_sh_prints_expected_result",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779818118214,
+                "stop": 1779818118214,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_reminder_log_file_contains_notification",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779818118215,
+                "stop": 1779818118215,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "passed",
+                "duration": 671,
+                "start": 1779818118216,
+                "stop": 1779818118887,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

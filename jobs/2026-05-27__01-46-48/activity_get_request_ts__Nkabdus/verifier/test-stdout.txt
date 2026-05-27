@@ -1,0 +1,146 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py EEE                                            [100%]
+
+==================================== ERRORS ====================================
+__________________ ERROR at setup of test_npm_start_succeeds ___________________
+
+    @pytest.fixture(scope="module")
+    def npm_start_output() -> subprocess.CompletedProcess:
+        """Run `npm start` once and reuse its output across tests."""
+        env = os.environ.copy()
+>       result = subprocess.run(
+            ["npm", "start"],
+            cwd=PROJECT_DIR,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=300,
+        )
+
+tests/test_final_state.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+usr/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: 1 args: ['npm', 'start']>, endtime = 96613.769600885
+orig_timeout = 300
+stdout_seq = [b'\n> temporal-fetch-url@1.0.0 start\n> bash scripts/start.sh\n\n', b'[start.sh] Starting Temporal Worker in backgrou...rkflow "fetch-wf-zr-nkabdus" on task queue "fetch-url-ts" ...\n', b'[client] Target URL: https://api.github.com/zen\n']
+stderr_seq = [b"2026-05-26T18:12:34.681Z [INFO] asset workflow-bundle-cd3776f5b2c028fb0f02.js 1.38 MiB [emitted] [immutable] (name:...     at async /home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:1190:24,\n  durationMs: 56\n}\n", ...]
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['npm', 'start']' timed out after 300 seconds
+
+usr/lib/python3.12/subprocess.py:1253: TimeoutExpired
+___________ ERROR at setup of test_npm_start_prints_non_empty_output ___________
+
+    @pytest.fixture(scope="module")
+    def npm_start_output() -> subprocess.CompletedProcess:
+        """Run `npm start` once and reuse its output across tests."""
+        env = os.environ.copy()
+>       result = subprocess.run(
+            ["npm", "start"],
+            cwd=PROJECT_DIR,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=300,
+        )
+
+tests/test_final_state.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+usr/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: 1 args: ['npm', 'start']>, endtime = 96613.769600885
+orig_timeout = 300
+stdout_seq = [b'\n> temporal-fetch-url@1.0.0 start\n> bash scripts/start.sh\n\n', b'[start.sh] Starting Temporal Worker in backgrou...rkflow "fetch-wf-zr-nkabdus" on task queue "fetch-url-ts" ...\n', b'[client] Target URL: https://api.github.com/zen\n']
+stderr_seq = [b"2026-05-26T18:12:34.681Z [INFO] asset workflow-bundle-cd3776f5b2c028fb0f02.js 1.38 MiB [emitted] [immutable] (name:...     at async /home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:1190:24,\n  durationMs: 56\n}\n", ...]
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['npm', 'start']' timed out after 300 seconds
+
+usr/lib/python3.12/subprocess.py:1253: TimeoutExpired
+_________ ERROR at setup of test_workflow_completed_in_temporal_cloud __________
+
+    @pytest.fixture(scope="module")
+    def npm_start_output() -> subprocess.CompletedProcess:
+        """Run `npm start` once and reuse its output across tests."""
+        env = os.environ.copy()
+>       result = subprocess.run(
+            ["npm", "start"],
+            cwd=PROJECT_DIR,
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=300,
+        )
+
+tests/test_final_state.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usr/lib/python3.12/subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+usr/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+usr/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Popen: returncode: 1 args: ['npm', 'start']>, endtime = 96613.769600885
+orig_timeout = 300
+stdout_seq = [b'\n> temporal-fetch-url@1.0.0 start\n> bash scripts/start.sh\n\n', b'[start.sh] Starting Temporal Worker in backgrou...rkflow "fetch-wf-zr-nkabdus" on task queue "fetch-url-ts" ...\n', b'[client] Target URL: https://api.github.com/zen\n']
+stderr_seq = [b"2026-05-26T18:12:34.681Z [INFO] asset workflow-bundle-cd3776f5b2c028fb0f02.js 1.38 MiB [emitted] [immutable] (name:...     at async /home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:1190:24,\n  durationMs: 56\n}\n", ...]
+skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() > endtime:
+>           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['npm', 'start']' timed out after 300 seconds
+
+usr/lib/python3.12/subprocess.py:1253: TimeoutExpired
+=========================== short test summary info ============================
+ERROR tests/test_final_state.py::test_npm_start_succeeds - subprocess.Timeout...
+ERROR tests/test_final_state.py::test_npm_start_prints_non_empty_output - sub...
+ERROR tests/test_final_state.py::test_workflow_completed_in_temporal_cloud - ...
+======================== 3 errors in 300.51s (0:05:00) =========================

@@ -1,0 +1,101 @@
+- Initializing MCP connections...
+You
+# Fix a Non-Deterministic Temporal Workflow (TypeScript) ## Background A teammate wrote a Temporal Workflow in TypeScript that picks a percentage discount for a user. The Workflow currently performs random number generation and reads wall-clock time directly inside the Workflow body, which violates Temporal's https://docs.temporal.io/develop/typescript/workflows/basics#workflow-logic-requirements. Even when the TypeScript SDK provides deterministic replacements for some APIs, the team's coding standard forbids the bare use of `Math.random` and `new Date(` inside Workflow code so that the codebase remains explicit about side effects and replay-safety. Your job is to refactor the broken Workflow so that: * Time is obtained through Temporal's Workflow API (e.g. `workflow.now()`). * Random selection of the discount happens inside an Activity called `pickDiscount` and is awaited from the Workflow. The project is already wired to connect to Temporal Cloud using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` environment variables. A Worker and Client driver are already provided. ## Requirements * Refactor `src/workflows.ts` so that the `DiscountWorkflow(userId: string)` Workflow no longer contains the strings `Math.random` or `new Date(`. * Add an Activity `pickDiscount()` (in `src/activities.ts`) that returns one of the integer percentages `[0, 5, 10, 15, 20]` chosen at random. * The Workflow must invoke `pickDiscount` through `proxyActivities` (do not call it inline) and must record the decision time using `workflow.now()` (or another Workflow-safe time API). * The Workflow must return an object of shape `{ userId: string, discount: number, decidedAt: number }` where `decidedAt` is a Unix epoch millisecond timestamp obtained from the Workflow time API. * Start the Worker (`npm run worker`) and then run the client (`npm run client`) which starts the Workflow with id `discount-${ZEALT_RUN_ID}` on Task Queue `discount-ts` and waits for completion. * The client must append the resulting discount to the log file `/home/user/myproject/output.log` in the format `Discount: <number>` after the Workflow completes successfully. ## Implementation Hints * Read the existing `src/workflows.ts`, `src/activities.ts`, `src/worker.ts`, and `src/client.ts` to understand the layout before changing anything. * The Temporal TypeScript SDK exposes `now()` from `@temporalio/workflow` which returns the deterministic Workflow time. * Activities can use `Math.random` freely; only Workflow code is restricted. * Read the `ZEALT_RUN_ID` environment variable in the client and use it to derive the Workflow id `discount-${ZEALT_RUN_ID}`. * Verify your fix by running the Worker in one process and the client in another; the Workflow must reach the `COMPLETED` state in Temporal Cloud. ## Acceptance Criteria * Project path: /home/user/myproject * Log file: /home/user/myproject/output.log * The Workflow with id `discount-${ZEALT_RUN_ID}` on Task Queue `discount-ts` must reach the `COMPLETED` state in Temporal Cloud (no `NonDeterministicError`). * The Workflow execution history must include at least one `ActivityTaskScheduled` event whose Activity Type is `pickDiscount`. * The file `src/workflows.ts` must NOT contain the strings `Math.random` or `new Date(` (regex check on raw file contents). * The Workflow result's `discount` field must be one of `0`, `5`, `10`, `15`, or `20`. * The log file must contain a line in the format: `Discount: <number>` where `<number>` is the discount returned by the Workflow.   
+
+Pochi
+💭 Thinking for 102 characters   
+📂 Listing files in /home/user/myproject recursively ✔ 
+Now let me read the key source files:   
+📖 Reading /home/user/myproject/src/workflows.ts ✔ 
+  
+📖 Reading /home/user/myproject/src/worker.ts ✔ 
+📖 Reading /home/user/myproject/src/client.ts ✔ 
+Now I have a clear picture. Let me also check the `package.json` to understand the scripts:   
+📖 Reading /home/user/myproject/package.json ✔ 
+Now I have everything I need. Let me set up the todo list and make the changes:   
+📋 Updating todo list (4 items) ✔ 
+📋 Updating todo list (4 items) ✔ 
+✏️  Writing /home/user/myproject/src/activities.ts ✔ 
+📋 Updating todo list (4 items) ✔ 
+✏️  Writing /home/user/myproject/src/workflows.ts ✔ 
+📋 Updating todo list (4 items) ✔ 
+Now start the Worker in the background:   
+🛠️ Tool startBackgroundJob ✔ 
+🛠️ Tool readBackgroundJobOutput ✔ 
+Worker is starting up. Let me wait a bit for it to connect, then run the client:   
+💫 Executing sleep 8 ✔ 
+🛠️ Tool readBackgroundJobOutput ✔ 
+The Worker is running and connected. Now run the client:   
+📋 Updating todo list (4 items) ✔ 
+💫 Executing npm run client ✖ "Command exited with code 1"
+The `now` export name may differ. Let me check what the `@temporalio/workflow` package actually exports:   
+💫 Executing grep -r "export.*now\|exports\.now\|module\.exports\.now" /home/user/myproject/node_modules/@temporalio/workflow/lib/ | head -20 ✔ 
+💫 Executing grep "now" /home/user/myproject/node_modules/@temporalio/workflow/lib/index.js | head -20 ✔ 
+💫 Executing grep -i "now\|time\|clock" /home/user/myproject/node_modules/@temporalio/workflow/lib/workflow.d.ts | head -20 ✔ 
+💫 Executing cat /home/user/myproject/node_modules/@temporalio/workflow/lib/index.d.ts | grep -i "now\|time\|clock\|date" | head -20 ✔ 
+💫 Executing grep -E "export (declare |const |function )" /home/user/myproject/node_modules/@temporalio/workflow/lib/index.d.ts | head -40 ✔ 
+💫 Executing grep -rn "now\b" /home/user/myproject/node_modules/@temporalio/workflow/lib/workflow.d.ts ✖ "Command exited with code 1"
+💫 Executing grep -rn "now\b\|workflowInfo\|currentTime" /home/user/myproject/node_modules/@temporalio/workflow/lib/*.d.ts | grep "declare\|export" | head -20 ✔ 
+💫 Executing grep -n "now\|currentTime\|Date\|timestamp\|millis" /home/user/myproject/node_modules/@temporalio/workflow/lib/workflow.d.ts | head -20 ✔ 
+💫 Executing grep -rn "currentTime\|\.now\b" /home/user/myproject/node_modules/@temporalio/workflow/lib/ | head -20 ✔ 
+The SDK overrides `Date.now()` to be deterministic in Workflow code. So instead of `now()`, I should use `Date.now()` which the SDK patches to be workflow-safe. Let me verify this:   
+📖 Reading /home/user/myproject/node_modules/@temporalio/workflow/lib/interfaces.d.ts ✔ 
+The SDK patches `Date.now()` to be deterministic in Workflow context. The comment says "The safe version of time is `new Date()` and `Date.now()`". So I should use `Date.now()` in the workflow. Let me update `workflows.ts` to use `Date.now()` instead of `now()` (which doesn't exist as a direct export):   
+✏️  Writing /home/user/myproject/src/workflows.ts ✔ 
+Now restart the worker (since the workflow code changed) and run the client:   
+🛠️ Tool killBackgroundJob ✔ 
+🛠️ Tool startBackgroundJob ✔ 
+💫 Executing sleep 10 ✔ 
+🛠️ Tool readBackgroundJobOutput ✔ 
+Worker is running. Now run the client:   
+💫 Executing npm run client ✔ 
+The Workflow completed successfully with a discount of `5`. Let me verify the log file was written:   
+💫 Executing cat /home/user/myproject/output.log ✔ 
+Let me also verify the final state of the source files and confirm the forbidden strings are gone:   
+💫 Executing grep -n "Math\.random\|new Date(" /home/user/myproject/src/workflows.ts && echo "FAIL: forbidden strings found" || echo "PASS: no forbidden strings" ✔ 
+📋 Updating todo list (4 items) ✔ 
+🎉 Task Completed
+The non-deterministic Temporal Workflow has been fixed. Here's a summary of every change made:
+
+---
+
+### `src/activities.ts` — added `pickDiscount()`
+```ts
+export async function pickDiscount(): Promise<number> {
+  const options = [0, 5, 10, 15, 20];
+  const idx = Math.floor(Math.random() * options.length);
+  return options[idx];
+}
+```
+`Math.random()` is allowed here because Activities run outside the Workflow sandbox and are not subject to replay determinism constraints.
+
+---
+
+### `src/workflows.ts` — fully refactored
+```ts
+import { proxyActivities } from '@temporalio/workflow';
+import type * as activities from './activities';
+
+const { pickDiscount } = proxyActivities<typeof activities>({
+  startToCloseTimeout: '10 seconds',
+});
+
+export async function DiscountWorkflow(userId: string): Promise<DiscountResult> {
+  const discount = await pickDiscount();   // delegated to Activity
+  const decidedAt = Date.now();            // SDK-patched: deterministic in Workflow context
+  return { userId, discount, decidedAt };
+}
+```
+- `Math.random` and `new Date(` have been **completely removed** from the Workflow body.
+- Random selection is now performed in the `pickDiscount` Activity, invoked via `proxyActivities` (producing an `ActivityTaskScheduled` event in the history).
+- `Date.now()` is used for the timestamp — the Temporal SDK patches this inside Workflow code to return the frozen, deterministic Workflow Task time, making it replay-safe.
+
+---
+
+### Execution result
+- Workflow id: `discount-zr-nwxdtmb` reached **COMPLETED** state on Temporal Cloud.
+- Workflow result: `{"userId":"user-42","discount":5,"decidedAt":1779818078979}`
+- `/home/user/myproject/output.log` contains: `Discount: 5`   
+- Waiting for async work to complete (timeout: 60000ms)...
+✖ Async wait timeout reached. Remaining: 0 subtask(s), 2 job(s)
+  

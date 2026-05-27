@@ -1,0 +1,53 @@
+- Initializing MCP connections...
+You
+# Debug a Stuck Temporal Workflow (Task Queue Mismatch) ## Background You are on call for a TypeScript Temporal project that connects to Temporal Cloud. A teammate left for the day and complained that a workflow they kick off with `npm run client` "just hangs forever". Running `npm run worker` and then `npm run client` produces a `Started workflow ...` line, but the workflow never completes — its server-side status stays in `Running` (with the workflow task scheduled but not started) indefinitely. Your job is to find the root cause, fix it with a minimal change, and prove that the workflow now runs to completion against the real Temporal Cloud namespace. The project under `/home/user/myproject` already contains a working `PingWorkflow(name: string): Promise<string>` that returns `pong-<name>` and a `src/worker.ts` / `src/client.ts` pair that both connect to Temporal Cloud using `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. The connection code works — the bug is somewhere else. ## Requirements * Investigate the project under `/home/user/myproject` and explain to yourself why the workflow never makes progress even though both the worker and client appear to start without error. * Apply a minimal fix so that the Worker actually picks up and executes the workflow started by the Client. The Worker and the Client must agree on which Task Queue the workflow runs on. * Do NOT change the workflow code, the workflow ID format, the workflow argument, or the connection logic. The only intended change is to make the task queue used by the Worker and the Client consistent. * Running `npm run worker` (in the background) followed by `npm run client` must result in a Workflow Execution that completes successfully on Temporal Cloud. ## Implementation Hints * A Temporal Worker only executes Workflow Tasks from the Task Queue it is registered for. If a Client starts a workflow on a different Task Queue, no Worker will ever pick it up and the workflow will sit in the `Running` state with a scheduled-but-not-started Workflow Task. * Read both `src/worker.ts` and `src/client.ts` carefully and compare the Task Queue strings they use. They should match exactly. * You can fix the mismatch by editing either file — pick whichever change is smaller. The verifier does not care which task queue name you settle on, only that the Worker and Client agree. * You can use the Temporal Cloud UI or `temporal` CLI (optional) to confirm the workflow is stuck in `Running` with no events beyond `WorkflowExecutionStarted` and `WorkflowTaskScheduled`. * The Worker must be left running while the Client executes the workflow. ## Acceptance Criteria * Project path: /home/user/myproject * Log file: /home/user/myproject/output.log * Read `run-id` from the `ZEALT_RUN_ID` environment variable. * After your fix, `src/worker.ts` and `src/client.ts` must use the **same** Task Queue name. The exact string is up to you. * A Workflow Execution must be created on Temporal Cloud (namespace `$TEMPORAL_NAMESPACE`) with: * Workflow Type: `PingWorkflow` * Workflow ID: `ping-${ZEALT_RUN_ID}` * A single string argument with value `temporal` * The Workflow Execution must complete successfully with the string result `pong-temporal`. * After running `npm run client`, the log file `/home/user/myproject/output.log` must contain a line in the format: `Workflow result: pong-temporal`.   
+
+Pochi
+💭 Thinking for 86 characters   
+📂 Listing files in /home/user/myproject recursively ✔ 
+Now let me read the key source files:   
+📖 Reading /home/user/myproject/src/worker.ts ✔ 
+  
+📖 Reading /home/user/myproject/src/workflows.ts ✔ 
+The bug is clear. The Worker registers on `task-queue-B` but the Client submits the workflow to `task-queue-A`. No Worker is ever polling `task-queue-A`, so the workflow task sits scheduled but never picked up. The minimal fix: change the Worker's `taskQueue` from `'task-queue-B'` to `'task-queue-A'` so both sides agree.   
+🔧 Applying diff to /home/user/myproject/src/worker.ts ✔ 
+Now start the worker in the background, then run the client:   
+🛠️ Tool startBackgroundJob ✔ 
+🛠️ Tool readBackgroundJobOutput ✔ 
+Worker is starting up. Let me wait a moment for it to connect, then run the client:   
+💫 Executing sleep 8 && cd /home/user/myproject && npm run client ✔ 
+The workflow completed successfully. Let me verify the log file was written:   
+💫 Executing cat /home/user/myproject/output.log ✔ 
+🛠️ Tool killBackgroundJob ✔ 
+🎉 Task Completed
+## Root Cause
+
+The Task Queue names were mismatched:
+
+| File | Task Queue |
+|---|---|
+| `src/worker.ts` | `task-queue-B` |
+| `src/client.ts` | `task-queue-A` |
+
+A Temporal Worker only polls the single Task Queue it is registered for. The Client was scheduling `PingWorkflow` on `task-queue-A`, but the Worker was listening on `task-queue-B` — so no Worker ever picked up the Workflow Task, leaving the execution stuck in `Running` with a scheduled-but-never-started Workflow Task indefinitely.
+
+## Fix Applied
+
+One-line change in `src/worker.ts`:
+
+```diff
+-    taskQueue: 'task-queue-B',
++    taskQueue: 'task-queue-A',
+```
+
+Both the Worker and the Client now agree on `task-queue-A`.
+
+## Verification
+
+- `npm run worker` (background) connected to Temporal Cloud successfully.
+- `npm run client` executed `PingWorkflow` with argument `temporal`.
+- Workflow completed with result `pong-temporal`.
+- `/home/user/myproject/output.log` contains: `Workflow result: pong-temporal`   
+- Waiting for async work to complete (timeout: 60000ms)...
+✖ Async wait timeout reached. Remaining: 0 subtask(s), 1 job(s)
+  

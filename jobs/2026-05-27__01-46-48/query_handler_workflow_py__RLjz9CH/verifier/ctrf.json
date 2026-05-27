@@ -1,0 +1,73 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 5,
+            "passed": 4,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779818897039,
+            "stop": 1779818933053
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_run_sh_succeeds",
+                "status": "passed",
+                "duration": 5756,
+                "start": 1779818897310,
+                "stop": 1779818903066,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_run_sh_prints_mid_counter",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779818903067,
+                "stop": 1779818903067,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_run_sh_prints_final_counter",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779818903068,
+                "stop": 1779818903068,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_final_counter_is_not_less_than_mid_counter",
+                "status": "passed",
+                "duration": 1,
+                "start": 1779818903068,
+                "stop": 1779818903069,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 29984,
+                "start": 1779818903069,
+                "stop": 1779818933053,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "self = <temporalio.service._BridgeServiceClient object at 0x77f5c2ff8380>\nrpc = 'query_workflow'\nreq = namespace: \"REDACTED\"\nexecution {\n  workflow_id: \"query-wf-zr-rljz9ch\"\n}\nquery {\n  query_type: \"get_counter\"\n}\n\nresp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.QueryWorkflowResponse'>\n\n    async def _rpc_call(\n        self,\n        rpc: str,\n        req: google.protobuf.message.Message,\n        resp_type: type[ServiceResponse],\n        *,\n        service: str,\n        retry: bool,\n        metadata: Mapping[str, str | bytes],\n        timeout: timedelta | None,\n    ) -> ServiceResponse:\n        global LOG_PROTOS\n        if LOG_PROTOS:\n            logger.debug(\"Service %s request to %s: %s\", service, rpc, req)\n        try:\n            client = await self._connected_client()\n>           resp = await client.call(\n                service=service,\n                rpc=rpc,\n                req=req,\n                resp_type=resp_type,\n                retry=retry,\n                metadata=metadata,\n                timeout=timeout,\n            )\n\nusr/local/lib/python3.12/dist-packages/temporalio/service.py:400: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <temporalio.bridge.client.Client object at 0x77f5c2ff8350>\n\n    async def call(\n        self,\n        *,\n        service: str,\n        rpc: str,\n        req: google.protobuf.message.Message,\n        resp_type: type[ProtoMessage],\n        retry: bool,\n        metadata: Mapping[str, str | bytes],\n        timeout: timedelta | None,\n    ) -> ProtoMessage:\n        \"\"\"Make RPC call using SDK Core.\"\"\"\n        # Prepare call\n        timeout_millis = round(timeout.total_seconds() * 1000) if timeout else None\n        call = RpcCall(rpc, req.SerializeToString(), retry, metadata, timeout_millis)\n    \n        # Do call (this throws an RPCError on failure)\n        if service == \"workflow\":\n            resp_fut = self._ref.call_workflow_service(call)\n        elif service == \"operator\":\n            resp_fut = self._ref.call_operator_service(call)\n        elif service == \"cloud\":\n            resp_fut = self._ref.call_cloud_service(call)\n        elif service == \"test\":\n            resp_fut = self._ref.call_test_service(call)\n        elif service == \"health\":\n            resp_fut = self._ref.call_health_service(call)\n        else:\n            raise ValueError(f\"Unrecognized service {service}\")\n    \n        # Convert response\n        resp = resp_type()\n>       resp.ParseFromString(await resp_fut)\nE       temporal_sdk_bridge.RPCError: (9, 'no poller seen for task queue recently, worker may be down', b'')\n\nusr/local/lib/python3.12/dist-packages/temporalio/bridge/client.py:164: RPCError\n\nDuring handling of the above exception, another exception occurred:\n\nrun_sh_output = CompletedProcess(args=['bash', 'run.sh'], returncode=0, stdout=\"Worker started, polling task queue 'query-handler-py' ...\\nMid counter: 1\\nFinal counter: 3\\n\", stderr='')\n\n    def test_workflow_completed_in_temporal_cloud(\n        run_sh_output: subprocess.CompletedProcess,\n    ):\n        assert run_sh_output.returncode == 0, (\n            \"Skipping cloud verification because `bash run.sh` did not exit cleanly.\"\n        )\n        combined = _combined_output(run_sh_output)\n        final_match = FINAL_PATTERN.search(combined)\n        assert final_match, (\n            \"Cannot verify Cloud workflow result without a `Final counter:` line in output.\"\n        )\n        expected_final_counter = int(final_match.group(1))\n>       asyncio.run(_verify_workflow_in_cloud(expected_final_counter))\n\ntests/test_final_state.py:150: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/lib/python3.12/asyncio/runners.py:194: in run\n    return runner.run(main)\nusr/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\nusr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete\n    return future.result()\ntests/test_final_state.py:127: in _verify_workflow_in_cloud\n    queried = await handle.query(\"get_counter\")\nusr/local/lib/python3.12/dist-packages/temporalio/client.py:3411: in query\n    return await self._client._impl.query_workflow(\nusr/local/lib/python3.12/dist-packages/temporalio/client.py:8364: in query_workflow\n    resp = await self._client.workflow_service.query_workflow(\nusr/local/lib/python3.12/dist-packages/temporalio/bridge/services_generated.py:1190: in query_workflow\n    return await self._client._rpc_call(\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <temporalio.service._BridgeServiceClient object at 0x77f5c2ff8380>\nrpc = 'query_workflow'\nreq = namespace: \"REDACTED\"\nexecution {\n  workflow_id: \"query-wf-zr-rljz9ch\"\n}\nquery {\n  query_type: \"get_counter\"\n}\n\nresp_type = <class 'temporalio.api.workflowservice.v1.request_response_pb2.QueryWorkflowResponse'>\n\n    async def _rpc_call(\n        self,\n        rpc: str,\n        req: google.protobuf.message.Message,\n        resp_type: type[ServiceResponse],\n        *,\n        service: str,\n        retry: bool,\n        metadata: Mapping[str, str | bytes],\n        timeout: timedelta | None,\n    ) -> ServiceResponse:\n        global LOG_PROTOS\n        if LOG_PROTOS:\n            logger.debug(\"Service %s request to %s: %s\", service, rpc, req)\n        try:\n            client = await self._connected_client()\n            resp = await client.call(\n                service=service,\n                rpc=rpc,\n                req=req,\n                resp_type=resp_type,\n                retry=retry,\n                metadata=metadata,\n                timeout=timeout,\n            )\n            if LOG_PROTOS:\n                logger.debug(\"Service %s response from %s: %s\", service, rpc, resp)\n            return resp\n        except BridgeRPCError as err:\n            # Intentionally swallowing the cause instead of using \"from\"\n            status, message, details = err.args\n>           raise RPCError(message, RPCStatusCode(status), details)\nE           temporalio.service.RPCError: no poller seen for task queue recently, worker may be down\n\nusr/local/lib/python3.12/dist-packages/temporalio/service.py:415: RPCError",
+                "message": "The test failed in the call phase"
+            }
+        ]
+    }
+}

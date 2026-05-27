@@ -1,0 +1,55 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779817829501,
+            "stop": 1779817833301
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_python_main_succeeds",
+                "status": "passed",
+                "duration": 2838,
+                "start": 1779817829736,
+                "stop": 1779817832574,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_python_main_prints_all_urls",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779817832575,
+                "stop": 1779817832575,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 725,
+                "start": 1779817832576,
+                "stop": 1779817833301,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "python_main_output = CompletedProcess(args=['python', 'main.py'], returncode=0, stdout=\"{'https://api.github.com': 403, 'https://httpbin.org/status/200': 200, 'https://www.example.com': 200}\\n\", stderr='')\n\n    def test_workflow_completed_in_temporal_cloud(\n        python_main_output: subprocess.CompletedProcess,\n    ):\n        assert python_main_output.returncode == 0, (\n            \"Skipping cloud verification because `python main.py` did not exit cleanly.\"\n        )\n>       asyncio.run(_verify_workflow_in_cloud())\n\ntests/test_final_state.py:127: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/lib/python3.12/asyncio/runners.py:194: in run\n    return runner.run(main)\nusr/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\nusr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete\n    return future.result()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    async def _verify_workflow_in_cloud() -> dict:\n        address = _get_env(\"TEMPORAL_ADDRESS\")\n        namespace = _get_env(\"TEMPORAL_NAMESPACE\")\n        api_key = _get_env(\"TEMPORAL_API_KEY\")\n        run_id = _get_env(\"ZEALT_RUN_ID\")\n    \n        client = await Client.connect(\n            address,\n            namespace=namespace,\n            api_key=api_key,\n            tls=True,\n        )\n    \n        workflow_id = f\"parallel-{run_id}\"\n        handle = client.get_workflow_handle(workflow_id)\n    \n        description = await handle.describe()\n        assert description.workflow_type == \"ParallelFetchWorkflow\", (\n            f\"Expected workflow type 'ParallelFetchWorkflow' for workflow id '{workflow_id}', \"\n            f\"got: {description.workflow_type!r}\"\n        )\n        assert description.status == WorkflowExecutionStatus.COMPLETED, (\n            f\"Expected workflow '{workflow_id}' to have status COMPLETED, \"\n            f\"got: {description.status}\"\n        )\n    \n        result = await handle.result()\n        assert isinstance(result, dict), (\n            f\"Expected workflow result to be a dict, got: {type(result).__name__}={result!r}\"\n        )\n        for url in EXPECTED_URLS:\n            assert url in result, (\n                f\"Expected workflow result dict to contain key {url!r}, got: {result!r}\"\n            )\n>           assert int(result[url]) == 200, (\n                f\"Expected workflow result[{url!r}] to be 200, got: {result[url]!r}\"\n            )\nE           AssertionError: Expected workflow result['https://api.github.com'] to be 200, got: 403\nE           assert 403 == 200\nE            +  where 403 = int(403)\n\ntests/test_final_state.py:90: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

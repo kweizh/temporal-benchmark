@@ -1,0 +1,38 @@
+- Initializing MCP connections...
+You
+# Hello World Temporal Workflow (Python) ## Background You are building your first Temporal application using the Temporal.io Python SDK (`temporalio`). The goal is to connect to **Temporal Cloud** using an API key, run a Worker that hosts a simple Workflow and Activity, and use a Client to start the Workflow and print its result. Temporal Cloud credentials are already provided to the environment as the following variables: `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE`. Do **NOT** hard-code or invent credentials; read them from the environment. ## Requirements * Implement a Python Temporal project that contains: * An **Activity** named `greet` that takes a string `name` and returns `Hello, <name>!`. * A **Workflow** registered with the type name `HelloWorkflow` that accepts a string `name`, calls the `greet` activity, and returns its result. * A **Worker** that connects to Temporal Cloud (via API key + TLS) and polls the task queue `hello-world-py`. * A **Client** entrypoint that connects to Temporal Cloud, starts (or executes) `HelloWorkflow` with the input `"Temporal"`, waits for completion, and prints the returned greeting to stdout. * The Workflow ID must use the prefix `hello-wf-` and include the current `run-id` so concurrent runs do not collide (e.g. `hello-wf-${ZEALT_RUN_ID}`). * The Worker and Client must use the task queue `hello-world-py`. * Provide a `python main.py` entrypoint that runs the Worker in the background, executes the Workflow via the Client, waits for the workflow result, prints it to stdout, and then exits cleanly (the Worker may be terminated after the Client finishes). ## Implementation Hints * Install the official Python SDK: `pip install temporalio`. * Use `temporalio.client.Client.connect` with the `TEMPORAL_ADDRESS`, `namespace=TEMPORAL_NAMESPACE`, `api_key=TEMPORAL_API_KEY`, and `tls=True` options to connect to Temporal Cloud. * Define the Activity with the `@activity.defn(name="greet")` decorator and define the Workflow with `@workflow.defn(name="HelloWorkflow")`. Use `workflow.execute_activity` from inside the Workflow with a reasonable `start_to_close_timeout`. * Use `temporalio.worker.Worker` with `workflows=[HelloWorkflow]` and `activities=[greet]` polling the `hello-world-py` task queue. * Read `ZEALT_RUN_ID`, `TEMPORAL_API_KEY`, `TEMPORAL_ADDRESS`, and `TEMPORAL_NAMESPACE` from `os.environ`. * You can run the Worker and the Client in the same `python main.py` process using `asyncio` (for example via `asyncio.create_task` and `worker.run()` with a cancellation after the workflow finishes) — just make sure the workflow completes and its result is printed before the script exits. ## Acceptance Criteria * Project path: /home/user/myproject * Start command: `python main.py` (executed from `/home/user/myproject`) * Task queue: `hello-world-py` * Workflow type name: `HelloWorkflow` * Activity type name: `greet` * Workflow ID: must start with `hello-wf-` and include the value of the `ZEALT_RUN_ID` environment variable * When `python main.py` is executed, the workflow `HelloWorkflow` must be started against Temporal Cloud using the namespace from `TEMPORAL_NAMESPACE`, run to completion, and the resulting greeting string returned from the activity must be printed to stdout. * The completed workflow execution must be visible in Temporal Cloud (status `COMPLETED`) and its result must equal the greeting produced by the `greet` activity for the input `"Temporal"`.   
+
+Pochi
+💭 Thinking for 142 characters   
+📋 Updating todo list (4 items) ✔ 
+💫 Executing mkdir -p /home/user/myproject ✔ 
+📋 Updating todo list (4 items) ✔ 
+💫 Executing pip install temporalio 2>&1 | tail -5 ✔ 
+💫 Executing pip install temporalio --break-system-packages 2>&1 | tail -10 ✔ 
+`temporalio` is already installed. Now I'll create the `main.py`:   
+📋 Updating todo list (4 items) ✔ 
+✏️  Writing /home/user/myproject/main.py ✔ 
+📋 Updating todo list (4 items) ✔ 
+💫 Executing cd /home/user/myproject && python main.py ✖ "Command exited with code 127"
+💫 Executing cd /home/user/myproject && python3 main.py ✔ 
+📋 Updating todo list (4 items) ✔ 
+The workflow ran successfully and printed `Hello, Temporal!`.   
+💫 Executing which python3 && ln -sf $(which python3) /usr/local/bin/python 2>/dev/null; python --version 2>/dev/null || echo "symlink may already exist" ✔ 
+`python` is now available as a symlink. Let's verify `python main.py` works:   
+💫 Executing cd /home/user/myproject && python main.py ✔ 
+🎉 Task Completed
+The project is complete at `/home/user/myproject/main.py`. Running `python main.py` from that directory:
+
+1. Reads `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, `TEMPORAL_API_KEY`, and `ZEALT_RUN_ID` from the environment.
+2. Connects to Temporal Cloud with TLS + API key authentication.
+3. Starts a `Worker` in the background polling task queue `hello-world-py`, hosting the `HelloWorkflow` workflow and `greet` activity.
+4. Executes `HelloWorkflow` with input `"Temporal"` using workflow ID `hello-wf-<ZEALT_RUN_ID>`.
+5. Prints the result to stdout: **`Hello, Temporal!`**
+6. Cancels the worker and exits cleanly.
+
+Key implementation details:
+- Activity: `@activity.defn(name="greet")` — returns `Hello, <name>!`
+- Workflow: `@workflow.defn(name="HelloWorkflow")` — calls `greet` via `workflow.execute_activity` with a 10-second `start_to_close_timeout`
+- Connection: `Client.connect(address, namespace=..., api_key=..., tls=True)`
+- Worker and client share the same connected `Client` instance, both using task queue `hello-world-py`   
+  

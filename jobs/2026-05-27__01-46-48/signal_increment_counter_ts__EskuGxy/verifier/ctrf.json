@@ -1,0 +1,52 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 3,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779818925954,
+            "stop": 1779818933753
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_npm_start_succeeds",
+                "status": "passed",
+                "duration": 6891,
+                "start": 1779818926197,
+                "stop": 1779818933088,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_npm_start_prints_final_counter",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779818933089,
+                "stop": 1779818933089,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "passed",
+                "duration": 663,
+                "start": 1779818933090,
+                "stop": 1779818933753,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

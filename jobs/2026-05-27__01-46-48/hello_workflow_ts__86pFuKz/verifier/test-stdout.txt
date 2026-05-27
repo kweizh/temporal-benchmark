@@ -1,0 +1,82 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py ..F                                            [100%]
+
+=================================== FAILURES ===================================
+__________________ test_workflow_completed_in_temporal_cloud ___________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=0, stdout='\n> temporal-hello-world-ts@1.0.0 start\n> npm run build...78Z [INFO] Worker state changed {\n  sdkComponent: 'worker',\n  taskQueue: 'hello-world-ts',\n  state: 'STOPPED'\n}\n")
+
+    def test_workflow_completed_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):
+        # Ensure the agent's start command actually ran before querying.
+        assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+>       asyncio.run(_verify_workflow_in_cloud())
+
+tests/test_final_state.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usr/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+usr/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+usr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def _verify_workflow_in_cloud() -> None:
+        address = _get_env("TEMPORAL_ADDRESS")
+        namespace = _get_env("TEMPORAL_NAMESPACE")
+        api_key = _get_env("TEMPORAL_API_KEY")
+        run_id = _get_env("ZEALT_RUN_ID")
+    
+        client = await Client.connect(
+            address,
+            namespace=namespace,
+            api_key=api_key,
+            tls=True,
+        )
+    
+        workflow_id_prefix = f"hello-wf-{run_id}"
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=10)
+        cutoff_str = cutoff.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+        query = (
+            "WorkflowType = 'HelloWorkflow' "
+            f"AND WorkflowId STARTS_WITH '{workflow_id_prefix}' "
+            f"AND StartTime > '{cutoff_str}'"
+        )
+    
+        matches = []
+        async for execution in client.list_workflows(query=query):
+            matches.append(execution)
+    
+        assert matches, (
+            "No completed HelloWorkflow execution found in Temporal Cloud namespace "
+            f"'{namespace}' with WorkflowId prefix '{workflow_id_prefix}' in the last "
+            "10 minutes. The agent's `npm start` must have started and completed the "
+            "workflow."
+        )
+    
+        matches.sort(key=lambda e: e.start_time or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+        latest = matches[0]
+    
+>       assert latest.status == WorkflowExecutionStatus.COMPLETED, (
+            f"Latest matching workflow execution (id={latest.id}, run_id={latest.run_id}) "
+            f"is not COMPLETED. status={latest.status}"
+        )
+E       AssertionError: Latest matching workflow execution (id=hello-wf-zr-86pfukz, run_id=019e656b-9bd4-7676-925e-b442c41f333e) is not COMPLETED. status=1
+E       assert <WorkflowExecutionStatus.RUNNING: 1> == <WorkflowExecutionStatus.COMPLETED: 2>
+E        +  where <WorkflowExecutionStatus.RUNNING: 1> = WorkflowExecution(close_time=None, execution_time=datetime.datetime(2026, 5, 26, 17, 53, 31, 604424, tzinfo=datetime.t...dLimitsConfig(memo_size_warning=2048, payload_size_warning=524288), external_storage=None, _payload_error_limits=None)).status
+E        +  and   <WorkflowExecutionStatus.COMPLETED: 2> = WorkflowExecutionStatus.COMPLETED
+
+tests/test_final_state.py:86: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_npm_start_succeeds
+PASSED tests/test_final_state.py::test_npm_start_prints_greeting
+FAILED tests/test_final_state.py::test_workflow_completed_in_temporal_cloud
+========================= 1 failed, 2 passed in 7.49s ==========================

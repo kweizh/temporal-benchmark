@@ -1,0 +1,94 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_npm_start_succeeds ____________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> money-transfer-saga@1.0.0 start\n> npm run build && ...n    code: 'ENOENT',\n    syscall: 'stat',\n    path: '/home/user/myproject/lib/workflows',\n    prev: null\n  }\n}\n")
+
+    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit successfully. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit successfully. stdout=
+E         
+E         > money-transfer-saga@1.0.0 start
+E         > npm run build && node lib/run.js
+E         
+E         
+E         > money-transfer-saga@1.0.0 build
+E         > tsc --build
+E         
+E         [run] Connecting worker to Temporal Cloud at REDACTED (namespace: REDACTED)
+E         
+E         stderr=
+E         [run] Fatal error: Error: ENOENT: no such file or directory, stat '/home/user/myproject/lib/workflows'
+E             at Object.toError (/home/user/myproject/node_modules/@jsonjoy.com/fs-core/lib/util.js:190:27)
+E             at Volume.statSync (/home/user/myproject/node_modules/@jsonjoy.com/fs-node/lib/volume.js:1021:30)
+E             at Union.syncMethod (/home/user/myproject/node_modules/unionfs/lib/union.js:689:35)
+E             at this_1.<computed> [as statSync] (/home/user/myproject/node_modules/unionfs/lib/union.js:569:34)
+E             at WorkflowCodeBundler.makeEntrypointPath (/home/user/myproject/node_modules/@temporalio/worker/lib/workflow/bundler.js:142:25)
+E             at WorkflowCodeBundler.createBundle (/home/user/myproject/node_modules/@temporalio/worker/lib/workflow/bundler.js:127:37)
+E             at Worker.getOrCreateBundle (/home/user/myproject/node_modules/@temporalio/worker/lib/worker.js:452:42)
+E             at Worker.create (/home/user/myproject/node_modules/@temporalio/worker/lib/worker.js:226:35)
+E             at main (/home/user/myproject/lib/run.js:74:42) {
+E           code: 'ENOENT',
+E           path: '/home/user/myproject/lib/workflows',
+E           prev: Error: ENOENT: no such file or directory, stat '/home/user/myproject/lib/workflows'
+E               at Object.statSync (node:fs:1726:25)
+E               at Union.syncMethod (/home/user/myproject/node_modules/unionfs/lib/union.js:689:35)
+E               at this_1.<computed> [as statSync] (/home/user/myproject/node_modules/unionfs/lib/union.js:569:34)
+E               at WorkflowCodeBundler.makeEntrypointPath (/home/user/myproject/node_modules/@temporalio/worker/lib/workflow/bundler.js:142:25)
+E               at WorkflowCodeBundler.createBundle (/home/user/myproject/node_modules/@temporalio/worker/lib/workflow/bundler.js:127:37)
+E               at Worker.getOrCreateBundle (/home/user/myproject/node_modules/@temporalio/worker/lib/worker.js:452:42)
+E               at Worker.create (/home/user/myproject/node_modules/@temporalio/worker/lib/worker.js:226:35)
+E               at main (/home/user/myproject/lib/run.js:74:42) {
+E             errno: -2,
+E             code: 'ENOENT',
+E             syscall: 'stat',
+E             path: '/home/user/myproject/lib/workflows',
+E             prev: null
+E           }
+E         }
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> money-transfer-saga@1.0.0 start\n> npm run build && ...n    code: 'ENOENT',\n    syscall: 'stat',\n    path: '/home/user/myproject/lib/workflows',\n    prev: null\n  }\n}\n").returncode
+
+tests/test_final_state.py:41: AssertionError
+________________________ test_accounts_file_final_state ________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> money-transfer-saga@1.0.0 start\n> npm run build && ...n    code: 'ENOENT',\n    syscall: 'stat',\n    path: '/home/user/myproject/lib/workflows',\n    prev: null\n  }\n}\n")
+
+    def test_accounts_file_final_state(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping accounts file check because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping accounts file check because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> money-transfer-saga@1.0.0 start\n> npm run build && ...n    code: 'ENOENT',\n    syscall: 'stat',\n    path: '/home/user/myproject/lib/workflows',\n    prev: null\n  }\n}\n").returncode
+
+tests/test_final_state.py:48: AssertionError
+_______________________ test_workflows_in_temporal_cloud _______________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> money-transfer-saga@1.0.0 start\n> npm run build && ...n    code: 'ENOENT',\n    syscall: 'stat',\n    path: '/home/user/myproject/lib/workflows',\n    prev: null\n  }\n}\n")
+
+    def test_workflows_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> money-transfer-saga@1.0.0 start\n> npm run build && ...n    code: 'ENOENT',\n    syscall: 'stat',\n    path: '/home/user/myproject/lib/workflows',\n    prev: null\n  }\n}\n").returncode
+
+tests/test_final_state.py:129: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_npm_start_succeeds - AssertionError: `...
+FAILED tests/test_final_state.py::test_accounts_file_final_state - AssertionE...
+FAILED tests/test_final_state.py::test_workflows_in_temporal_cloud - Assertio...
+============================== 3 failed in 1.29s ===============================

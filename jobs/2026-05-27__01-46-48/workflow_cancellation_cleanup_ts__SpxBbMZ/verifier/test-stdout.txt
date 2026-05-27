@@ -1,0 +1,146 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_npm_start_exits_cleanly _________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> temporal-cancel-cleanup@1.0.0 start\n> node -r ts-no...dProcess.emit (node:domain:489:12)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)\n")
+
+    def test_npm_start_exits_cleanly(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit with status 0 even though the workflow was "
+            "expected to end as CANCELED. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit with status 0 even though the workflow was expected to end as CANCELED. stdout=
+E         
+E         > temporal-cancel-cleanup@1.0.0 start
+E         > node -r ts-node/register src/start.ts
+E         
+E         [start] Spawning worker process...
+E         [start] Waiting for worker to be ready...
+E         [worker] [worker] Connecting to Temporal Cloud at REDACTED (namespace: REDACTED)
+E         
+E         stderr=
+E         [worker:err] [worker] Fatal error: Error: ENOENT: no such file or directory, stat '/home/user/myproject/src/workflows'
+E         [worker:err] at Object.toError (/home/user/myproject/node_modules/@jsonjoy.com/fs-core/src/util.ts:188:21)
+E         [worker:err] at Volume.statSync (/home/user/myproject/node_modules/@jsonjoy.com/fs-node/src/volume.ts:855:24)
+E         [worker:err] at Union.syncMethod (/home/user/myproject/node_modules/unionfs/lib/union.js:689:35)
+E         [worker:err] at Union.this_1.<computed> [as statSync] (/home/user/myproject/node_modules/unionfs/lib/union.js:569:34)
+E         [worker:err] at WorkflowCodeBundler.makeEntrypointPath (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:152:21)
+E         [worker:err] at WorkflowCodeBundler.createBundle (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:130:33)
+E         [worker:err] at Worker.getOrCreateBundle (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:789:36)
+E         [worker:err] at Worker.create (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:523:31)
+E         [worker:err] at main (/home/user/myproject/src/worker.ts:25:31) {
+E         [worker:err] code: 'ENOENT',
+E         [worker:err] path: '/home/user/myproject/src/workflows',
+E         [worker:err] prev: Error: ENOENT: no such file or directory, stat '/home/user/myproject/src/workflows'
+E         [worker:err] at Object.statSync (node:fs:1726:25)
+E         [worker:err] at Union.syncMethod (/home/user/myproject/node_modules/unionfs/lib/union.js:689:35)
+E         [worker:err] at Union.this_1.<computed> [as statSync] (/home/user/myproject/node_modules/unionfs/lib/union.js:569:34)
+E         [worker:err] at WorkflowCodeBundler.makeEntrypointPath (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:152:21)
+E         [worker:err] at WorkflowCodeBundler.createBundle (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:130:33)
+E         [worker:err] at Worker.getOrCreateBundle (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:789:36)
+E         [worker:err] at Worker.create (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:523:31)
+E         [worker:err] at main (/home/user/myproject/src/worker.ts:25:31) {
+E         [worker:err] errno: -2,
+E         [worker:err] code: 'ENOENT',
+E         [worker:err] syscall: 'stat',
+E         [worker:err] path: '/home/user/myproject/src/workflows',
+E         [worker:err] prev: null
+E         [worker:err] }
+E         [worker:err] }
+E         [start] Worker failed to become ready: Error: Worker exited (code 1) before becoming ready
+E             at ChildProcess.<anonymous> (/home/user/myproject/src/start.ts:68:16)
+E             at ChildProcess.emit (node:events:509:28)
+E             at ChildProcess.emit (node:domain:489:12)
+E             at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> temporal-cancel-cleanup@1.0.0 start\n> node -r ts-no...dProcess.emit (node:domain:489:12)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)\n").returncode
+
+tests/test_final_state.py:37: AssertionError
+_________________ test_npm_start_prints_cleanup_done_observed __________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> temporal-cancel-cleanup@1.0.0 start\n> node -r ts-no...dProcess.emit (node:domain:489:12)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)\n")
+
+    def test_npm_start_prints_cleanup_done_observed(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+        combined = (npm_start_output.stdout or "") + (npm_start_output.stderr or "")
+>       assert EXPECTED_LOG in combined, (
+            f"Expected combined output of `npm start` to contain '{EXPECTED_LOG}', "
+            f"got stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: Expected combined output of `npm start` to contain 'cleanup-done observed', got stdout=
+E         
+E         > temporal-cancel-cleanup@1.0.0 start
+E         > node -r ts-node/register src/start.ts
+E         
+E         [start] Spawning worker process...
+E         [start] Waiting for worker to be ready...
+E         [worker] [worker] Connecting to Temporal Cloud at REDACTED (namespace: REDACTED)
+E         
+E         stderr=
+E         [worker:err] [worker] Fatal error: Error: ENOENT: no such file or directory, stat '/home/user/myproject/src/workflows'
+E         [worker:err] at Object.toError (/home/user/myproject/node_modules/@jsonjoy.com/fs-core/src/util.ts:188:21)
+E         [worker:err] at Volume.statSync (/home/user/myproject/node_modules/@jsonjoy.com/fs-node/src/volume.ts:855:24)
+E         [worker:err] at Union.syncMethod (/home/user/myproject/node_modules/unionfs/lib/union.js:689:35)
+E         [worker:err] at Union.this_1.<computed> [as statSync] (/home/user/myproject/node_modules/unionfs/lib/union.js:569:34)
+E         [worker:err] at WorkflowCodeBundler.makeEntrypointPath (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:152:21)
+E         [worker:err] at WorkflowCodeBundler.createBundle (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:130:33)
+E         [worker:err] at Worker.getOrCreateBundle (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:789:36)
+E         [worker:err] at Worker.create (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:523:31)
+E         [worker:err] at main (/home/user/myproject/src/worker.ts:25:31) {
+E         [worker:err] code: 'ENOENT',
+E         [worker:err] path: '/home/user/myproject/src/workflows',
+E         [worker:err] prev: Error: ENOENT: no such file or directory, stat '/home/user/myproject/src/workflows'
+E         [worker:err] at Object.statSync (node:fs:1726:25)
+E         [worker:err] at Union.syncMethod (/home/user/myproject/node_modules/unionfs/lib/union.js:689:35)
+E         [worker:err] at Union.this_1.<computed> [as statSync] (/home/user/myproject/node_modules/unionfs/lib/union.js:569:34)
+E         [worker:err] at WorkflowCodeBundler.makeEntrypointPath (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:152:21)
+E         [worker:err] at WorkflowCodeBundler.createBundle (/home/user/myproject/node_modules/@temporalio/worker/src/workflow/bundler.ts:130:33)
+E         [worker:err] at Worker.getOrCreateBundle (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:789:36)
+E         [worker:err] at Worker.create (/home/user/myproject/node_modules/@temporalio/worker/src/worker.ts:523:31)
+E         [worker:err] at main (/home/user/myproject/src/worker.ts:25:31) {
+E         [worker:err] errno: -2,
+E         [worker:err] code: 'ENOENT',
+E         [worker:err] syscall: 'stat',
+E         [worker:err] path: '/home/user/myproject/src/workflows',
+E         [worker:err] prev: null
+E         [worker:err] }
+E         [worker:err] }
+E         [start] Worker failed to become ready: Error: Worker exited (code 1) before becoming ready
+E             at ChildProcess.<anonymous> (/home/user/myproject/src/start.ts:68:16)
+E             at ChildProcess.emit (node:events:509:28)
+E             at ChildProcess.emit (node:domain:489:12)
+E             at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)
+E         
+E       assert 'cleanup-done observed' in '\n> temporal-cancel-cleanup@1.0.0 start\n> node -r ts-node/register src/start.ts\n\n[start] Spawning worker process.....ldProcess.emit (node:domain:489:12)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)\n'
+
+tests/test_final_state.py:48: AssertionError
+____________ test_workflow_canceled_and_cleanup_completed_in_cloud _____________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> temporal-cancel-cleanup@1.0.0 start\n> node -r ts-no...dProcess.emit (node:domain:489:12)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)\n")
+
+    def test_workflow_canceled_and_cleanup_completed_in_cloud(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> temporal-cancel-cleanup@1.0.0 start\n> node -r ts-no...dProcess.emit (node:domain:489:12)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:295:12)\n").returncode
+
+tests/test_final_state.py:136: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_npm_start_exits_cleanly - AssertionErr...
+FAILED tests/test_final_state.py::test_npm_start_prints_cleanup_done_observed
+FAILED tests/test_final_state.py::test_workflow_canceled_and_cleanup_completed_in_cloud
+============================== 3 failed in 4.07s ===============================

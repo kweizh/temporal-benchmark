@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 7 items
+
+tests/test_final_state.py .......                                        [100%]
+
+=============================== warnings summary ===============================
+test_final_state.py::test_workflow_completed_on_cloud
+  /tests/test_final_state.py:115: DeprecationWarning: There is no current event loop
+    return asyncio.get_event_loop().run_until_complete(_connect_client())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_workflows_file_has_no_datetime_now
+PASSED tests/test_final_state.py::test_workflows_file_has_no_random_choice
+PASSED tests/test_final_state.py::test_workflows_file_uses_pick_discount_activity
+PASSED tests/test_final_state.py::test_log_file_contains_valid_result
+PASSED tests/test_final_state.py::test_workflow_completed_on_cloud
+PASSED tests/test_final_state.py::test_workflow_history_has_pick_discount_activity
+PASSED tests/test_final_state.py::test_workflow_result_matches_log
+========================= 7 passed, 1 warning in 1.13s =========================

@@ -1,0 +1,23 @@
+{
+  "name": "temporal-fetch-url",
+  "version": "1.0.0",
+  "description": "Temporal workflow that performs an HTTP GET via an activity",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --build",
+    "start": "bash scripts/start.sh",
+    "worker": "ts-node src/worker.ts",
+    "client": "ts-node src/client.ts"
+  },
+  "dependencies": {
+    "@temporalio/activity": "^1.11.7",
+    "@temporalio/client": "^1.11.7",
+    "@temporalio/worker": "^1.11.7",
+    "@temporalio/workflow": "^1.11.7"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "@types/node": "^20.14.0"
+  }
+}
