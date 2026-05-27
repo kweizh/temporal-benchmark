@@ -1,0 +1,55 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779816252766,
+            "stop": 1779816266047
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_npm_start_exits_cleanly",
+                "status": "passed",
+                "duration": 12115,
+                "start": 1779816253010,
+                "stop": 1779816265125,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_npm_start_prints_cleanup_done_observed",
+                "status": "passed",
+                "duration": 1,
+                "start": 1779816265125,
+                "stop": 1779816265126,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_canceled_and_cleanup_completed_in_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 921,
+                "start": 1779816265126,
+                "stop": 1779816266047,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=0, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/index.ts\\n\\nSta... [INFO] Worker state changed {\\n  sdkComponent: 'worker',\\n  taskQueue: 'cancel-cleanup-ts',\\n  state: 'STOPPED'\\n}\\n\")\n\n    def test_workflow_canceled_and_cleanup_completed_in_cloud(\n        npm_start_output: subprocess.CompletedProcess,\n    ):\n        assert npm_start_output.returncode == 0, (\n            \"Skipping cloud verification because `npm start` did not exit cleanly.\"\n        )\n>       asyncio.run(_verify_workflow_in_cloud())\n\ntests/test_final_state.py:139: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/lib/python3.12/asyncio/runners.py:194: in run\n    return runner.run(main)\nusr/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\nusr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete\n    return future.result()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    async def _verify_workflow_in_cloud() -> None:\n        address = _get_env(\"TEMPORAL_ADDRESS\")\n        namespace = _get_env(\"TEMPORAL_NAMESPACE\")\n        api_key = _get_env(\"TEMPORAL_API_KEY\")\n        run_id = _get_env(\"ZEALT_RUN_ID\")\n    \n        client = await Client.connect(\n            address,\n            namespace=namespace,\n            api_key=api_key,\n            tls=True,\n        )\n    \n        workflow_id_prefix = f\"cancel-wf-{run_id}\"\n        cutoff = datetime.now(timezone.utc) - timedelta(minutes=10)\n        cutoff_str = cutoff.strftime(\"%Y-%m-%dT%H:%M:%S.%f\")[:-3] + \"Z\"\n        query = (\n            \"WorkflowType = 'CancellableWorkflow' \"\n            f\"AND WorkflowId STARTS_WITH '{workflow_id_prefix}' \"\n            f\"AND StartTime > '{cutoff_str}'\"\n        )\n    \n        matches = []\n        async for execution in client.list_workflows(query=query):\n            matches.append(execution)\n    \n        assert matches, (\n            \"No CancellableWorkflow execution found in Temporal Cloud namespace \"\n            f\"'{namespace}' with WorkflowId prefix '{workflow_id_prefix}' in the last \"\n            \"10 minutes. The agent's `npm start` must have started the workflow.\"\n        )\n    \n        matches.sort(\n            key=lambda e: e.start_time\n            or datetime.min.replace(tzinfo=timezone.utc),\n            reverse=True,\n        )\n        latest = matches[0]\n    \n        # Use describe() for strong-consistency status reading.\n        handle = client.get_workflow_handle(latest.id, run_id=latest.run_id)\n        desc = await handle.describe()\n        assert desc.status == WorkflowExecutionStatus.CANCELED, (\n            f\"Latest matching workflow execution (id={latest.id}, run_id={latest.run_id}) \"\n            f\"is not CANCELED on Temporal Cloud; status={desc.status!r}.\"\n        )\n        assert desc.task_queue == \"cancel-cleanup-ts\", (\n            f\"Expected workflow task queue 'cancel-cleanup-ts', \"\n            f\"got {desc.task_queue!r}.\"\n        )\n    \n        history = await handle.fetch_history()\n    \n        # Build a map from scheduled event id -> activity type name so we can\n        # correlate ActivityTaskCompleted events back to their activity type.\n        scheduled_id_to_activity_type = {}\n        for event in history.events:\n            # 10 == EVENT_TYPE_ACTIVITY_TASK_SCHEDULED\n            if int(event.event_type) == 10:\n                attrs = event.activity_task_scheduled_event_attributes\n                scheduled_id_to_activity_type[event.event_id] = attrs.activity_type.name\n    \n        completed_activity_types = []\n        for event in history.events:\n            # 11 == EVENT_TYPE_ACTIVITY_TASK_COMPLETED\n            if int(event.event_type) == 11:\n                attrs = event.activity_task_completed_event_attributes\n                scheduled_event_id = attrs.scheduled_event_id\n                activity_type = scheduled_id_to_activity_type.get(scheduled_event_id)\n                if activity_type:\n                    completed_activity_types.append(activity_type)\n    \n>       assert \"cleanup\" in completed_activity_types, (\n            \"Expected workflow history to contain an ActivityTaskCompleted event \"\n            \"for activity type 'cleanup'. \"\n            f\"Found completed activities: {completed_activity_types!r}.\"\n        )\nE       AssertionError: Expected workflow history to contain an ActivityTaskCompleted event for activity type 'cleanup'. Found completed activities: [].\nE       assert 'cleanup' in []\n\ntests/test_final_state.py:126: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

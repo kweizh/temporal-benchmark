@@ -1,0 +1,64 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 4,
+            "passed": 3,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779815067214,
+            "stop": 1779815099261
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_workflows_ts_contains_patched_marker",
+                "status": "passed",
+                "duration": 8652,
+                "start": 1779815067270,
+                "stop": 1779815075922,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflows_complete",
+                "status": "passed",
+                "duration": 19119,
+                "start": 1779815075922,
+                "stop": 1779815095041,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_notify_log_contains_only_new",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 2036,
+                "start": 1779815095042,
+                "stop": 1779815097078,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "start_agent_worker = None\n\n    def test_notify_log_contains_only_new(start_agent_worker):\n        # Give activities a moment to flush their writes.\n        time.sleep(2)\n        assert os.path.isfile(NOTIFY_LOG), f\"Expected {NOTIFY_LOG} to exist after run.\"\n        with open(NOTIFY_LOG) as f:\n            content = f.read()\n        assert f\"notified:{NEW_WF_ID}\" in content, (\n            f\"Expected {NOTIFY_LOG} to contain 'notified:{NEW_WF_ID}'. Got:\\n{content}\"\n        )\n>       assert f\"notified:{OLD_WF_ID}\" not in content, (\n            f\"Expected {NOTIFY_LOG} NOT to contain 'notified:{OLD_WF_ID}'. Got:\\n{content}\"\n        )\nE       AssertionError: Expected /workspace/notify.log NOT to contain 'notified:order-old-zr-eskview'. Got:\nE         notified:order-old-zr-eskview\nE         notified:order-new-zr-eskview\nE         \nE       assert 'notified:or...d-zr-eskview' not in 'notified:or...zr-eskview\\n'\nE         'notified:order-old-zr-eskview' is contained here:\nE           notified:order-old-zr-eskview\nE           notified:order-new-zr-eskview\n\ntests/test_final_state.py:148: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            },
+            {
+                "name": "test_final_state.py::test_order_log_contains_both",
+                "status": "passed",
+                "duration": 2182,
+                "start": 1779815097078,
+                "stop": 1779815099260,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

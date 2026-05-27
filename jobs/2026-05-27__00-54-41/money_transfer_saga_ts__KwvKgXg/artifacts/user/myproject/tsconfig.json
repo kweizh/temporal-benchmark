@@ -1,0 +1,12 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "rootDir": "./src",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": false,
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["src/**/*"]
+}

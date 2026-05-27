@@ -1,0 +1,98 @@
+Skipping image OS validation for hb__fix_nondeterministic_workflow_py: docker inspect returned 1
+Running command: apt-get update && apt-get install -y curl ripgrep
+Command outputs captured
+Running command: set -euo pipefail; curl -fsSL https://getpochi.com/install.sh | bash -x -s -- pochi-v0.6.8 && mkdir -p /logs/agent/pochi && ~/.pochi/bin/pochi --version
+Command outputs captured
+Running command: ln -sf ~/.pochi/bin/pochi /usr/local/bin/pochi
+Command outputs captured
+Running command: echo zr-twmjenm > /logs/artifacts/run-id && echo fix_nondeterministic_workflow_py__TwMJenm > /logs/artifacts/trial_id
+Command outputs captured
+Running command: mkdir -p ~/.pochi && cat << 'EOF' | sed -e "s/OPENAI_API_KEY/${OPENAI_API_KEY}/g" -e "s/DEEPINFRA_API_KEY/${DEEPINFRA_API_KEY}/g" > ~/.pochi/config.jsonc
+{
+  "providers": {
+    "deepinfra": {
+      "kind": "openai",
+      "baseURL": "https://api.deepinfra.com/v1/openai",
+      "apiKey": "DEEPINFRA_API_KEY",
+      "models": {
+        "zai-org/GLM-4.7-Flash": {
+          "name": "glm-4.7-flash"
+        },
+        "moonshotai/Kimi-K2.6": {
+          "name": "kimi-K2.6"
+        },
+        "deepseek-ai/DeepSeek-V4-Pro": {
+          "name": "DeepSeek-V4-Pro"
+        }
+      }
+    },
+    "openai": {
+      "kind": "openai",
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "OPENAI_API_KEY",
+      "models": {
+        "gpt-5.4": {
+          "name": "gpt-5.4"
+        }
+      }
+    }
+  }
+}
+EOF
+Command outputs captured
+Running command: if [ -f /bootstrap/test_initial_state.py ]; then pytest -s --log-cli-level=DEBUG /bootstrap/test_initial_state.py > >(tee /logs/agent/pochi/initial-test-stdout.txt) 2> >(tee /logs/agent/pochi/initial-test-stderr.txt >&2); fi
+Command outputs captured
+Running command: pochi --model google/gemini-3.1-pro --max-steps 200 --max-retries 10 --blobs-dir /logs/agent/pochi/blobs --experimental-stream-trajectory /logs/agent/pochi/trajectory.jsonl > >(tee /logs/agent/pochi/stdout.txt) 2> >(tee /logs/agent/pochi/stderr.txt >&2) <<'EOF'
+# Fix a Non-Deterministic Temporal Workflow (Python SDK)
+
+## Background
+Temporal Workflows must be **deterministic** because the Temporal Server can replay them at any time to reconstruct state. Using `datetime.datetime.now()`, `random.choice(...)`, network I/O, or other non-deterministic constructs directly inside the Workflow function will produce a Non-Deterministic Error during replay and may cause the Workflow to fail in production.
+
+A project under `/home/user/discount-py` has been shipped with a broken Workflow that violates these rules. The current `workflows.py` reads the current wall-clock time and picks a random discount **inside** the Workflow body. You must refactor it to be deterministic, run it against **real Temporal Cloud**, and confirm it completes successfully.
+
+A Python virtual environment is preinstalled at `/home/user/discount-py/.venv` with the `temporalio` SDK. Use `/home/user/discount-py/.venv/bin/python` to run scripts.
+
+## Requirements
+- Refactor `/home/user/discount-py/workflows.py` so the `@workflow.defn` class no longer calls `datetime.datetime.now()`, `datetime.now()`, `random.choice(...)`, or any other non-deterministic construct directly.
+- The Workflow MUST obtain the current time using Temporal's deterministic time API.
+- Randomness MUST be moved into a Temporal **Activity** named `pick_discount` that returns one of the allowed discounts. The Workflow MUST call this Activity via `workflow.execute_activity`.
+- The Workflow MUST return a JSON-serializable dict of the form:
+  ```json
+  {
+    "user_id": "<the user_id passed in>",
+    "discount": <int in [0, 5, 10, 15, 20]>,
+    "decided_at": "<ISO-8601 timestamp string>"
+  }
+  ```
+- Register `pick_discount` as an Activity on the Worker and execute it against the task queue `discount-py`.
+- The Workflow must be started against **real Temporal Cloud** using the credentials in the environment.
+- The Workflow ID MUST be `discount-py-${ZEALT_RUN_ID}` where `ZEALT_RUN_ID` is read from the environment.
+- The task queue MUST be exactly `discount-py`.
+- Write the final Workflow result to `/home/user/discount-py/output.log` in the format `Workflow result: <json>` after the Workflow completes.
+
+## Implementation Hints
+- Inspect the existing files in `/home/user/discount-py/` (`workflows.py`, `activities.py`, `worker.py`, `starter.py`) to understand the project layout.
+- Review the Temporal Python documentation on **Workflow determinism** and **deterministic alternatives** for time and randomness.
+- The Worker must register both the Workflow class and the new Activity on the `discount-py` task queue.
+- The connection to Temporal Cloud uses the environment variables `TEMPORAL_ADDRESS`, `TEMPORAL_NAMESPACE`, and `TEMPORAL_API_KEY`. TLS is required for Cloud connections.
+- You can run the Worker in the background and then run the starter script to execute the Workflow synchronously.
+- The Workflow `id` and `task_queue` values are critical — they are what the verifier inspects.
+
+## Acceptance Criteria
+- Project path: /home/user/discount-py
+- Log file: /home/user/discount-py/output.log
+- `workflows.py` MUST NOT contain any of the following substrings (checked via regex): `datetime.now`, `datetime.datetime.now`, `random.choice`.
+- An Activity named `pick_discount` MUST exist in the project and be invoked from the Workflow.
+- The Workflow MUST be executed on Temporal Cloud with:
+  - Task queue: `discount-py`
+  - Workflow ID: `discount-py-${ZEALT_RUN_ID}` (where `ZEALT_RUN_ID` is read from the environment)
+- The Workflow MUST reach the `COMPLETED` status in Temporal Cloud.
+- The Workflow history MUST contain an `ActivityTaskScheduled` event for the `pick_discount` Activity.
+- The Workflow result `discount` field MUST be an integer in `[0, 5, 10, 15, 20]`.
+- The log file MUST contain a line in the format: `Workflow result: <json_dict>` where the dict has the required `user_id`, `discount`, and `decided_at` fields.
+
+
+EOF
+Command outputs captured
+Running command: rm -f ~/.pochi/config.jsonc
+Command outputs captured

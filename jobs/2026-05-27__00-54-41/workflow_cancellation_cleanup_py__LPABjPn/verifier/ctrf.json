@@ -1,0 +1,52 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 3,
+            "failed": 0,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779815379648,
+            "stop": 1779815380875
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_cleanup_log_contains_released_alpha",
+                "status": "passed",
+                "duration": 1,
+                "start": 1779815379871,
+                "stop": 1779815379872,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_canceled_on_temporal_cloud",
+                "status": "passed",
+                "duration": 516,
+                "start": 1779815379872,
+                "stop": 1779815380388,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_release_resources_activity_scheduled_in_history",
+                "status": "passed",
+                "duration": 485,
+                "start": 1779815380389,
+                "stop": 1779815380874,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            }
+        ]
+    }
+}

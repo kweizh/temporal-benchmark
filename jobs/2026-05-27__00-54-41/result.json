@@ -1,0 +1,74 @@
+{
+    "id": "2c27c16a-0c5c-4300-9366-e2dfc66aca05",
+    "started_at": "2026-05-27T00:54:43.400699",
+    "updated_at": "2026-05-27T01:32:08.190257",
+    "finished_at": "2026-05-27T01:32:08.190257",
+    "n_total_trials": 28,
+    "stats": {
+        "n_completed_trials": 28,
+        "n_errored_trials": 2,
+        "n_running_trials": 0,
+        "n_pending_trials": 0,
+        "n_cancelled_trials": 0,
+        "n_retries": 0,
+        "evals": {
+            "pochi__gemini-3.1-pro__tasks": {
+                "n_trials": 27,
+                "n_errors": 2,
+                "metrics": [
+                    {
+                        "mean": 0.42857142857142855
+                    }
+                ],
+                "pass_at_k": {},
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "continue_as_new_loop_py__8ufsoLg",
+                            "parallel_activities_workflow_py__VhoMT8B",
+                            "query_handler_workflow_ts__SUUscAa",
+                            "fix_nondeterministic_workflow_py__TwMJenm",
+                            "reminder_sleep_workflow_ts__9RBN4K3",
+                            "workflow_cancellation_cleanup_py__LPABjPn",
+                            "task_queue_debug_ts__Q53cUGt",
+                            "signal_increment_counter_py__wEp8oeG",
+                            "subscription_signal_workflow_ts__ttUiZ9f",
+                            "workflow_update_handler_ts__rQEzMjr",
+                            "activity_get_request_py__33J7j33",
+                            "hello_workflow_py__gT2zHLd"
+                        ],
+                        "0.0": [
+                            "continue_as_new_loop_ts__6msNwAz",
+                            "hello_workflow_ts__UnUgvcH",
+                            "patch_versioning_ts__esKview",
+                            "fix_nondeterministic_workflow_ts__wLUhCQz",
+                            "reminder_sleep_workflow_py__nDft3X8",
+                            "retry_policy_fixed_py__SyVogrM",
+                            "child_workflow_ts__3pMonCs",
+                            "heartbeat_activity_py__G8aawge",
+                            "parallel_activities_workflow_ts__VQtrohF",
+                            "workflow_cancellation_cleanup_ts__xZt4Tfy",
+                            "signal_increment_counter_ts__Kjff7wN",
+                            "query_handler_workflow_py__cJ8Ediu",
+                            "activity_get_request_ts__3h7bYgC",
+                            "money_transfer_saga_py__5Be9ici",
+                            "money_transfer_saga_ts__KwvKgXg"
+                        ]
+                    }
+                },
+                "exception_stats": {
+                    "AgentTimeoutError": [
+                        "fix_nondeterministic_workflow_ts__wLUhCQz"
+                    ],
+                    "NonZeroAgentExitCodeError": [
+                        "retry_policy_fixed_ts__HPZ2Prs"
+                    ]
+                }
+            }
+        },
+        "n_input_tokens": 0,
+        "n_cache_tokens": 0,
+        "n_output_tokens": 462267,
+        "cost_usd": null
+    }
+}

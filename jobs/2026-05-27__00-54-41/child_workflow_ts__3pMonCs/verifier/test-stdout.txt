@@ -1,0 +1,90 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py ..F                                            [100%]
+
+=================================== FAILURES ===================================
+__________________ test_workflows_completed_in_temporal_cloud __________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=0, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n12\... [INFO] Worker state changed {\n  sdkComponent: 'worker',\n  taskQueue: 'child-workflow-ts',\n  state: 'STOPPED'\n}\n")
+
+    def test_workflows_completed_in_temporal_cloud(
+        npm_start_output: subprocess.CompletedProcess,
+    ):
+        # Ensure the agent's start command actually ran before querying.
+        assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+>       asyncio.run(_verify_workflows_in_cloud())
+
+tests/test_final_state.py:130: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usr/lib/python3.12/asyncio/runners.py:194: in run
+    return runner.run(main)
+usr/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+usr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete
+    return future.result()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    async def _verify_workflows_in_cloud() -> None:
+        address = _get_env("TEMPORAL_ADDRESS")
+        namespace = _get_env("TEMPORAL_NAMESPACE")
+        api_key = _get_env("TEMPORAL_API_KEY")
+        run_id = _get_env("ZEALT_RUN_ID")
+    
+        client = await Client.connect(
+            address,
+            namespace=namespace,
+            api_key=api_key,
+            tls=True,
+        )
+    
+        parent_id_prefix = f"parent-wf-{run_id}"
+        cutoff = datetime.now(timezone.utc) - timedelta(minutes=10)
+        cutoff_str = cutoff.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    
+        # 1) Find the parent workflow execution.
+        parent_query = (
+            "WorkflowType = 'ParentSumWorkflow' "
+            f"AND WorkflowId STARTS_WITH '{parent_id_prefix}' "
+            f"AND StartTime > '{cutoff_str}'"
+        )
+    
+        parents = []
+        async for execution in client.list_workflows(query=parent_query):
+            parents.append(execution)
+    
+        assert parents, (
+            "No ParentSumWorkflow execution found in Temporal Cloud namespace "
+            f"'{namespace}' with WorkflowId prefix '{parent_id_prefix}' in the last "
+            "10 minutes. The agent's `npm start` must have started and completed the "
+            "parent workflow."
+        )
+    
+        parents.sort(
+            key=lambda e: e.start_time or datetime.min.replace(tzinfo=timezone.utc),
+            reverse=True,
+        )
+        latest_parent = parents[0]
+    
+>       assert latest_parent.status == WorkflowExecutionStatus.COMPLETED, (
+            f"Latest matching parent workflow execution (id={latest_parent.id}, "
+            f"run_id={latest_parent.run_id}) is not COMPLETED. "
+            f"status={latest_parent.status}"
+        )
+E       AssertionError: Latest matching parent workflow execution (id=parent-wf-zr-3pmoncs, run_id=019e6549-9db2-7bde-a22e-cdae34ebd689) is not COMPLETED. status=1
+E       assert <WorkflowExecutionStatus.RUNNING: 1> == <WorkflowExecutionStatus.COMPLETED: 2>
+E        +  where <WorkflowExecutionStatus.RUNNING: 1> = WorkflowExecution(close_time=None, execution_time=datetime.datetime(2026, 5, 26, 17, 16, 23, 858778, tzinfo=datetime.t...dLimitsConfig(memo_size_warning=2048, payload_size_warning=524288), external_storage=None, _payload_error_limits=None)).status
+E        +  and   <WorkflowExecutionStatus.COMPLETED: 2> = WorkflowExecutionStatus.COMPLETED
+
+tests/test_final_state.py:93: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_npm_start_succeeds
+PASSED tests/test_final_state.py::test_npm_start_prints_expected_result
+FAILED tests/test_final_state.py::test_workflows_completed_in_temporal_cloud
+========================= 1 failed, 2 passed in 7.21s ==========================

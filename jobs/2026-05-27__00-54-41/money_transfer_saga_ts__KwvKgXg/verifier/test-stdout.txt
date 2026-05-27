@@ -1,0 +1,93 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 3 items
+
+tests/test_final_state.py FFF                                            [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_npm_start_succeeds ____________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...:19) {\n  diagnosticCodes: [\n    2591, 2591, 2304,\n    2591, 2304, 2304,\n    2591, 2591, 2584,\n    2591\n  ]\n}\n")
+
+    def test_npm_start_succeeds(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "`npm start` did not exit successfully. "
+            f"stdout=\n{npm_start_output.stdout}\nstderr=\n{npm_start_output.stderr}"
+        )
+E       AssertionError: `npm start` did not exit successfully. stdout=
+E         
+E         > myproject@1.0.0 start
+E         > ts-node src/index.ts
+E         
+E         
+E         stderr=
+E         /home/user/myproject/node_modules/ts-node/src/index.ts:859
+E             return new TSError(diagnosticText, diagnosticCodes, diagnostics);
+E                    ^
+E         TSError: ⨯ Unable to compile TypeScript:
+E         src/index.ts(1,23): error TS2591: Cannot find name 'child_process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/index.ts(2,18): error TS2591: Cannot find name 'path'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/index.ts(5,60): error TS2304: Cannot find name '__dirname'.
+E         src/index.ts(7,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/index.ts(11,32): error TS2304: Cannot find name 'setTimeout'.
+E         src/index.ts(13,60): error TS2304: Cannot find name '__dirname'.
+E         src/index.ts(15,10): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/index.ts(20,5): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         src/index.ts(25,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+E         src/index.ts(26,3): error TS2591: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+E         
+E             at createTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:859:12)
+E             at reportTSError (/home/user/myproject/node_modules/ts-node/src/index.ts:863:19)
+E             at getOutput (/home/user/myproject/node_modules/ts-node/src/index.ts:1077:36)
+E             at Object.compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1433:41)
+E             at Module.m._compile (/home/user/myproject/node_modules/ts-node/src/index.ts:1617:30)
+E             at node:internal/modules/cjs/loader:1961:10
+E             at Object.require.extensions.<computed> [as .ts] (/home/user/myproject/node_modules/ts-node/src/index.ts:1621:12)
+E             at Module.load (node:internal/modules/cjs/loader:1553:32)
+E             at Module._load (node:internal/modules/cjs/loader:1355:12)
+E             at wrapModuleLoad (node:internal/modules/cjs/loader:255:19) {
+E           diagnosticCodes: [
+E             2591, 2591, 2304,
+E             2591, 2304, 2304,
+E             2591, 2591, 2584,
+E             2591
+E           ]
+E         }
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...:19) {\n  diagnosticCodes: [\n    2591, 2591, 2304,\n    2591, 2304, 2304,\n    2591, 2591, 2584,\n    2591\n  ]\n}\n").returncode
+
+tests/test_final_state.py:41: AssertionError
+________________________ test_accounts_file_final_state ________________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...:19) {\n  diagnosticCodes: [\n    2591, 2591, 2304,\n    2591, 2304, 2304,\n    2591, 2591, 2584,\n    2591\n  ]\n}\n")
+
+    def test_accounts_file_final_state(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping accounts file check because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping accounts file check because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...:19) {\n  diagnosticCodes: [\n    2591, 2591, 2304,\n    2591, 2304, 2304,\n    2591, 2591, 2584,\n    2591\n  ]\n}\n").returncode
+
+tests/test_final_state.py:48: AssertionError
+_______________________ test_workflows_in_temporal_cloud _______________________
+
+npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...:19) {\n  diagnosticCodes: [\n    2591, 2591, 2304,\n    2591, 2304, 2304,\n    2591, 2591, 2584,\n    2591\n  ]\n}\n")
+
+    def test_workflows_in_temporal_cloud(npm_start_output: subprocess.CompletedProcess):
+>       assert npm_start_output.returncode == 0, (
+            "Skipping cloud verification because `npm start` did not exit cleanly."
+        )
+E       AssertionError: Skipping cloud verification because `npm start` did not exit cleanly.
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['npm', 'start'], returncode=1, stdout='\n> myproject@1.0.0 start\n> ts-node src/index.ts\n\n', ...:19) {\n  diagnosticCodes: [\n    2591, 2591, 2304,\n    2591, 2304, 2304,\n    2591, 2591, 2584,\n    2591\n  ]\n}\n").returncode
+
+tests/test_final_state.py:129: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_final_state.py::test_npm_start_succeeds - AssertionError: `...
+FAILED tests/test_final_state.py::test_accounts_file_final_state - AssertionE...
+FAILED tests/test_final_state.py::test_workflows_in_temporal_cloud - Assertio...
+============================== 3 failed in 0.93s ===============================

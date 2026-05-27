@@ -1,0 +1,38 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /tests
+plugins: json-ctrf-0.5.0
+collected 6 items
+
+tests/test_final_state.py ..F...                                         [100%]
+
+=================================== FAILURES ===================================
+___________________________ test_workflow_completed ____________________________
+
+workflow_handle = (<temporalio.client.Client object at 0x791e37c600e0>, <temporalio.client.WorkflowHandle object at 0x791e37df0bc0>)
+
+    def test_workflow_completed(workflow_handle):
+        _, handle = workflow_handle
+    
+        async def _describe():
+            return await handle.describe()
+    
+        desc = asyncio.run(_describe())
+>       assert desc.status == WorkflowExecutionStatus.COMPLETED, (
+            f"Workflow {_workflow_id()} expected to be COMPLETED, got {desc.status!r}."
+        )
+E       AssertionError: Workflow discount-zr-wluhcqz expected to be COMPLETED, got <WorkflowExecutionStatus.RUNNING: 1>.
+E       assert <WorkflowExecutionStatus.RUNNING: 1> == <WorkflowExecutionStatus.COMPLETED: 2>
+E        +  where <WorkflowExecutionStatus.RUNNING: 1> = WorkflowExecutionDescription(close_time=None, data_converter=DataConverter(payload_converter_class=<class 'temporalio...._EXECUTION_STARTED\n      event_id: 1\n    }\n  }\n}\n, _static_summary=None, _static_details=None, _metadata_decoded=False).status
+E        +  and   <WorkflowExecutionStatus.COMPLETED: 2> = WorkflowExecutionStatus.COMPLETED
+
+tests/test_final_state.py:68: AssertionError
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_final_state.py::test_workflows_ts_no_math_random
+PASSED tests/test_final_state.py::test_workflows_ts_no_new_date
+PASSED tests/test_final_state.py::test_history_has_pick_discount_and_no_nope
+PASSED tests/test_final_state.py::test_workflow_result_discount
+PASSED tests/test_final_state.py::test_output_log_contains_discount
+FAILED tests/test_final_state.py::test_workflow_completed - AssertionError: W...
+=================== 1 failed, 5 passed in 274.80s (0:04:34) ====================

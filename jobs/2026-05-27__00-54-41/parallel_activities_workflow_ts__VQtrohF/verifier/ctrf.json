@@ -1,0 +1,55 @@
+{
+    "results": {
+        "tool": {
+            "name": "pytest",
+            "version": "7.4.4"
+        },
+        "summary": {
+            "tests": 3,
+            "passed": 2,
+            "failed": 1,
+            "skipped": 0,
+            "pending": 0,
+            "other": 0,
+            "start": 1779816025013,
+            "stop": 1779816032782
+        },
+        "environment": {
+            "buildName": "Pytest JSON CTRF Report",
+            "buildNumber": "000",
+            "buildUrl": "https://ctrf.io"
+        },
+        "tests": [
+            {
+                "name": "test_final_state.py::test_npm_start_succeeds",
+                "status": "passed",
+                "duration": 6846,
+                "start": 1779816025287,
+                "stop": 1779816032133,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_npm_start_prints_expected_sum",
+                "status": "passed",
+                "duration": 0,
+                "start": 1779816032134,
+                "stop": 1779816032134,
+                "retries": 0,
+                "file_path": "test_final_state.py"
+            },
+            {
+                "name": "test_final_state.py::test_workflow_completed_in_temporal_cloud",
+                "status": "failed",
+                "raw_status": "call_failed",
+                "duration": 648,
+                "start": 1779816032134,
+                "stop": 1779816032782,
+                "retries": 0,
+                "file_path": "test_final_state.py",
+                "trace": "npm_start_output = CompletedProcess(args=['npm', 'start'], returncode=0, stdout='\\n> myproject@1.0.0 start\\n> ts-node src/start.ts\\n\\n55\\...INFO] Worker state changed {\\n  sdkComponent: 'worker',\\n  taskQueue: 'parallel-squares-ts',\\n  state: 'STOPPED'\\n}\\n\")\n\n    def test_workflow_completed_in_temporal_cloud(\n        npm_start_output: subprocess.CompletedProcess,\n    ):\n        assert npm_start_output.returncode == 0, (\n            \"Skipping cloud verification because `npm start` did not exit cleanly.\"\n        )\n>       asyncio.run(_verify_workflow_in_cloud())\n\ntests/test_final_state.py:140: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nusr/lib/python3.12/asyncio/runners.py:194: in run\n    return runner.run(main)\nusr/lib/python3.12/asyncio/runners.py:118: in run\n    return self._loop.run_until_complete(task)\nusr/lib/python3.12/asyncio/base_events.py:687: in run_until_complete\n    return future.result()\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n    async def _verify_workflow_in_cloud() -> None:\n        address = _get_env(\"TEMPORAL_ADDRESS\")\n        namespace = _get_env(\"TEMPORAL_NAMESPACE\")\n        api_key = _get_env(\"TEMPORAL_API_KEY\")\n        run_id = _get_env(\"ZEALT_RUN_ID\")\n    \n        client = await Client.connect(\n            address,\n            namespace=namespace,\n            api_key=api_key,\n            tls=True,\n        )\n    \n        workflow_id_prefix = f\"{WORKFLOW_ID_PREFIX_BASE}{run_id}\"\n        cutoff = datetime.now(timezone.utc) - timedelta(minutes=10)\n        cutoff_str = cutoff.strftime(\"%Y-%m-%dT%H:%M:%S.%f\")[:-3] + \"Z\"\n        query = (\n            f\"WorkflowType = '{WORKFLOW_TYPE}' \"\n            f\"AND WorkflowId STARTS_WITH '{workflow_id_prefix}' \"\n            f\"AND StartTime > '{cutoff_str}'\"\n        )\n    \n        matches = []\n        async for execution in client.list_workflows(query=query):\n            matches.append(execution)\n    \n        assert matches, (\n            f\"No {WORKFLOW_TYPE} execution found in Temporal Cloud namespace \"\n            f\"'{namespace}' with WorkflowId prefix '{workflow_id_prefix}' in the \"\n            \"last 10 minutes. The agent's `npm start` must have started and \"\n            \"completed the workflow.\"\n        )\n    \n        matches.sort(\n            key=lambda e: e.start_time or datetime.min.replace(tzinfo=timezone.utc),\n            reverse=True,\n        )\n        latest = matches[0]\n    \n>       assert latest.status == WorkflowExecutionStatus.COMPLETED, (\n            f\"Latest matching workflow execution (id={latest.id}, \"\n            f\"run_id={latest.run_id}) is not COMPLETED. status={latest.status}\"\n        )\nE       AssertionError: Latest matching workflow execution (id=parallel-wf-zr-vqtrohf, run_id=019e654d-63a3-7c3c-b406-9734985a16a3) is not COMPLETED. status=1\nE       assert <WorkflowExecutionStatus.RUNNING: 1> == <WorkflowExecutionStatus.COMPLETED: 2>\nE        +  where <WorkflowExecutionStatus.RUNNING: 1> = WorkflowExecution(close_time=None, execution_time=datetime.datetime(2026, 5, 26, 17, 20, 31, 139802, tzinfo=datetime.t...dLimitsConfig(memo_size_warning=2048, payload_size_warning=524288), external_storage=None, _payload_error_limits=None)).status\nE        +  and   <WorkflowExecutionStatus.COMPLETED: 2> = WorkflowExecutionStatus.COMPLETED\n\ntests/test_final_state.py:95: AssertionError",
+                "message": "The test failed in the call phase due to an assertion error"
+            }
+        ]
+    }
+}

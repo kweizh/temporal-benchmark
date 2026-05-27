@@ -1,0 +1,21 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+rootdir: /bootstrap
+plugins: json-ctrf-0.5.0
+collected 13 items
+
+bootstrap/test_initial_state.py::test_node_available PASSED
+bootstrap/test_initial_state.py::test_npm_available PASSED
+bootstrap/test_initial_state.py::test_project_dir_exists PASSED
+bootstrap/test_initial_state.py::test_package_json_exists PASSED
+bootstrap/test_initial_state.py::test_package_json_declares_temporal_sdk PASSED
+bootstrap/test_initial_state.py::test_node_modules_installed PASSED
+bootstrap/test_initial_state.py::test_worker_file_exists PASSED
+bootstrap/test_initial_state.py::test_client_file_exists PASSED
+bootstrap/test_initial_state.py::test_workflows_file_exists PASSED
+bootstrap/test_initial_state.py::test_initial_worker_uses_task_queue_b PASSED
+bootstrap/test_initial_state.py::test_initial_client_uses_task_queue_a PASSED
+bootstrap/test_initial_state.py::test_temporal_env_vars_present PASSED
+bootstrap/test_initial_state.py::test_zealt_run_id_present PASSED
+
+============================== 13 passed in 0.04s ==============================
